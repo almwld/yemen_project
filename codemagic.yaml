@@ -7,7 +7,7 @@ workflows:
       flutter: stable
 
     scripts:
-      - name: 🧱 إنشاء Flutter App مؤقت
+      - name: إنشاء Flutter App مؤقت
         script: |
           flutter create temp_app
           rm -rf temp_app/lib
@@ -17,7 +17,7 @@ workflows:
           cd temp_app
           flutter pub get
 
-      - name: 🏗️ بناء APK
+      - name: بناء APK Release
         script: |
           cd temp_app
           flutter build apk --release --no-tree-shake-icons
