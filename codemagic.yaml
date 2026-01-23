@@ -1,19 +1,20 @@
 workflows:
-  flutter-apk-workflow:
-    name: Yemen Market – Cloud APK (SAFE MODE)
+  flutter-clean-build:
+    name: Yemen Market – Clean Cloud Build
     max_build_duration: 60
 
     environment:
       flutter: stable
 
     scripts:
-      - name: 🧱 Create Flutter App Shell
+      - name: 🧱 Create clean Flutter app
         script: |
           flutter create app
           rm -rf app/lib
+          rm -rf app/assets
           cp -r lib app/
-          cp pubspec.yaml app/
           cp -r assets app/ || true
+          cp pubspec.yaml app/
           cd app
 
       - name: 📦 Pub Get
