@@ -1,27 +1,26 @@
 workflows:
-  flutter-clean-build:
-    name: Yemen Market – Clean Cloud Build
+  flutter-apk-workflow:
+    name: APK Yemen Market (TEMP SHELL)
     max_build_duration: 60
 
     environment:
       flutter: stable
 
     scripts:
-      - name: 🧱 Create clean Flutter app
+      - name: 🧱 إنشاء Flutter App مؤقت
         script: |
-          flutter create app
-          rm -rf app/lib
-          rm -rf app/assets
-          cp -r lib app/
-          cp -r assets app/ || true
-          cp pubspec.yaml app/
-          cd app
+          flutter create temp_app
+          rm -rf temp_app/lib
+          cp -r lib temp_app/
+          cp pubspec.yaml temp_app/
+          cp -r assets temp_app/ || true
+          cd temp_app
+          flutter pub get
 
-      - name: 📦 Pub Get
-        script: flutter pub get
-
-      - name: 🏗️ Build APK
-        script: flutter build apk --release --no-tree-shake-icons
+      - name: 🏗️ بناء APK
+        script: |
+          cd temp_app
+          flutter build apk --release --no-tree-shake-icons
 
     artifacts:
-      - app/build/app/outputs/flutter-apk/app-release.apk
+      - temp_app/build/app/outputs/flutter-apk/app-release.apk
