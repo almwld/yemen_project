@@ -1,0 +1,17 @@
+# Flutter
+.dart_tool/
+.build/
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDE
+.vscode/
+.idea/
+
+# Firebase (مهم)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# Secrets
+.env
