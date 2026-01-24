@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
 import 'core/theme/app_theme.dart';
+import 'screens/home_screen.dart';
 
 class YemenMarketApp extends StatelessWidget {
   const YemenMarketApp({super.key});
@@ -11,8 +11,7 @@ class YemenMarketApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.system,
-      home: const HomeScreen(), // 👈 Dashboard
+      home: HomeScreen(), // 👈 الدخول مباشرة للسوق
     );
   }
 }

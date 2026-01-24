@@ -3,22 +3,16 @@ import 'package:flutter/material.dart';
 class AppTheme {
   static ThemeData light() {
     return ThemeData(
-      primaryColor: const Color(0xFF0A7C5A),
+      brightness: Brightness.light,
+      primarySwatch: Colors.green,
       scaffoldBackgroundColor: Colors.white,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF0A7C5A),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF0A7C5A),
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
+    );
+  }
+
+  static ThemeData dark() {
+    return ThemeData(
+      brightness: Brightness.dark,
+      primarySwatch: Colors.green,
     );
   }
 }
