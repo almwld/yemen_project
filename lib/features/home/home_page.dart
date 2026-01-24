@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../categories/presentation/categories_page.dart';
-import '../products/presentation/widgets/products_grid.dart';
+import '../../features/categories/presentation/categories_page.dart';
+import '../../features/products/presentation/widgets/products_grid.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -9,19 +9,27 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('سوق اليمن'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.dark_mode),
-            onPressed: () {},
-          )
-        ],
+        title: const Text('السوق'),
+        centerTitle: true,
       ),
       body: Column(
-        children: const [
-          SizedBox(height: 12),
-          SizedBox(height: 120, child: CategoriesPage()),
-          Expanded(child: ProductsGrid()),
+        children: [
+          SizedBox(
+            height: 120,
+            child: CategoriesPage(),
+          ),
+          Expanded(
+            child: ProductsGrid(),
+          ),
+
+          // تكرار (كما طلبت)
+          SizedBox(
+            height: 120,
+            child: CategoriesPage(),
+          ),
+          Expanded(
+            child: ProductsGrid(),
+          ),
         ],
       ),
     );

@@ -1,31 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/language/language_cubit.dart';
+import 'package:provider/provider.dart';
+import '../../../core/theme/theme_provider.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final lang = context.read<LanguageCubit>();
+    final theme = context.watch<ThemeProvider>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('الإعدادات')),
-      body: ListView(
-        children: [
-          ListTile(
-            title: const Text('العربية'),
-            onTap: lang.setArabic,
-          ),
-          ListTile(
-            title: const Text('English'),
-            onTap: lang.setEnglish,
-          ),
-          ListTile(
-            title: const Text('حسب لغة النظام'),
-            onTap: lang.followSystem,
-          ),
-        ],
+      body: SwitchListTile(
+        title: const Text('الوضع الليلي'),
+        value: theme.mode == ThemeMode.dark,
+        onChanged: (_) => theme.toggle(),
       ),
     );
   }

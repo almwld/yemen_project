@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static ThemeData light() {
-    return ThemeData(
-      brightness: Brightness.light,
-      primarySwatch: Colors.green,
-      scaffoldBackgroundColor: Colors.white,
-    );
-  }
+  static ThemeData light() => ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey[100],
+      );
 
-  static ThemeData dark() {
-    return ThemeData(
-      brightness: Brightness.dark,
-      primarySwatch: Colors.green,
-    );
-  }
+  static ThemeData dark() => ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.black,
+      );
 }

@@ -1,22 +1,22 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ThemeCubit extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
+enum AppThemeMode { light, dark }
 
-  ThemeMode get themeMode => _themeMode;
+class ThemeState {
+  final AppThemeMode mode;
+  const ThemeState(this.mode);
+}
 
-  void setLight() {
-    _themeMode = ThemeMode.light;
-    notifyListeners();
-  }
+class ThemeCubit extends Cubit<ThemeState> {
+  ThemeCubit() : super(const ThemeState(AppThemeMode.light));
 
-  void setDark() {
-    _themeMode = ThemeMode.dark;
-    notifyListeners();
-  }
-
-  void setSystem() {
-    _themeMode = ThemeMode.system;
-    notifyListeners();
+  void toggleTheme() {
+    emit(
+      ThemeState(
+        state.mode == AppThemeMode.light
+            ? AppThemeMode.dark
+            : AppThemeMode.light,
+      ),
+    );
   }
 }
