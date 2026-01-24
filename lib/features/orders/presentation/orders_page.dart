@@ -6,10 +6,8 @@ class OrdersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Orders')),
-      body: const Center(
-        child: Text('Orders History'),
-      ),
+      appBar: AppBar(title: const Text('طلباتي')),
+      body: const Center(child: Text('لا توجد طلبات')),
     );
   }
 }
