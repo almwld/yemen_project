@@ -1,26 +1,23 @@
 workflows:
-  flutter-apk-workflow:
-    name: APK Yemen Market (TEMP SHELL)
+  android-workflow:
+    name: Yemen Market Build
+    instance_type: mac_mini_m1
     max_build_duration: 60
-
     environment:
       flutter: stable
-
+      java: 17
     scripts:
-      - name: إنشاء Flutter App مؤقت
-        script: |
-          flutter create temp_app
-          rm -rf temp_app/lib
-          cp -r lib temp_app/
-          cp pubspec.yaml temp_app/
-          cp -r assets temp_app/ || true
-          cd temp_app
-          flutter pub get
-
-      - name: بناء APK Release
-        script: |
-          cd temp_app
-          flutter build apk --release --no-tree-shake-icons
-
+      - name: Set up local.properties
+        script: echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Upgrade dependencies
+        script: flutter pub upgrade --major-versions
+      - name: Build Android APK
+        script: flutter build apk --release --android-skip-build-dependency-validation
     artifacts:
-      - temp_app/build/app/outputs/flutter-apk/app-release.apk
+      - build/app/outputs/flutter-apk/**/app-release.apk
+    publishing:
+      email:
+        recipients:
+          - almwld@example.com # ضع إيميلك هنا لتصلك الرسالة عند النجاح
