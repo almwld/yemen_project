@@ -12,9 +12,9 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('الإعدادات')),
       body: SwitchListTile(
-        title: const Text('الوضع الليلي'),
-        value: theme.mode == ThemeMode.dark,
-        onChanged: (_) => theme.toggle(),
+        title: const Text('الوضع الداكن'),
+        value: theme.themeMode == ThemeMode.dark,
+        onChanged: theme.toggleTheme,
       ),
     );
   }

@@ -28,7 +28,7 @@ class _RootPageState extends State<RootPage> {
         onTap: (i) => setState(() => index = i),
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.store),
+            icon: Icon(Icons.storefront),
             label: 'السوق',
           ),
           BottomNavigationBarItem(

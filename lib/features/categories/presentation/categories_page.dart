@@ -12,17 +12,17 @@ class CategoriesPage extends StatelessWidget {
       'شحن ألعاب',
       'إنترنت',
       'مزادات',
-      'تجارة',
       'حجوزات',
-      'حفلات',
+      'خدمات',
     ];
 
-    return ListView.separated(
+    return ListView.builder(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      itemBuilder: (_, i) => Chip(label: Text(categories[i])),
-      separatorBuilder: (_, __) => const SizedBox(width: 8),
       itemCount: categories.length,
+      itemBuilder: (_, i) => Padding(
+        padding: const EdgeInsets.all(8),
+        child: Chip(label: Text(categories[i])),
+      ),
     );
   }
 }
