@@ -1,29 +1,14 @@
 workflows:
   flutter-apk-workflow:
-    name: APK Yemen Market (Final Fix)
+    name: Yemen Market Final Fix
     max_build_duration: 60
     environment:
       flutter: stable
       java: 17
     scripts:
-      - name: Setup and Build
+      - name: Build Project
         script: |
-          # إنشاء تطبيق جديد تماما لتجنب مشاكل v1 embedding
-          flutter create --project-name yemen_market temp_app
-          
-          # نقل ملفاتك الأساسية إلى التطبيق الجديد
-          rm -rf temp_app/lib
-          cp -r lib temp_app/
-          cp pubspec.yaml temp_app/
-          cp -r assets temp_app/ || true
-          
-          # نقل ملف الفايربيس (تأكد أنه موجود في المجلد الرئيسي)
-          cp android/app/google-services.json temp_app/android/app/ || cp google-services.json temp_app/android/app/ || true
-          
-          cd temp_app
           flutter pub get
-          
-          # البناء النهائي
           flutter build apk --release --no-tree-shake-icons --android-skip-build-dependency-validation
     artifacts:
-      - temp_app/build/app/outputs/flutter-apk/app-release.apk
+      - build/app/outputs/flutter-apk/app-release.apk
