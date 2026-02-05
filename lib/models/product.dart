@@ -1,11 +1,19 @@
+import 'package:flutter/material.dart';
+
 class Product {
-  final String name;
+  final String id;
+  final String title;
+  final String description;
   final double price;
-  final String image;
+  final IconData icon;
+  final Color color;
 
   Product({
-    required this.name,
+    required this.id,
+    required this.title,
+    required this.description,
     required this.price,
-    required this.image,
+    required this.icon,
+    required this.color,
   });
 }
