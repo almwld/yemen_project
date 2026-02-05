@@ -1,14 +1,21 @@
 workflows:
-  flutter-apk-workflow:
-    name: Yemen Market Final Fix
+  android-workflow:
+    name: Android Workflow
     max_build_duration: 60
-    environment:
-      flutter: stable
-      java: 17
+    instance_type: mac_mini_m1
     scripts:
-      - name: Build Project
-        script: |
+      - name: Set up Android folder
+        script: | 
+          # هذا الأمر سيقوم بإنشاء ملفات الأندرويد المفقودة تلقائياً داخل Codemagic
+          flutter create . --platforms android
+          # إعادة وضع ملف الجي بي إس في مكانه الصحيح بعد إعادة الإنشاء
+          cp android/app/google-services.json . 
+          cp google-services.json android/app/
+      - name: Get Flutter packages
+        script: | 
           flutter pub get
-          flutter build apk --release --no-tree-shake-icons --android-skip-build-dependency-validation
+      - name: Build APK
+        script: | 
+          flutter build apk --release
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
