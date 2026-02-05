@@ -18,21 +18,23 @@ class YemenMarketApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Color(0xFFE0F7FA),
-        appBarTheme: AppBarTheme(
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF00ACC1), Color(0xFF00796B)],
-              ),
-            ),
-          ),
-          centerTitle: true,
-          titleTextStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
       ),
       home: MainNavigation(),
     );
   }
+}
+
+// ويدجت مخصص للتدرج اللوني لسهولة استخدامه في كل الصفحات
+Widget myGradientBackground() {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [Color(0xFF00ACC1), Color(0xFF00796B)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    ),
+  );
 }
 
 class MainNavigation extends StatefulWidget {
@@ -66,7 +68,11 @@ class ProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("يمن ماركت 🌊")),
+      appBar: AppBar(
+        title: Text("يمن ماركت 🌊", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        flexibleSpace: myGradientBackground(),
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('products').snapshots(),
         builder: (context, snapshot) {
@@ -117,7 +123,10 @@ class ProductDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(data['name'])),
+      appBar: AppBar(
+        title: Text(data['name'], style: TextStyle(color: Colors.white)),
+        flexibleSpace: myGradientBackground(),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -130,12 +139,12 @@ class ProductDetails extends StatelessWidget {
                   Text(data['name'], style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                   Text("${data['price']}", style: TextStyle(fontSize: 22, color: Colors.green)),
                   SizedBox(height: 20),
-                  Text("هذا المنتج متوفر بجودة عالية في يمن ماركت.", style: TextStyle(fontSize: 16)),
+                  Text("هذا المنتج متوفر بجودة عالية في يمن ماركت. تواصل معنا للطلب.", style: TextStyle(fontSize: 16)),
                   SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: () {},
-                    child: Center(child: Text("اطلب عبر واتساب", style: TextStyle(color: Colors.white))),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green, padding: EdgeInsets.all(15)),
+                    child: Center(child: Text("اطلب عبر واتساب", style: TextStyle(color: Colors.white, fontSize: 18))),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green, padding: EdgeInsets.all(15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
                   )
                 ],
               ),
@@ -151,7 +160,7 @@ class MapPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("مواقعنا 📍")),
+      appBar: AppBar(title: Text("مواقعنا 📍", style: TextStyle(color: Colors.white)), flexibleSpace: myGradientBackground()),
       body: Center(child: Text("الخريطة ستتوفر قريباً")),
     );
   }
@@ -161,11 +170,12 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("الإعدادات ⚙️")),
+      appBar: AppBar(title: Text("الإعدادات ⚙️", style: TextStyle(color: Colors.white)), flexibleSpace: myGradientBackground()),
       body: ListView(
         children: [
-          ListTile(leading: Icon(Icons.person), title: Text("الملف الشخصي")),
-          ListTile(leading: Icon(Icons.language), title: Text("اللغة")),
+          ListTile(leading: Icon(Icons.person, color: Color(0xFF00796B)), title: Text("الملف الشخصي")),
+          ListTile(leading: Icon(Icons.language, color: Color(0xFF00796B)), title: Text("اللغة")),
+          ListTile(leading: Icon(Icons.info, color: Color(0xFF00796B)), title: Text("عن التطبيق")),
         ],
       ),
     );
