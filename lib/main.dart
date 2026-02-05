@@ -3,11 +3,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint("Firebase Error: $e");
+  }
   runApp(YemenMarketMaster());
 }
 
@@ -17,7 +20,11 @@ class YemenMarketMaster extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'سوق اليمن الرقمي',
-      theme: ThemeData(primarySwatch: Colors.red, useMaterial3: true),
+      theme: ThemeData(
+        primaryColor: Colors.red,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
+        useMaterial3: true,
+      ),
       home: AuthWrapper(),
     );
   }
@@ -29,9 +36,12 @@ class AuthWrapper extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator(color: Colors.red)));
+        }
         if (snapshot.hasData) return MainDashboard();
         return LoginScreen();
-      }
+      },
     );
   }
 }
@@ -51,7 +61,8 @@ class _MainDashboardState extends State<MainDashboard> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
-        items: [
+        selectedItemColor: Colors.red,
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.store), label: 'المتجر'),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'الدردشة'),
           BottomNavigationBarItem(icon: Icon(Icons.analytics), label: 'الإحصائيات'),
@@ -63,6 +74,7 @@ class _MainDashboardState extends State<MainDashboard> {
 
 class ChatScreen extends StatelessWidget {
   final TextEditingController _msgController = TextEditingController();
+
   void _sendLocation() async {
     LocationPermission p = await Geolocator.requestPermission();
     if (p == LocationPermission.denied) return;
@@ -74,34 +86,44 @@ class ChatScreen extends StatelessWidget {
       'createdAt': Timestamp.now(),
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("المحادثة")),
+      appBar: AppBar(title: const Text("المحادثة"), backgroundColor: Colors.red, foregroundColor: Colors.white),
       body: Column(children: [
         Expanded(child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('chats').orderBy('createdAt', descending: true).snapshots(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
-            return ListView(reverse: true, children: snapshot.data!.docs.map((doc) => ListTile(
-              title: Text(doc['text']),
-              subtitle: Text(doc['sender'] ?? ""),
-              trailing: doc.data().toString().contains('locationUrl') ? Icon(Icons.map, color: Colors.blue) : null,
-            )).toList());
+            if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+            return ListView(
+              reverse: true,
+              children: snapshot.data!.docs.map((doc) => ListTile(
+                title: Text(doc['text'] ?? ""),
+                subtitle: Text(doc['sender'] ?? "مجهول"),
+                leading: const Icon(Icons.person_pin),
+                trailing: doc.data().toString().contains('locationUrl') ? const Icon(Icons.map, color: Colors.green) : null,
+              )).toList(),
+            );
           },
         )),
-        Row(children: [
-          IconButton(icon: Icon(Icons.location_on), onPressed: _sendLocation),
-          Expanded(child: TextField(controller: _msgController)),
-          IconButton(icon: Icon(Icons.send), onPressed: () {
-            FirebaseFirestore.instance.collection('chats').add({
-              'text': _msgController.text,
-              'sender': FirebaseAuth.instance.currentUser?.phoneNumber,
-              'createdAt': Timestamp.now(),
-            });
-            _msgController.clear();
-          }),
-        ]),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(children: [
+            IconButton(icon: const Icon(Icons.location_on, color: Colors.red), onPressed: _sendLocation),
+            Expanded(child: TextField(controller: _msgController, decoration: const InputDecoration(hintText: "اكتب رسالتك..."))),
+            IconButton(icon: const Icon(Icons.send, color: Colors.red), onPressed: () {
+              if (_msgController.text.isNotEmpty) {
+                FirebaseFirestore.instance.collection('chats').add({
+                  'text': _msgController.text,
+                  'sender': FirebaseAuth.instance.currentUser?.phoneNumber ?? "تجريبي",
+                  'createdAt': Timestamp.now(),
+                });
+                _msgController.clear();
+              }
+            }),
+          ]),
+        ),
       ]),
     );
   }
@@ -111,12 +133,23 @@ class ProductListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("سوق اليمن")),
+      appBar: AppBar(title: const Text("سوق اليمن الرقمي"), backgroundColor: Colors.red, foregroundColor: Colors.white),
       body: GridView.builder(
-        padding: EdgeInsets.all(10),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        itemCount: 4,
-        itemBuilder: (ctx, i) => Card(child: Center(child: Text("منتج يمني $i"))),
+        padding: const EdgeInsets.all(10),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.8),
+        itemCount: 6,
+        itemBuilder: (ctx, i) => Card(
+          elevation: 4,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.shopping_bag, size: 50, color: Colors.red),
+              const SizedBox(height: 10),
+              Text("منتج يمني ${i + 1}", style: const TextStyle(fontWeight: FontWeight.bold)),
+              const Text("سعر ممتاز", style: TextStyle(color: Colors.grey)),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -126,8 +159,8 @@ class AdminStatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("الإحصائيات")),
-      body: Center(child: Text("إجمالي المبيعات: 150,000 ريال")),
+      appBar: AppBar(title: const Text("الإحصائيات")),
+      body: const Center(child: Text("إجمالي المبيعات: 150,000 ريال", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
     );
   }
 }
@@ -135,6 +168,23 @@ class AdminStatsScreen extends StatelessWidget {
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: ElevatedButton(onPressed: () => FirebaseAuth.instance.signInAnonymously(), child: Text("دخول تجريبي"))));
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.storefront, size: 100, color: Colors.red),
+            const SizedBox(height: 20),
+            const Text("يمن ماركت بليس", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 40),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+              onPressed: () => FirebaseAuth.instance.signInAnonymously(),
+              child: const Text("الدخول كضيف"),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
