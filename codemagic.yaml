@@ -1,13 +1,22 @@
 workflows:
   android-workflow:
-    name: Yemen Market Termux Build
+    name: Yemen Market Magic Build
     environment:
       flutter: stable
       java: 17
     scripts:
-      - name: Fix Build
+      - name: Ultimate Fix Script
         script: |
+          # حذف أي ملفات قديمة قد تسبب تداخل
+          find . -name "MainActivity.java" -delete
+          
+          # التأكد من أن المانيفست يطلب v2 Embedding بصرامة
+          find android -name "AndroidManifest.xml" -exec sed -i 's/android:name="io.flutter.app.FlutterApplication"/android:name="${applicationName}"/g' {} +
+          
+          # تشغيل التحديث
           flutter pub get
-          flutter build apk --release --android-skip-build-dependency-validation
+          
+          # البناء مع تنظيف كامل (Clean Build)
+          flutter build apk --release --clean --android-skip-build-dependency-validation
     artifacts:
       - build/app/outputs/flutter-apk/**/app-release.apk
