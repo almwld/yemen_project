@@ -74,12 +74,17 @@ class ChatScreen extends StatelessWidget {
   final TextEditingController _msgController = TextEditingController();
 
   void _sendLocation() async {
+    // طلب الإذن وتحديد الموقع
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) return;
+    
     Position pos = await Geolocator.getCurrentPosition();
-    String url = "https://www.google.com/maps/search/?api=1&query=${pos.latitude},${pos.longitude}";
+    String url = "https://www.google.com/maps?q=${pos.latitude},${pos.longitude}";
+    
     FirebaseFirestore.instance.collection('chats').add({
       'text': '📍 موقع التوصيل الخاص بي',
       'locationUrl': url,
-      'sender': FirebaseAuth.instance.currentUser?.phoneNumber ?? "ضيف",
+      'sender': FirebaseAuth.instance.currentUser?.phoneNumber ?? "مستخدم",
       'createdAt': Timestamp.now(),
     });
   }
@@ -108,25 +113,29 @@ class ChatScreen extends StatelessWidget {
               },
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(8),
-            child: Row(
-              children: [
-                IconButton(icon: Icon(Icons.location_on, color: Colors.red), onPressed: _sendLocation),
-                Expanded(child: TextField(controller: _msgController, decoration: InputDecoration(hintText: "اكتب رسالة..."))),
-                IconButton(icon: Icon(Icons.send), onPressed: () {
-                  if(_msgController.text.isNotEmpty) {
-                     FirebaseFirestore.instance.collection('chats').add({
-                       'text': _msgController.text,
-                       'sender': FirebaseAuth.instance.currentUser?.phoneNumber ?? "ضيف",
-                       'createdAt': Timestamp.now(),
-                     });
-                     _msgController.clear();
-                  }
-                }),
-              ],
-            ),
-          ),
+          _inputArea(),
+        ],
+      ),
+    );
+  }
+
+  Widget _inputArea() {
+    return Container(
+      padding: EdgeInsets.all(8),
+      child: Row(
+        children: [
+          IconButton(icon: Icon(Icons.location_on, color: Colors.red), onPressed: _sendLocation),
+          Expanded(child: TextField(controller: _msgController, decoration: InputDecoration(hintText: "اكتب رسالة..."))),
+          IconButton(icon: Icon(Icons.send), onPressed: () {
+            if(_msgController.text.isNotEmpty) {
+               FirebaseFirestore.instance.collection('chats').add({
+                 'text': _msgController.text,
+                 'sender': FirebaseAuth.instance.currentUser?.phoneNumber ?? "مستخدم",
+                 'createdAt': Timestamp.now(),
+               });
+               _msgController.clear();
+            }
+          }),
         ],
       ),
     );
@@ -140,14 +149,18 @@ class ProductListScreen extends StatelessWidget {
       appBar: AppBar(title: Text("سوق اليمن")),
       body: GridView.builder(
         padding: EdgeInsets.all(10),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        itemCount: 4,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.8),
+        itemCount: 6,
         itemBuilder: (ctx, i) => Card(
+          elevation: 4,
           child: Column(
             children: [
-              Expanded(child: Icon(Icons.shopping_basket, size: 50, color: Colors.brown)),
-              Text("منتج يمني أصيل"),
-              ElevatedButton(onPressed: () {}, child: Text("إضافة للسلة"))
+              Expanded(child: Icon(Icons.shopping_bag, size: 60, color: Colors.redAccent)),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("منتج يمني مميز #$i", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              ElevatedButton(onPressed: () {}, child: Text("طلب الآن"))
             ],
           ),
         ),
@@ -160,16 +173,29 @@ class AdminStatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("الأداء المالي")),
-      body: Center(
+      appBar: AppBar(title: Text("لوحة التحكم")),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.trending_up, size: 80, color: Colors.green),
-            Text("إجمالي المبيعات: 150,000 ريال", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Text("الطلبات المكتملة: 12"),
+            _statCard("إجمالي المبيعات", "240,000 ريال", Colors.green),
+            SizedBox(height: 10),
+            _statCard("الطلبات الجديدة", "15 طلب", Colors.orange),
+            SizedBox(height: 10),
+            _statCard("العملاء النشطون", "89 عميل", Colors.blue),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _statCard(String title, String value, Color color) {
+    return Card(
+      color: color.withOpacity(0.1),
+      child: ListTile(
+        leading: Icon(Icons.analytics, color: color),
+        title: Text(title),
+        trailing: Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
     );
   }
@@ -178,6 +204,22 @@ class AdminStatsScreen extends StatelessWidget {
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: ElevatedButton(onPressed: () => FirebaseAuth.instance.signInAnonymously(), child: Text("الدخول كضيف تجريبي"))));
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.storefront, size: 100, color: Colors.red),
+            Text("سوق اليمن الرقمي", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            SizedBox(height: 30),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+              onPressed: () => FirebaseAuth.instance.signInAnonymously(), 
+              child: Text("ابدأ التجربة الآن")
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
