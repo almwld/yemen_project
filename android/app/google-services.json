@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "282862193658",
+    "project_id": "yemenmarketapp",
+    "storage_bucket": "yemenmarketapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282862193658:android:c423e9488897ace99c3243",
+        "android_client_info": {
+          "package_name": "com.yemenmarket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDB5ckT9-C7n-Am6LFCj-4dnmSbMXWTEAY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
