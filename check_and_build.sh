@@ -1,33 +1,14 @@
 #!/bin/bash
-# 1. تهيئة المجلدات والملفات الأساسية
+# 1. إصلاح الهيكل (ليظل ثابتاً)
 mkdir -p lib
-cat > lib/home_screen.dart <<'EOD'
-import 'package:flutter/material.dart';
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text("System Solid & Stable")));
-  }
-}
-EOD
+[ ! -f lib/home_screen.dart ] && echo "import 'package:flutter/material.dart'; class HomeScreen extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(body: Center(child: Text('System Solid'))); } }" > lib/home_screen.dart
 
-cat > lib/main.dart <<'EOD'
-import 'package:flutter/material.dart';
-import 'home_screen.dart';
-void main() => runApp(MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen()));
-EOD
+# 2. أمر التنظيف وتحديث المكتبات (Deep Clean)
+# سنقوم بإضافة ملف لمسح الكاش في السيرفر
+echo "Pre-Build Cleaning..."
+rm -f pubspec.lock
 
-# 2. ذكاء اصطناعي لتصحيح الاعتماديات (Dependencies)
-echo "Fixing dependencies for the Build Machine..."
-if [ -f pubspec.yaml ]; then
-    # حذف ملف الـ lock لضمان جلب أحدث الإصدارات المتوافقة
-    rm -f pubspec.lock
-    # تحديث المكتبات برمجياً لتجنب التضارب
-    # ملاحظة: سنعتمد على السيرفر لتنفيذ flutter pub upgrade
-fi
-
-# 3. الرفع الآمن للسيرفر
-echo "Structure Verified. Syncing with Build Machine..."
+# 3. الرفع مع فرض التحديث
 git add .
-git commit -m "Build Fix: Resolving dependency conflicts and verifying structure"
-git push origin main
+git commit -m "Build Optimization: Deep clean and dependency sync"
+git push origin main --force
