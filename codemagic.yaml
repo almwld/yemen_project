@@ -1,43 +1,30 @@
 workflows:
   android-workflow:
-    name: Yemen Market - RAM Build
+    name: Yemen Market - Final Rebirth
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Escape and Reconstruct
+      - name: Create Fresh Core
         script: | 
-          # 1. إنشاء منطقة بناء معزولة تماماً في نظام التشغيل
-          export BUILD_DIR=/tmp/fresh_yemen_build
-          rm -rf $BUILD_DIR
-          
-          # 2. إنشاء مشروع فلاتر جديد 2026 في تلك المنطقة
-          flutter create --platforms android --org com.yemenmarket --project-name yemen_market $BUILD_DIR
-          
-          # 3. نقل "قلب" مشروعك فقط (الكود والملفات) إلى المجلد المعزول
-          rm -rf $BUILD_DIR/lib $BUILD_DIR/pubspec.yaml
-          cp -r lib $BUILD_DIR/
-          cp pubspec.yaml $BUILD_DIR/
-          [ -d assets ] && cp -r assets $BUILD_DIR/
-          
-          # 4. إعداد الفايربيس في المنطقة المعزولة
-          mkdir -p $BUILD_DIR/android/app
-          if [ -f google-services.json ]; then
-            cp google-services.json $BUILD_DIR/android/app/
-          fi
+          # 1. مسح أي ملفات متبقية في مجلد العمل بالسيرفر
+          find . -maxdepth 1 ! -name 'lib' ! -name 'assets' ! -name 'pubspec.yaml' ! -name 'google-services.json' ! -name 'codemagic.yaml' -exec rm -rf {} +
 
-          # 5. حقن إعدادات Gradle الحديثة
-          cd $BUILD_DIR
-          echo "buildscript { dependencies { classpath 'com.google.gms:google-services:4.4.1' } }" > android/build.gradle.tmp
-          cat android/build.gradle >> android/build.gradle.tmp
-          mv android/build.gradle.tmp android/build.gradle
+          # 2. إعادة إنشاء هيكل الأندرويد من الصفر بأحدث إصدار فلاتر 2026
+          flutter create . --platforms android --org com.yemenmarket --project-name yemen_market
+          
+          # 3. إعداد Firebase داخل الهيكل الجديد
+          mkdir -p android/app
+          [ -f google-services.json ] && cp google-services.json android/app/
+
+          # 4. حقن إعدادات Gradle (طريقة الدمج المباشر)
+          echo "buildscript { dependencies { classpath 'com.google.gms:google-services:4.4.1' } }" > android/build.gradle.new
+          cat android/build.gradle >> android/build.gradle.new
+          mv android/build.gradle.new android/build.gradle
           echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
 
-          # 6. البناء في المنطقة المعزولة
+      - name: Build Professional APK
+        script: |
           flutter pub get
           flutter build apk --release --no-tree-shake-icons
-          
-          # 7. إعادة الثمرة (APK) إلى مجلد المشروع الأصلي ليراها Codemagic
-          mkdir -p $CM_BUILD_DIR/build/app/outputs/flutter-apk/
-          cp build/app/outputs/flutter-apk/app-release.apk $CM_BUILD_DIR/build/app/outputs/flutter-apk/
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
