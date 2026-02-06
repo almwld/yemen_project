@@ -1,21 +1,36 @@
 workflows:
   android-workflow:
-    name: Android Workflow
+    name: Yemen Market Build
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Set up Android folder
+      - name: Initialize Android Project
         script: | 
-          # هذا الأمر سيقوم بإنشاء ملفات الأندرويد المفقودة تلقائياً داخل Codemagic
-          flutter create . --platforms android
-          # إعادة وضع ملف الجي بي إس في مكانه الصحيح بعد إعادة الإنشاء
-          cp android/app/google-services.json . 
-          cp google-services.json android/app/
-      - name: Get Flutter packages
-        script: | 
+          # إنشاء ملفات الأندرويد المفقودة تلقائياً
+          flutter create . --platforms android --org com.yemenmarket
+          
+          # التأكد من وجود ملف Firebase في مكانه الصحيح
+          # سنحاول نسخه من المجلد الرئيسي أو من المكان الذي رفعته فيه
+          if [ -f "android/app/google-services.json" ]; then
+            echo "Firebase config found."
+          else
+            cp google-services.json android/app/ || echo "Warning: google-services.json not found!"
+          fi
+
+      - name: Configure Firebase SDK
+        script: |
+          # إضافة الأسطر البرمجية لتعريف فايربيس داخل ملفات الأندرويد الجديدة
+          sed -i 's/dependencies {/dependencies {\n        classpath "com.google.gms:google-services:4.4.1"/' android/build.gradle
+          echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
+
+      - name: Get Dependencies
+        script: |
           flutter pub get
-      - name: Build APK
-        script: | 
-          flutter build apk --release
+
+      - name: Build Release APK
+        script: |
+          # بناء التطبيق بنسخة الإصدار النهائي
+          flutter build apk --release --no-tree-shake-icons
+
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
