@@ -1,41 +1,32 @@
 workflows:
   android-workflow:
-    name: Yemen Market - Final Isolation
+    name: Yemen Market - Absolute Victory
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Isolated Reconstruction and Build
+      - name: Build From Subfolder
         script: | 
-          # 1. الدخول لمجلد خارج مستودع GitHub (لضمان النقاء)
-          cd /tmp
-          rm -rf final_build_zone
+          # الآن السيرفر لن يجد pubspec في المجلد الحالي فلن يطلق الخطأ
+          # سنقوم ببناء المشروع داخل مجلد جديد تماماً
+          flutter create --platforms android build_app
           
-          # 2. إنشاء مشروع فلاتر جديد 2026 كلياً
-          flutter create --platforms android --org com.yemenmarket --project-name yemen_market final_build_zone
+          # استبدال ملفات المشروع الجديد بملفاتك الموجودة في 'src'
+          rm -rf build_app/lib
+          cp -r src/lib build_app/
+          cp src/pubspec.yaml build_app/
+          [ -d src/assets ] && cp -r src/assets build_app/
           
-          # 3. نقل كودك النظيف من المجلد الذي سحبه Codemagic إلى المجلد الجديد
-          # ملاحظة: $CM_BUILD_DIR هو مجلد GitHub الخاص بك
-          cp -r $CM_BUILD_DIR/lib/* final_build_zone/lib/
-          cp $CM_BUILD_DIR/pubspec.yaml final_build_zone/
-          [ -d $CM_BUILD_DIR/assets ] && cp -r $CM_BUILD_DIR/assets final_build_zone/
-          
-          # 4. إعداد Firebase في المجلد الجديد
-          mkdir -p final_build_zone/android/app
-          [ -f $CM_BUILD_DIR/google-services.json ] && cp $CM_BUILD_DIR/google-services.json final_build_zone/android/app/
+          # إعداد الفايربيس
+          if [ -f src/google-services.json ]; then
+            mkdir -p build_app/android/app
+            cp src/google-services.json build_app/android/app/
+          fi
 
-          # 5. الدخول وبدء البناء من المنطقة المعزولة
-          cd final_build_zone
-          
-          # إعداد Gradle الحديث
-          echo "buildscript { dependencies { classpath 'com.google.gms:google-services:4.4.1' } }" > android/build.gradle.new
-          cat android/build.gradle >> android/build.gradle.new
-          mv android/build.gradle.new android/build.gradle
-          echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
-          
+          cd build_app
           flutter pub get
           flutter build apk --release --no-tree-shake-icons
-
-          # 6. إعادة ملف الـ APK الناتج إلى مجلد Codemagic ليتم عرضه للتحميل
+          
+          # نقل النتيجة للخارج ليراها Codemagic
           mkdir -p $CM_BUILD_DIR/build/app/outputs/flutter-apk/
           cp build/app/outputs/flutter-apk/app-release.apk $CM_BUILD_DIR/build/app/outputs/flutter-apk/
     artifacts:
