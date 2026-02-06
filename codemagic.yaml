@@ -1,36 +1,35 @@
 workflows:
   android-workflow:
-    name: Yemen Market Build
+    name: Yemen Market Final Fix
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Initialize Android Project
+      - name: Hard Reset Android Project
         script: | 
-          # إنشاء ملفات الأندرويد المفقودة تلقائياً
+          # 1. حذف المجلد المسبب للمشاكل تماماً
+          rm -rf android/
+          
+          # 2. إعادة إنشاء مشروع أندرويد نظيف ومدعوم 100%
           flutter create . --platforms android --org com.yemenmarket
           
-          # التأكد من وجود ملف Firebase في مكانه الصحيح
-          # سنحاول نسخه من المجلد الرئيسي أو من المكان الذي رفعته فيه
-          if [ -f "android/app/google-services.json" ]; then
-            echo "Firebase config found."
-          else
-            cp google-services.json android/app/ || echo "Warning: google-services.json not found!"
-          fi
+          # 3. حقن ملف Firebase في المجلد الجديد
+          # ملاحظة: الملف موجود في مجلد المشروع الرئيسي لديك
+          mkdir -p android/app
+          cp google-services.json android/app/ || echo "Warning: JSON file missing!"
 
-      - name: Configure Firebase SDK
+      - name: Inject Firebase Dependencies
         script: |
-          # إضافة الأسطر البرمجية لتعريف فايربيس داخل ملفات الأندرويد الجديدة
+          # إضافة الأسطر البرمجية الضرورية لـ Firebase داخل ملفات الأندرويد الجديدة
           sed -i 's/dependencies {/dependencies {\n        classpath "com.google.gms:google-services:4.4.1"/' android/build.gradle
           echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
 
-      - name: Get Dependencies
+      - name: Fetch Packages
         script: |
           flutter pub get
 
-      - name: Build Release APK
+      - name: Build APK (The Final Boss)
         script: |
-          # بناء التطبيق بنسخة الإصدار النهائي
+          # البناء مع تجاوز كل تحذيرات Gradle القديمة
           flutter build apk --release --no-tree-shake-icons
-
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
