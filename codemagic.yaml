@@ -1,37 +1,47 @@
 workflows:
   android-workflow:
-    name: Yemen Market Final Clean Build
+    name: Yemen Market - Absolute Fix
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Fresh Clone and Build
+      - name: Master Reconstruction
         script: | 
-          # 1. إنشاء مجلد بناء جديد تماماً خارج مسار Git
-          cd ..
-          rm -rf build_system
-          flutter create --platforms android --org com.yemenmarket --project-name yemen_market_new build_system
-          
-          # 2. نقل ملفات الـ lib والـ assets والـ pubspec النظيفة فقط
-          cp -r yemen_project/lib/* build_system/lib/
-          cp -r yemen_project/assets/* build_system/assets/ || echo "No assets"
-          cp yemen_project/pubspec.yaml build_system/pubspec.yaml
+          # 1. حفظ الكود والملفات الهامة في مكان آمن مؤقت خارج المجلد الحالي
+          mkdir -p ../safe_zone
+          cp -r lib ../safe_zone/
+          [ -d assets ] && cp -r assets ../safe_zone/
+          cp pubspec.yaml ../safe_zone/
+          [ -f google-services.json ] && cp google-services.json ../safe_zone/
 
-          # 3. إعداد Firebase بشكل سليم
-          mkdir -p build_system/android/app
-          cp yemen_project/google-services.json build_system/android/app/
+          # 2. تفريغ المجلد الحالي تماماً من أي ملفات أندرويد تالفة
+          rm -rf *
+          rm -rf .??*
 
-          # 4. الدخول وبدء البناء من الصفر
-          cd build_system
-          
-          # ربط Firebase في ملفات Gradle الجديدة
-          sed -i 's/dependencies {/dependencies {\n        classpath "com.google.gms:google-services:4.4.1"/' android/build.gradle
+          # 3. إعادة إنشاء هيكل المشروع نظيفاً 100%
+          flutter create . --platforms android --org com.yemenmarket --project-name yemen_market
+
+          # 4. استعادة كودك وملفاتك للمشروع الجديد
+          rm -rf lib assets pubspec.yaml
+          cp -r ../safe_zone/lib .
+          [ -d ../safe_zone/assets ] && cp -r ../safe_zone/assets .
+          cp ../safe_zone/pubspec.yaml .
+
+          # 5. زرع ملف Firebase وإعدادات Gradle بشكل صحيح
+          mkdir -p android/app
+          if [ -f ../safe_zone/google-services.json ]; then
+            cp ../safe_zone/google-services.json android/app/
+          fi
+
+          # إعداد Gradle (طريقة بديلة وأكثر أماناً من sed)
+          echo "buildscript { dependencies { classpath 'com.google.gms:google-services:4.4.1' } }" > android/build.gradle.temp
+          cat android/build.gradle >> android/build.gradle.temp
+          mv android/build.gradle.temp android/build.gradle
           echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
-          
-          flutter pub get
-          flutter build apk --release --no-tree-shake-icons
 
-          # 5. إعادة الملف الناتج للمكان الصحيح
-          mkdir -p ../yemen_project/build/app/outputs/flutter-apk/
-          cp build/app/outputs/flutter-apk/app-release.apk ../yemen_project/build/app/outputs/flutter-apk/
+      - name: Final Production Build
+        script: |
+          flutter pub get
+          flutter clean
+          flutter build apk --release --no-tree-shake-icons
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
