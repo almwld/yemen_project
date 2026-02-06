@@ -1,32 +1,57 @@
 workflows:
   android-workflow:
-    name: Yemen Market Emergency Build
+    name: Yemen Market Super Reconstruct
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
       - name: Reconstruct Project From Scratch
         script: | 
-          # 1. نقل ملفاتك الهامة لمكان آمن مؤقتاً
+          # 1. نسخ ملفات الكود فقط (lib و assets) لمكان آمن
           mkdir -p ../temp_files
-          cp -r lib assets pubspec.yaml google-services.json ../temp_files/
+          cp -r lib assets pubspec.yaml ../temp_files/
 
-          # 2. حذف كل شيء في المجلد الحالي (بما فيه الملفات التالفة)
+          # 2. تنظيف شامل للمجلد الحالي
           rm -rf *
           rm -rf .??*
 
-          # 3. إنشاء مشروع Flutter جديد ونظيف تماماً بنفس الاسم
+          # 3. إنشاء مشروع Flutter جديد
           flutter create . --platforms android --org com.yemenmarket --project-name yemen_market
 
-          # 4. إعادة ملفاتك الأصلية للمشروع الجديد النظيف
+          # 4. استعادة الكود والملفات
           cp -r ../temp_files/lib .
           cp -r ../temp_files/assets .
           cp ../temp_files/pubspec.yaml .
+
+          # 5. إعادة إنشاء ملف google-services.json يدوياً (الحل السحري)
           mkdir -p android/app
-          cp ../temp_files/google-services.json android/app/
+          cat <<JSON > android/app/google-services.json
+          {
+            "project_info": {
+              "project_number": "282862193658",
+              "project_id": "yemenmarketapp",
+              "storage_bucket": "yemenmarketapp.firebasestorage.app"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:282862193658:android:c423e9488897ace99c3243",
+                  "android_client_info": {
+                    "package_name": "com.yemenmarket"
+                  }
+                },
+                "api_key": [
+                  { "current_key": "AIzaSyDB5ckT9-C7n-Am6LFCj-4dnmSbMXWTEAY" }
+                ],
+                "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          JSON
 
       - name: Inject Firebase and Build
         script: |
-          # إضافة إعدادات Firebase لملف build.gradle الجديد
+          # إضافة الإعدادات لملف Gradle الجديد
           sed -i 's/dependencies {/dependencies {\n        classpath "com.google.gms:google-services:4.4.1"/' android/build.gradle
           echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
           
