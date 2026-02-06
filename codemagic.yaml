@@ -1,31 +1,34 @@
 workflows:
   android-workflow:
-    name: Yemen Market - Absolute Clean Build
+    name: Yemen Market - Final Victory
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Build Preparation
+      - name: Cold Start Reconstruction
         script: | 
-          # إنشاء مشروع جديد تماماً في مجلد مؤقت
-          flutter create --platforms android --org com.yemenmarket --project-name yemen_market ../fresh_app
+          # 1. إنشاء تطبيق "شبح" نظيف تماماً بعيداً عن المجلد الحالي
+          cd ..
+          flutter create --platforms android --org com.yemenmarket --project-name yemen_market ghost_app
           
-          # نقل ملفات البرمجة والملحقات إليه
-          cp -r lib ../fresh_app/
-          cp pubspec.yaml ../fresh_app/
-          [ -d assets ] && cp -r assets ../fresh_app/
-          [ -f google-services.json ] && cp google-services.json ../fresh_app/android/app/
-
-          # تجهيز إعدادات Gradle في المشروع الجديد
-          cd ../fresh_app
-          sed -i '' 's/dependencies {/dependencies {\n        classpath "com.google.gms:google-services:4.4.1"/' android/build.gradle || sed -i 's/dependencies {/dependencies {\n        classpath "com.google.gms:google-services:4.4.1"/' android/build.gradle
+          # 2. نقل ملفات الأندرويد "النظيفة" فقط إلى مجلد مشروعنا
+          cp -r ghost_app/android yemen_project/
+          
+          # 3. العودة لمجلد المشروع وتجهيز الفايربيس
+          cd yemen_project
+          mkdir -p android/app
+          if [ -f google-services.json ]; then
+            cp google-services.json android/app/
+          fi
+          
+          # 4. حقن إعدادات Gradle في الهيكل الجديد
+          echo "buildscript { dependencies { classpath 'com.google.gms:google-services:4.4.1' } }" > android/build.gradle.tmp
+          cat android/build.gradle >> android/build.gradle.temp
+          mv android/build.gradle.temp android/build.gradle
           echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
-          
-          # بدء البناء من داخل المجلد النظيف
+
+      - name: Absolute Build
+        script: |
           flutter pub get
           flutter build apk --release --no-tree-shake-icons
-          
-          # نقل الـ APK الناتج لمجلد المخرجات الرئيسي
-          mkdir -p $CM_BUILD_DIR/build/app/outputs/flutter-apk/
-          cp build/app/outputs/flutter-apk/app-release.apk $CM_BUILD_DIR/build/app/outputs/flutter-apk/
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
