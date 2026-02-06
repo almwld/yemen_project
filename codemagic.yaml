@@ -1,37 +1,43 @@
 workflows:
   android-workflow:
-    name: Yemen Market - Subfolder Strike
+    name: Yemen Market - RAM Build
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Create Isolated Project
+      - name: Escape and Reconstruct
         script: | 
-          # 1. إنشاء مشروع جديد تماماً في مجلد فرعي اسمه 'yemen_app'
-          flutter create --platforms android --org com.yemenmarket --project-name yemen_market yemen_app
+          # 1. إنشاء منطقة بناء معزولة تماماً في نظام التشغيل
+          export BUILD_DIR=/tmp/fresh_yemen_build
+          rm -rf $BUILD_DIR
           
-          # 2. نقل ملفاتك الحيوية إلى المجلد الفرعي الجديد
-          rm -rf yemen_app/lib yemen_app/pubspec.yaml
-          cp -r lib yemen_app/
-          cp pubspec.yaml yemen_app/
-          [ -d assets ] && cp -r assets yemen_app/
-          [ -f google-services.json ] && cp google-services.json yemen_app/android/app/
+          # 2. إنشاء مشروع فلاتر جديد 2026 في تلك المنطقة
+          flutter create --platforms android --org com.yemenmarket --project-name yemen_market $BUILD_DIR
+          
+          # 3. نقل "قلب" مشروعك فقط (الكود والملفات) إلى المجلد المعزول
+          rm -rf $BUILD_DIR/lib $BUILD_DIR/pubspec.yaml
+          cp -r lib $BUILD_DIR/
+          cp pubspec.yaml $BUILD_DIR/
+          [ -d assets ] && cp -r assets $BUILD_DIR/
+          
+          # 4. إعداد الفايربيس في المنطقة المعزولة
+          mkdir -p $BUILD_DIR/android/app
+          if [ -f google-services.json ]; then
+            cp google-services.json $BUILD_DIR/android/app/
+          fi
 
-          # 3. إعداد الفايربيس داخل المجلد الفرعي
-          cd yemen_app
-          echo "buildscript { dependencies { classpath 'com.google.gms:google-services:4.4.1' } }" > android/build.gradle.new
-          cat android/build.gradle >> android/build.gradle.new
-          mv android/build.gradle.new android/build.gradle
+          # 5. حقن إعدادات Gradle الحديثة
+          cd $BUILD_DIR
+          echo "buildscript { dependencies { classpath 'com.google.gms:google-services:4.4.1' } }" > android/build.gradle.tmp
+          cat android/build.gradle >> android/build.gradle.tmp
+          mv android/build.gradle.tmp android/build.gradle
           echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
 
-      - name: Build From Subfolder
-        script: |
-          # الدخول للمجلد الفرعي للبناء
-          cd yemen_app
+          # 6. البناء في المنطقة المعزولة
           flutter pub get
           flutter build apk --release --no-tree-shake-icons
           
-          # نقل الـ APK للمكان المتوقع
-          mkdir -p ../build/app/outputs/flutter-apk/
-          cp build/app/outputs/flutter-apk/app-release.apk ../build/app/outputs/flutter-apk/
+          # 7. إعادة الثمرة (APK) إلى مجلد المشروع الأصلي ليراها Codemagic
+          mkdir -p $CM_BUILD_DIR/build/app/outputs/flutter-apk/
+          cp build/app/outputs/flutter-apk/app-release.apk $CM_BUILD_DIR/build/app/outputs/flutter-apk/
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
