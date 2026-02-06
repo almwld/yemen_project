@@ -1,59 +1,37 @@
 workflows:
   android-workflow:
-    name: Yemen Market Nuclear Reset
+    name: Yemen Market Final Clean Build
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Total Wipe and Fresh Start
+      - name: Fresh Clone and Build
         script: | 
-          # 1. حفظ الكود والملفات الأساسية في ذاكرة السيرفر المؤقتة
-          mkdir -p /tmp/yemen_safe
-          cp -r lib assets pubspec.yaml /tmp/yemen_safe/
+          # 1. إنشاء مجلد بناء جديد تماماً خارج مسار Git
+          cd ..
+          rm -rf build_system
+          flutter create --platforms android --org com.yemenmarket --project-name yemen_market_new build_system
+          
+          # 2. نقل ملفات الـ lib والـ assets والـ pubspec النظيفة فقط
+          cp -r yemen_project/lib/* build_system/lib/
+          cp -r yemen_project/assets/* build_system/assets/ || echo "No assets"
+          cp yemen_project/pubspec.yaml build_system/pubspec.yaml
 
-          # 2. مسح شامل وحقيقي لكل الملفات (بما فيها المخفية .android, .gradle, .idea)
-          find . -maxdepth 1 ! -name 'codemagic.yaml' ! -name '.' -exec rm -rf {} +
+          # 3. إعداد Firebase بشكل سليم
+          mkdir -p build_system/android/app
+          cp yemen_project/google-services.json build_system/android/app/
 
-          # 3. إنشاء مشروع جديد كلياً بهيكل 2026
-          flutter create --platforms android --org com.yemenmarket .
-
-          # 4. استعادة كودك (العقل) إلى الهيكل الجديد (الجسد)
-          rm -rf lib assets pubspec.yaml
-          cp -r /tmp/yemen_safe/lib .
-          cp -r /tmp/yemen_safe/assets .
-          cp /tmp/yemen_safe/pubspec.yaml .
-
-          # 5. إنشاء ملف Firebase من الصفر داخل المجلد الجديد
-          mkdir -p android/app
-          cat <<JSON > android/app/google-services.json
-          {
-            "project_info": {
-              "project_number": "282862193658",
-              "project_id": "yemenmarketapp",
-              "storage_bucket": "yemenmarketapp.firebasestorage.app"
-            },
-            "client": [
-              {
-                "client_info": {
-                  "mobilesdk_app_id": "1:282862193658:android:c423e9488897ace99c3243",
-                  "android_client_info": { "package_name": "com.yemenmarket" }
-                },
-                "api_key": [ { "current_key": "AIzaSyDB5ckT9-C7n-Am6LFCj-4dnmSbMXWTEAY" } ],
-                "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
-              }
-            ],
-            "configuration_version": "1"
-          }
-          JSON
-
-      - name: Final Build Attempt
-        script: |
-          # إضافة إعدادات الفايربيس للملفات الجديدة
+          # 4. الدخول وبدء البناء من الصفر
+          cd build_system
+          
+          # ربط Firebase في ملفات Gradle الجديدة
           sed -i 's/dependencies {/dependencies {\n        classpath "com.google.gms:google-services:4.4.1"/' android/build.gradle
           echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
           
           flutter pub get
-          # استخدام أمر تنظيف إضافي قبل البناء
-          flutter clean
           flutter build apk --release --no-tree-shake-icons
+
+          # 5. إعادة الملف الناتج للمكان الصحيح
+          mkdir -p ../yemen_project/build/app/outputs/flutter-apk/
+          cp build/app/outputs/flutter-apk/app-release.apk ../yemen_project/build/app/outputs/flutter-apk/
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
