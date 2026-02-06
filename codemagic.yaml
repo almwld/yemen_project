@@ -1,35 +1,36 @@
 workflows:
   android-workflow:
-    name: Yemen Market Final Fix
+    name: Yemen Market Emergency Build
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Hard Reset Android Project
+      - name: Reconstruct Project From Scratch
         script: | 
-          # 1. حذف المجلد المسبب للمشاكل تماماً
-          rm -rf android/
-          
-          # 2. إعادة إنشاء مشروع أندرويد نظيف ومدعوم 100%
-          flutter create . --platforms android --org com.yemenmarket
-          
-          # 3. حقن ملف Firebase في المجلد الجديد
-          # ملاحظة: الملف موجود في مجلد المشروع الرئيسي لديك
-          mkdir -p android/app
-          cp google-services.json android/app/ || echo "Warning: JSON file missing!"
+          # 1. نقل ملفاتك الهامة لمكان آمن مؤقتاً
+          mkdir -p ../temp_files
+          cp -r lib assets pubspec.yaml google-services.json ../temp_files/
 
-      - name: Inject Firebase Dependencies
+          # 2. حذف كل شيء في المجلد الحالي (بما فيه الملفات التالفة)
+          rm -rf *
+          rm -rf .??*
+
+          # 3. إنشاء مشروع Flutter جديد ونظيف تماماً بنفس الاسم
+          flutter create . --platforms android --org com.yemenmarket --project-name yemen_market
+
+          # 4. إعادة ملفاتك الأصلية للمشروع الجديد النظيف
+          cp -r ../temp_files/lib .
+          cp -r ../temp_files/assets .
+          cp ../temp_files/pubspec.yaml .
+          mkdir -p android/app
+          cp ../temp_files/google-services.json android/app/
+
+      - name: Inject Firebase and Build
         script: |
-          # إضافة الأسطر البرمجية الضرورية لـ Firebase داخل ملفات الأندرويد الجديدة
+          # إضافة إعدادات Firebase لملف build.gradle الجديد
           sed -i 's/dependencies {/dependencies {\n        classpath "com.google.gms:google-services:4.4.1"/' android/build.gradle
           echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
-
-      - name: Fetch Packages
-        script: |
+          
           flutter pub get
-
-      - name: Build APK (The Final Boss)
-        script: |
-          # البناء مع تجاوز كل تحذيرات Gradle القديمة
           flutter build apk --release --no-tree-shake-icons
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
