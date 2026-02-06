@@ -1,30 +1,31 @@
 workflows:
   android-workflow:
-    name: Yemen Market - Final Rebirth
+    name: Yemen Market - Absolute Clean Build
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Create Fresh Core
+      - name: Build Preparation
         script: | 
-          # 1. مسح أي ملفات متبقية في مجلد العمل بالسيرفر
-          find . -maxdepth 1 ! -name 'lib' ! -name 'assets' ! -name 'pubspec.yaml' ! -name 'google-services.json' ! -name 'codemagic.yaml' -exec rm -rf {} +
-
-          # 2. إعادة إنشاء هيكل الأندرويد من الصفر بأحدث إصدار فلاتر 2026
-          flutter create . --platforms android --org com.yemenmarket --project-name yemen_market
+          # إنشاء مشروع جديد تماماً في مجلد مؤقت
+          flutter create --platforms android --org com.yemenmarket --project-name yemen_market ../fresh_app
           
-          # 3. إعداد Firebase داخل الهيكل الجديد
-          mkdir -p android/app
-          [ -f google-services.json ] && cp google-services.json android/app/
+          # نقل ملفات البرمجة والملحقات إليه
+          cp -r lib ../fresh_app/
+          cp pubspec.yaml ../fresh_app/
+          [ -d assets ] && cp -r assets ../fresh_app/
+          [ -f google-services.json ] && cp google-services.json ../fresh_app/android/app/
 
-          # 4. حقن إعدادات Gradle (طريقة الدمج المباشر)
-          echo "buildscript { dependencies { classpath 'com.google.gms:google-services:4.4.1' } }" > android/build.gradle.new
-          cat android/build.gradle >> android/build.gradle.new
-          mv android/build.gradle.new android/build.gradle
+          # تجهيز إعدادات Gradle في المشروع الجديد
+          cd ../fresh_app
+          sed -i '' 's/dependencies {/dependencies {\n        classpath "com.google.gms:google-services:4.4.1"/' android/build.gradle || sed -i 's/dependencies {/dependencies {\n        classpath "com.google.gms:google-services:4.4.1"/' android/build.gradle
           echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
-
-      - name: Build Professional APK
-        script: |
+          
+          # بدء البناء من داخل المجلد النظيف
           flutter pub get
           flutter build apk --release --no-tree-shake-icons
+          
+          # نقل الـ APK الناتج لمجلد المخرجات الرئيسي
+          mkdir -p $CM_BUILD_DIR/build/app/outputs/flutter-apk/
+          cp build/app/outputs/flutter-apk/app-release.apk $CM_BUILD_DIR/build/app/outputs/flutter-apk/
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
