@@ -20,17 +20,15 @@ class AppData {
 
   static Map<String, double> promoCodes = {'YEMEN': 0.20, 'HELLO': 0.10};
 
-  // --- العمليات الحسابية ---
   static double get cartTotal {
-    double total = cart.fold(0, (sum, item) => sum + (item['price'] as double));
-    return total * (1 - currentDiscount);
+    double total = cart.fold(0.0, (sum, item) => sum + (item['price'] as double));
+    return total * (1.0 - currentDiscount);
   }
 
-  static double get totalSales => orders.fold(0, (sum, item) => sum + (item['total'] as double));
+  static double get totalSales => orders.fold(0.0, (sum, item) => sum + (item['total'] as double));
   static int get successfulOrdersCount => orders.length;
-  static double get pendingDepositsTotal => depositRequests.fold(0, (sum, item) => sum + (item['amount'] as double));
+  static double get pendingDepositsTotal => depositRequests.fold(0.0, (sum, item) => sum + (item['amount'] as double));
 
-  // --- الدوال البرمجية ---
   static void addToCart(Map<String, dynamic> product) {
     cart.add(product);
   }
@@ -60,7 +58,7 @@ class AppData {
   }
 
   static void approveDeposit(Map<String, dynamic> request) {
-    userBalance += request['amount'];
+    userBalance += (request['amount'] as double);
     depositRequests.remove(request);
   }
 }
