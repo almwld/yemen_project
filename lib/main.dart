@@ -16,7 +16,7 @@ class YemenMarketApp extends StatelessWidget {
         primarySwatch: Colors.orange,
         scaffoldBackgroundColor: const Color(0xFF121212),
       ),
-      home: const SplashScreen(), // البداية بشاشة الترحيب
+      home: const SplashScreen(),
     );
   }
 }
@@ -31,7 +31,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // الانتقال للرئيسية بعد 3 ثواني
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AdminDashboardPage()));
     });
@@ -44,10 +43,22 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.shopping_bag, size: 100, color: Colors.orange),
-            const SizedBox(height: 20),
-            const Text("فليكس يمن ماركت", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.orange)),
-            const SizedBox(height: 10),
+            // استدعاء شعارك الجديد هنا بدلاً من الأيقونة
+            Image.asset(
+              "assets/logo.png",
+              width: 180,
+              height: 180,
+              errorBuilder: (context, error, stackTrace) {
+                // في حال فشل تحميل الصورة يظهر هذا الرمز كبديل
+                return const Icon(Icons.shopping_bag, size: 100, color: Colors.orange);
+              },
+            ),
+            const SizedBox(height: 25),
+            const Text(
+              "فليكس يمن ماركت",
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.orange),
+            ),
+            const SizedBox(height: 15),
             const CircularProgressIndicator(color: Colors.orange),
           ],
         ),
