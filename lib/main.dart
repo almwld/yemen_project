@@ -1,10 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yemen_market/logic/cubits/language_cubit.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -13,147 +12,191 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<LanguageCubit>(
       create: (context) => LanguageCubit(),
-      child: BlocBuilder<LanguageCubit, Locale>(
-        builder: (context, locale) {
-          return MaterialApp(
-            locale: locale,
-            debugShowCheckedModeBanner: false,
-            title: 'يمن ماركت',
-            theme: ThemeData(
-              primarySwatch: Colors.red,
-              useMaterial3: true,
-              scaffoldBackgroundColor: Colors.grey[100],
-            ),
-            home: const MainScreen(),
-          );
-        },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: const Color(0xFF121212), // الرمادي الفخم
+          primaryColor: Colors.red,
+        ),
+        home: const AdaptiveMarketScreen(),
       ),
     );
   }
 }
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class AdaptiveMarketScreen extends StatefulWidget {
+  const AdaptiveMarketScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<AdaptiveMarketScreen> createState() => _AdaptiveMarketScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
+class _AdaptiveMarketScreenState extends State<AdaptiveMarketScreen> {
+  // اللون الديناميكي الافتراضي (يتغير حسب القسم)
+  Color accentColor = Colors.blueAccent; 
+  String activeCategory = "إلكترونيات";
 
-  // قائمة الصفحات الرئيسية
-  final List<Widget> _pages = [
-    const HomePage(),
-    const CategoriesPage(),
-    const ChatPage(),
-    const ProfilePage(),
+  final List<Map<String, dynamic>> categories = [
+    {'id': 'tech', 'name': 'إلكترونيات', 'icon': Icons.bolt, 'color': Colors.blueAccent},
+    {'id': 'fashion', 'name': 'أزياء', 'icon': Icons.auto_awesome, 'color': Color(0xFFFFD700)}, // ذهبي
+    {'id': 'local', 'name': 'بن وعقيق', 'icon': Icons.coffee, 'color': Color(0xFF8B4513)}, // بني دافئ
+    {'id': 'realestate', 'name': 'عقارات', 'icon': Icons.location_city, 'color': Colors.emerald},
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.red[900],
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.grid_view), label: 'الأقسام'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'الدردشة'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
-        ],
-      ),
-    );
+  void _updateTheme(String name, Color color) {
+    setState(() {
+      activeCategory = name;
+      accentColor = color;
+    });
   }
-}
-
-// --- صفحة الرئيسية مع البحث والسلة ---
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.red[900],
-        title: Container(
-          height: 40,
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-          child: const TextField(
-            decoration: InputDecoration(
-              hintText: 'ابحث في يمن ماركت...',
-              prefixIcon: Icon(Icons.search),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 10),
+      body: Stack(
+        children: [
+          // إضاءة خلفية ناعمة (Dynamic Glow)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 600),
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: const Alignment(1, -0.5),
+                radius: 1.5,
+                colors: [accentColor.withOpacity(0.15), Colors.transparent],
+              ),
             ),
           ),
-        ),
-        actions: [
-          Stack(
-            children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart, color: Colors.white)),
-              Positioned(right: 8, top: 8, child: CircleAvatar(radius: 8, backgroundColor: Colors.orange, child: Text('0', style: TextStyle(fontSize: 10)))),
+          
+          CustomScrollView(
+            slivers: [
+              // الهيدر الزجاجي العائم
+              SliverAppBar(
+                floating: true,
+                backgroundColor: Colors.transparent,
+                flexibleSpace: ClipRRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      color: Colors.white.withOpacity(0.05),
+                      alignment: Alignment.bottomCenter,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: _buildSearchBar(),
+                    ),
+                  ),
+                ),
+              ),
+
+              // قسم التصنيفات المتفاعلة
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 120,
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      final cat = categories[index];
+                      bool isSelected = activeCategory == cat['name'];
+                      return GestureDetector(
+                        onTap: () => _updateTheme(cat['name'], cat['color']),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          width: 80,
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: isSelected ? cat['color'].withOpacity(0.2) : Colors.white.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: isSelected ? cat['color'] : Colors.transparent),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(cat['icon'], color: isSelected ? cat['color'] : Colors.white60),
+                              const SizedBox(height: 5),
+                              Text(cat['name'], style: TextStyle(fontSize: 10, color: isSelected ? Colors.white : Colors.white60)),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              // عرض المنتجات بلمسة زجاجية
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 15,
+                    crossAxisSpacing: 15,
+                    childAspectRatio: 0.8,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => _buildProductCard(index),
+                    childCount: 4,
+                  ),
+                ),
+              ),
             ],
           ),
         ],
       ),
-      body: const Center(child: Text('هنا ستظهر أحدث الإعلانات')),
     );
   }
-}
 
-// --- صفحة الأقسام ---
-class CategoriesPage extends StatelessWidget {
-  const CategoriesPage({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('الأقسام')),
-    body: GridView.count(
-      crossAxisCount: 3,
-      children: List.generate(9, (index) => Card(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.category, color: Colors.red), Text('قسم $index')]))),
-    ),
-  );
-}
-
-// --- صفحة الدردشة ---
-class ChatPage extends StatelessWidget {
-  const ChatPage({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('الرسائل')),
-    body: ListView.builder(
-      itemCount: 5,
-      itemBuilder: (context, index) => ListTile(
-        leading: const CircleAvatar(child: Icon(Icons.person)),
-        title: Text('بائع يمني $index'),
-        subtitle: const Text('هل المنتج لا يزال متوفراً؟'),
-        trailing: const Text('12:00 م'),
+  Widget _buildSearchBar() {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: accentColor.withOpacity(0.5)),
+        boxShadow: [BoxShadow(color: accentColor.withOpacity(0.1), blurRadius: 10)],
       ),
-    ),
-  );
-}
+      child: const TextField(
+        decoration: InputDecoration(
+          hintText: "ابحث في يمن ماركت...",
+          prefixIcon: Icon(Icons.search, color: Colors.white70),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
 
-// --- صفحة الحساب والإعدادات ---
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('الملف الشخصي')),
-    body: Column(
-      children: [
-        const SizedBox(height: 20),
-        const Center(child: CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50))),
-        const Text('مستخدم يمن ماركت', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const Divider(),
-        ListTile(leading: const Icon(Icons.settings), title: const Text('إعدادات التطبيق'), onTap: () {}),
-        ListTile(leading: const Icon(Icons.language), title: const Text('تغيير اللغة'), onTap: () {}),
-        ListTile(leading: const Icon(Icons.help_outline), title: const Text('مركز المساعدة'), onTap: () {}),
-        ListTile(leading: const Icon(Icons.logout, color: Colors.red), title: const Text('تسجيل الخروج'), onTap: () {}),
-      ],
-    ),
-  );
+  Widget _buildProductCard(int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: accentColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(child: Icon(Icons.image, size: 50, color: accentColor)),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("منتج نموذجي", style: TextStyle(fontWeight: FontWeight.bold)),
+                Text("٤٥,٠٠٠ ريال", style: TextStyle(color: accentColor)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
