@@ -75,7 +75,7 @@ class LoginPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context, 
-                    MaterialPageRoute(builder: (context) => DashboardPage())
+                    MaterialPageRoute(builder: (context) => AdminDashboardPage())
                   );
                 },
                 child: const Text("الدخول كضيف", style: TextStyle(color: Colors.amber)),
