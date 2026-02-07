@@ -67,7 +67,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildPromoBanner() {
-    return Container(
+    return GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => ProductDetailsPage(title: name, price: price))), child: Container(
       margin: EdgeInsets.symmetric(horizontal: 16),
       height: 150,
       decoration: BoxDecoration(
@@ -112,7 +112,7 @@ class _DashboardPageState extends State<DashboardPage> {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisSpacing: 15, crossAxisSpacing: 15),
       itemCount: services.length,
       itemBuilder: (context, index) {
-        return Container(
+        return GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => ProductDetailsPage(title: name, price: price))), child: Container(
           decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(15)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -128,22 +128,22 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildFeaturedProducts() {
-    return Container(
+    return GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => ProductDetailsPage(title: name, price: price))), child: Container(
       height: 200,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 16),
         children: [
-          _productCard('عقيق كبدي فاخر', '٤٥ ألف', Icons.diamond),
-          _productCard('جنبية صيفاني', '١٢٠ ألف', Icons.military_tech),
-          _productCard('عسل سدر طبيعي', '٣٠ ألف', Icons.local_pharmacy),
+          _productCard(context, 'عقيق كبدي فاخر', '٤٥ ألف', Icons.diamond),
+          _productCard(context, 'جنبية صيفاني', '١٢٠ ألف', Icons.military_tech),
+          _productCard(context, 'عسل سدر طبيعي', '٣٠ ألف', Icons.local_pharmacy),
         ],
       ),
     );
   }
 
-  Widget _productCard(String name, String price, IconData icon) {
-    return Container(
+  Widget _productCard(BuildContext context, String name, String price, IconData icon) {
+    return GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => ProductDetailsPage(title: name, price: price))), child: Container(
       width: 150,
       margin: EdgeInsets.only(right: 15),
       decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15)),
