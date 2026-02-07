@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace "com.example.yemen_project"
+    namespace "com.almwld.yemenproject"
     compileSdk 34
 
     compileOptions {
@@ -18,7 +18,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.yemen_project"
+        applicationId "com.almwld.yemenproject"
         minSdk 21
         targetSdk 34
         versionCode 1
