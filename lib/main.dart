@@ -1,3 +1,4 @@
+import 'features/splash/splash_page.dart';
 import 'package:flutter/material.dart';
 // ملاحظة: قمت بالإبقاء على استيراداتك الأصلية لضمان عدم حدوث أخطاء
 import 'features/dashboard/presentation/admin_dashboard_page.dart';
@@ -15,7 +16,7 @@ class YemenMarketApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'يمن ماركت الشامل',
       // سنبدأ بصفحة تسجيل الدخول الجديدة
-      home: const LoginPage(), 
+      home: SplashScreen(),
     );
   }
 }
