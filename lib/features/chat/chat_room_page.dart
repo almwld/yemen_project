@@ -5,51 +5,48 @@ class ChatRoomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: Text('دردشة مع البائع'), backgroundColor: Colors.white10),
+      appBar: AppBar(
+        backgroundColor: Colors.white10,
+        title: Row(
+          children: [
+            Icon(Icons.support_agent, color: Colors.amber),
+            SizedBox(width: 10),
+            Text('مركز خدمة العملاء والطلبات'),
+          ],
+        ),
+      ),
       body: Column(
         children: [
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(15),
-              children: [
-                _chatBubble('مرحباً، هل الجنبية لا تزال متوفرة؟', true),
-                _chatBubble('أهلاً بك، نعم لا تزال موجودة في المزاد.', false),
-              ],
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Card(
+              color: Colors.amber.withOpacity(0.1),
+              child: ListTile(
+                leading: Icon(Icons.info, color: Colors.amber),
+                title: Text('نحن هنا لخدمتك', style: TextStyle(color: Colors.white, fontSize: 14)),
+                subtitle: Text('أرسل استفسارك وسيقوم فريقنا بتجهيز طلبك وتوصيله إليك.', style: TextStyle(color: Colors.white54, fontSize: 12)),
+              ),
             ),
           ),
-          _buildMessageInput(),
+          Expanded(child: Container()), // مساحة الرسائل
+          _buildOrderInput(),
         ],
       ),
     );
   }
 
-  Widget _chatBubble(String text, bool isMe) {
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isMe ? Colors.amber : Colors.white10,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Text(text, style: TextStyle(color: isMe ? Colors.black : Colors.white)),
-      ),
-    );
-  }
-
-  Widget _buildMessageInput() {
+  Widget _buildOrderInput() {
     return Container(
       padding: EdgeInsets.all(10),
       color: Colors.white10,
       child: Row(
         children: [
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(hintText: 'اكتب رسالتك...', border: InputBorder.none),
-            ),
+          Expanded(child: TextField(decoration: InputDecoration(hintText: 'اطلب منتجك الآن...', border: InputBorder.none))),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            onPressed: () {}, 
+            child: Text('تأكيد الطلب'),
           ),
-          IconButton(icon: Icon(Icons.send, color: Colors.amber), onPressed: () {}),
         ],
       ),
     );
