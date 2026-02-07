@@ -1,3 +1,4 @@
+import '../maps/location_view.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetailsPage extends StatelessWidget {
@@ -28,7 +29,7 @@ class ProductDetailsPage extends StatelessWidget {
                 SizedBox(height: 10),
                 Text(price, style: TextStyle(fontSize: 20, color: Colors.amber)),
                 SizedBox(height: 20),
-                Text('هذا المنتج من التراث اليمني الأصيل، متوفر الآن للتواصل المباشر مع البائع عبر الواتساب.',
+                _buildMapSection(), Text('هذا المنتج من التراث اليمني الأصيل، متوفر الآن للتواصل المباشر مع البائع عبر الواتساب.',
                   style: TextStyle(color: Colors.white70, fontSize: 16)),
               ],
             ),
@@ -50,3 +51,8 @@ class ProductDetailsPage extends StatelessWidget {
     );
   }
 }
+
+  Widget _buildMapSection() {
+    // إحداثيات افتراضية في صنعاء
+    return LocationView(location: const LatLng(15.3351, 44.1989)); 
+  }
