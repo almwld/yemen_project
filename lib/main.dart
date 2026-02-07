@@ -32,7 +32,6 @@ class AdaptiveMarketScreen extends StatefulWidget {
 
 class _AdaptiveMarketScreenState extends State<AdaptiveMarketScreen> {
   Color accentColor = Colors.orangeAccent;
-  String activeCategory = "بن وعقيق";
 
   final List<Map<String, dynamic>> products = [
     {'name': 'بن خولاني درجة أولى', 'price': '١٥,٠٠٠ ريال', 'color': Color(0xFF8B4513), 'desc': 'أجود أنواع البن اليمني الأصيل من جبال خولان.'},
@@ -46,11 +45,21 @@ class _AdaptiveMarketScreenState extends State<AdaptiveMarketScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // إضاءة خلفية ثابتة خفيفة
+          // تم إصلاح السطر ٥٣ هنا عبر استخدام boxShadow بدلاً من blurRadius المباشر
           Positioned(
             top: -100,
             right: -50,
-            child: Container(width: 300, height: 300, decoration: BoxDecoration(color: accentColor.withOpacity(0.1), shape: BoxShape.circle, blurRadius: 100)),
+            child: Container(
+              width: 300, 
+              height: 300, 
+              decoration: BoxDecoration(
+                color: accentColor.withOpacity(0.1), 
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(color: accentColor.withOpacity(0.2), blurRadius: 100, spreadRadius: 50)
+                ],
+              ),
+            ),
           ),
           
           CustomScrollView(
@@ -121,7 +130,6 @@ class _AdaptiveMarketScreenState extends State<AdaptiveMarketScreen> {
   }
 }
 
-// --- شاشة تفاصيل المنتج المتكيفة ---
 class ProductDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> product;
   const ProductDetailsScreen({super.key, required this.product});
@@ -132,24 +140,25 @@ class ProductDetailsScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF0F0F0F),
       body: Stack(
         children: [
-          // الهالة اللونية المتغيرة (Glowing Logic)
           Positioned(
             top: -50,
             left: -50,
-            child: AnimatedContainer(
-              duration: const Duration(seconds: 1),
+            child: Container(
               width: 400, height: 400,
-              decoration: BoxDecoration(color: product['color'].withOpacity(0.2), shape: BoxShape.circle),
-              child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80), child: Container(color: Colors.transparent)),
+              decoration: BoxDecoration(
+                color: product['color'].withOpacity(0.2), 
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(color: product['color'].withOpacity(0.1), blurRadius: 80, spreadRadius: 40)
+                ],
+              ),
             ),
           ),
-          
           SafeArea(
             child: Column(
               children: [
                 AppBar(backgroundColor: Colors.transparent, elevation: 0),
                 const SizedBox(height: 20),
-                // صورة المنتج الزجاجية
                 Hero(
                   tag: product['name'],
                   child: Container(
@@ -163,7 +172,6 @@ class ProductDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 40),
-                // تفاصيل زجاجية
                 Expanded(
                   child: Container(
                     width: double.infinity,
@@ -182,14 +190,12 @@ class ProductDetailsScreen extends StatelessWidget {
                         const SizedBox(height: 20),
                         Text(product['desc'], style: const TextStyle(fontSize: 16, color: Colors.white70), textAlign: TextAlign.right),
                         const Spacer(),
-                        // زر الشراء الديناميكي
                         Container(
                           width: double.infinity,
                           height: 60,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(colors: [product['color'], product['color'].withOpacity(0.6)]),
                             borderRadius: BorderRadius.circular(20),
-                            boxShadow: [BoxShadow(color: product['color'].withOpacity(0.3), blurRadius: 20)],
                           ),
                           child: const Center(child: Text("تواصل مع البائع الآن", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
                         ),
