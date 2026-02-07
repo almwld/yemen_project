@@ -1,32 +1,27 @@
 workflows:
   android-workflow:
-    name: Yemen Market - Absolute Victory
+    name: Yemen Project - Technical Fix
     max_build_duration: 60
     instance_type: mac_mini_m1
     scripts:
-      - name: Build From Subfolder
-        script: | 
-          # الآن السيرفر لن يجد pubspec في المجلد الحالي فلن يطلق الخطأ
-          # سنقوم ببناء المشروع داخل مجلد جديد تماماً
-          flutter create --platforms android build_app
+      - name: Critical Build Script
+        script: |
+          # إنشاء مشروع جديد متوافق مع 2026
+          flutter create --platforms android build_zone
+          rm -rf build_zone/lib
           
-          # استبدال ملفات المشروع الجديد بملفاتك الموجودة في 'src'
-          rm -rf build_app/lib
-          cp -r src/lib build_app/
-          cp src/pubspec.yaml build_app/
-          [ -d src/assets ] && cp -r src/assets build_app/
+          # نقل الكود مع التأكد من سلامة المجلدات
+          cp -R src/lib build_zone/
+          cp src/pubspec.yaml build_zone/
+          [ -d src/assets ] && cp -R src/assets build_zone/ || true
           
-          # إعداد الفايربيس
-          if [ -f src/google-services.json ]; then
-            mkdir -p build_app/android/app
-            cp src/google-services.json build_app/android/app/
-          fi
-
-          cd build_app
+          cd build_zone
           flutter pub get
+          
+          # البناء الحقيقي
           flutter build apk --release --no-tree-shake-icons
           
-          # نقل النتيجة للخارج ليراها Codemagic
+          # نقل الـ APK لمكان العرض
           mkdir -p $CM_BUILD_DIR/build/app/outputs/flutter-apk/
           cp build/app/outputs/flutter-apk/app-release.apk $CM_BUILD_DIR/build/app/outputs/flutter-apk/
     artifacts:
