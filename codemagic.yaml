@@ -1,13 +1,20 @@
 workflows:
   android-workflow:
     name: Production Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
     environment:
       flutter: stable
     scripts:
-      - name: Build
+      - name: Repair and Reconstruct Project
         script: |
-          flutter clean
+          # حذف مجلد أندرويد القديم المسبب للمشاكل
+          rm -rf android
+          # إجبار فلوتر على إعادة إنشاء ملفات المنصة بشكل صحيح
+          flutter create . --platforms android
           flutter pub get
+      - name: Build Production APK
+        script: |
           flutter build apk --release
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
