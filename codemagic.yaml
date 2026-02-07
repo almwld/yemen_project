@@ -1,25 +1,19 @@
 workflows:
   android-workflow:
-    name: Yemen Market Root Fix
+    name: Yemen Market Fix Bloc
     max_build_duration: 60
     environment:
       flutter: stable
       java: 17
     scripts:
-      - name: Reconstruct Android Folder
+      - name: Reconstruct and Clean
         script: |
-          # 1. حذف مجلد أندرويد القديم المسبب للمشاكل
-          rm -rf android
-          
-          # 2. إجبار فلاتر على إنشاء ملفات أندرويد جديدة متوافقة مع الجذر
+          # حذف المجلدات القديمة لضمان عدم وجود تضارب
+          rm -rf build
           flutter create . --platforms android --org com.yemen.market
-          
-          # 3. تحميل المكتبات وتحديث الروابط
           flutter pub get
-          
       - name: Build Android APK
         script: |
-          # البناء باستخدام المجلد الجديد
           flutter build apk --release --no-tree-shake-icons
     artifacts:
       - build/app/outputs/flutter-apk/*.apk

@@ -1,25 +1,23 @@
 name: yemen_market
-description: "Yemen Market Professional App"
+description: A new Flutter project for Yemen Market.
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.10.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
-  firebase_core: ^2.32.0
-  firebase_auth: ^4.16.0
-  cloud_firestore: ^4.17.5
-  geolocator: ^10.1.1
-  url_launcher: ^6.3.2
-  provider: ^6.1.2
+  flutter_bloc: ^8.1.3
+  bloc: ^8.1.2
+  url_launcher: ^6.3.0
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
