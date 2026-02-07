@@ -43,7 +43,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           _buildCategoryList(),
           _buildSectionTitle("المزادات العاجلة"),
           _buildProductCard("جنبية صيفاني قديم", "120,000 RY", Icons.gavel),
-          _buildProductCard("تويوتا هايلوكس 2024", "35,000 $", Icons.directions_car),
+          _buildProductCard("تويوتا هايلوكس 2024", "35,000 \$", Icons.directions_car),
         ],
       ),
     );
