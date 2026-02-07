@@ -1,19 +1,19 @@
 workflows:
   android-workflow:
-    name: Yemen Market Fix Bloc
-    max_build_duration: 60
+    name: Android Build Workflow
+    max_build_duration: 30
+    instance_type: mac_mini_m1
     environment:
       flutter: stable
-      java: 17
+      java: 11
     scripts:
-      - name: Reconstruct and Clean
-        script: |
-          # حذف المجلدات القديمة لضمان عدم وجود تضارب
-          rm -rf build
-          flutter create . --platforms android --org com.yemen.market
-          flutter pub get
+      - name: Get Flutter packages
+        script: flutter packages pub get
       - name: Build Android APK
-        script: |
-          flutter build apk --release --no-tree-shake-icons
+        script: flutter build apk --release --no-sound-null-safety
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com # اختياري: سيصلك الرابط هنا

@@ -1,15 +1,17 @@
 name: yemen_project
-description: A new Flutter project for Yemen Market.
-publish_to: 'none'
+description: حراج السوبر - منصة الخدمات المتكاملة في اليمن
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  provider: ^6.0.0
+  google_fonts: ^4.0.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
@@ -19,4 +21,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/logo.png
+    - assets/icons/app_icon.png
