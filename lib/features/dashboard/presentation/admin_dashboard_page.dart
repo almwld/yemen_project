@@ -46,7 +46,7 @@ class _DashboardPageState extends State<DashboardPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
         onPressed: () {},
-        child: Icon(Icons.whatsapp, size: 30),
+        child: Icon(Icons.chat, size: 30),
       ),
     );
   }
