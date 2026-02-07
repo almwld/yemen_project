@@ -1,28 +1,19 @@
 workflows:
   android-workflow:
-    name: Yemen Market Final Release
+    name: Yemen Market Root Build
     max_build_duration: 60
     environment:
       flutter: stable
       java: 17
     scripts:
-      - name: Reconstruct Project Structure
+      - name: Clean and Get Packages
         script: |
-          # 1. إنشاء المشروع النظيف في مجلد منفصل تماماً
-          flutter create --org com.yemen.market --project-name yemen_market temp_fix
-          
-          # 2. نقل ملفات الأندرويد السليمة إلى قلب مشروعك
-          # نستخدم المسار الكامل لضمان عدم الخطأ
-          cp -r temp_fix/android src/
-          
-          # 3. الدخول لمجلد الكود الحقيقي وتنفيذ العمليات هناك
-          cd src
+          # نحن الآن في الجذر مباشرة، لا داعي لـ cd src
+          flutter clean
           flutter pub get
-          
       - name: Build Android APK
         script: |
-          # الدخول للمسار الصحيح قبل البدء بالبناء
-          cd src
+          # البناء من الجذر مباشرة
           flutter build apk --release --no-tree-shake-icons
     artifacts:
-      - src/build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/flutter-apk/*.apk
