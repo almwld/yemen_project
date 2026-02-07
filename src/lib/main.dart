@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// المسارات الحقيقية التي وجدناها في المسح
-import 'features/home/home_page.dart';
-import 'core/theme/app_theme.dart';
-import 'core/providers/cart_provider.dart';
+// استيراد الملفات الحقيقية بناءً على هيكلة مشروعك
+import 'package:yemen_market/features/home/home_page.dart';
+import 'package:yemen_market/core/providers/cart_provider.dart';
+import 'package:yemen_market/core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // إذا كان لديك Firebase، تأكد من إلغاء التعليق عن الأسطر التالية لاحقاً
-  // await Firebase.initializeApp();
-
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CartProvider()),
-        // أضف أي Providers أخرى تظهر في مجلد core/providers
+        // أضفنا مزود السلة لأنه موجود في مسار core/providers/cart_provider.dart
       ],
       child: const YemenMarketApp(),
     ),
@@ -31,12 +28,11 @@ class YemenMarketApp extends StatelessWidget {
     return MaterialApp(
       title: 'سوق اليمن الرقمي',
       debugShowCheckedModeBanner: false,
-      // استخدام الثيم الحقيقي لمشروعك
       theme: ThemeData(
         primarySwatch: Colors.red,
         useMaterial3: true,
       ),
-      // تشغيل الصفحة الرئيسية الحقيقية
+      // تشغيل الصفحة الرئيسية المكتشفة في features/home/home_page.dart
       home: const HomePage(), 
     );
   }
