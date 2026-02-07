@@ -1,31 +1,13 @@
 workflows:
   android-workflow:
-    name: Yemen Market - Full Version Build
-    max_build_duration: 60
-    instance_type: mac_mini_m1
+    name: Production Build
+    environment:
+      flutter: stable
     scripts:
-      - name: Full Project Reconstruction
+      - name: Build
         script: |
-          # إنشاء الهيكل المتوافق مع أحدث إصدارات أندرويد
-          flutter create --platforms android build_zone
-          
-          # مسح كود البداية الافتراضي
-          rm -rf build_zone/lib
-          
-          # نقل مشروعك الكامل (الكود، الصور، الإعدادات)
-          cp -R src/lib build_zone/
-          cp src/pubspec.yaml build_zone/
-          [ -d src/assets ] && cp -R src/assets build_zone/ || true
-          
-          # دمج ملفات الإعدادات الخاصة بالأندرويد إذا كانت موجودة (مثل أيقونة التطبيق)
-          cd build_zone
-          
-          # جلب المكتبات وبناء التطبيق الحقيقي
+          flutter clean
           flutter pub get
-          flutter build apk --release --no-tree-shake-icons
-          
-          # تصدير الملف النهائي للتحميل
-          mkdir -p $CM_BUILD_DIR/build/app/outputs/flutter-apk/
-          cp build/app/outputs/flutter-apk/app-release.apk $CM_BUILD_DIR/build/app/outputs/flutter-apk/
+          flutter build apk --release
     artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
+      - build/app/outputs/flutter-apk/*.apk
