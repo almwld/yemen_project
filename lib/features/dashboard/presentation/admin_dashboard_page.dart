@@ -1,3 +1,4 @@
+import 'widgets/auction_card.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -35,6 +36,7 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             _buildSearchBar(),
             _buildPromoBanner(),
+            AuctionCard(),
             _buildSectionHeader('الخدمات والأقسام'),
             _buildServicesGrid(),
             _buildSectionHeader('المقتنيات التراثية المميزة'),
