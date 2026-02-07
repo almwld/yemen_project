@@ -1,20 +1,19 @@
 workflows:
   android-workflow:
-    name: Production Build
+    name: Yemen Market Build
     max_build_duration: 60
-    instance_type: mac_mini_m1
     environment:
       flutter: stable
+      java: 17
     scripts:
-      - name: Repair and Reconstruct Project
-        script: |
-          # حذف مجلد أندرويد القديم المسبب للمشاكل
-          rm -rf android
-          # إجبار فلوتر على إعادة إنشاء ملفات المنصة بشكل صحيح
-          flutter create . --platforms android
+      - name: Force Clean and Get Packages
+        script: | 
+          cd src
+          flutter clean
           flutter pub get
-      - name: Build Production APK
-        script: |
-          flutter build apk --release
+      - name: Build Android APK
+        script: | 
+          cd src
+          flutter build apk --release --no-tree-shake-icons
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
