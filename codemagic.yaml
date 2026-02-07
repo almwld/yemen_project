@@ -1,19 +1,24 @@
 workflows:
   android-workflow:
-    name: Yemen Market Build
+    name: Yemen Market Fix Build
     max_build_duration: 60
     environment:
       flutter: stable
       java: 17
     scripts:
-      - name: Force Clean and Get Packages
-        script: | 
+      - name: Reconstruct Project Structure
+        script: |
+          # العودة للمجلد الرئيسي
+          cd ..
+          # إنشاء مشروع جديد مؤقت لإخراج ملفات Gradle سليمة
+          flutter create -t app --org com.yemen.market --project-name yemen_market temp_project
+          # نقل ملفات أندرويد السليمة إلى مشروعك
+          cp -r temp_project/android src/
           cd src
-          flutter clean
           flutter pub get
       - name: Build Android APK
-        script: | 
+        script: |
           cd src
           flutter build apk --release --no-tree-shake-icons
     artifacts:
-      - build/app/outputs/flutter-apk/*.apk
+      - src/build/app/outputs/flutter-apk/*.apk
