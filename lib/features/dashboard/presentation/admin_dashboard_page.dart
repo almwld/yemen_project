@@ -20,7 +20,7 @@ class _DashboardPageState extends State<DashboardPage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('سوق اليمن الشامل', style: TextStyle(color: Color(0xFFFFC107), fontWeight: FontWeight.bold)),
+            Text('فليكس يمن ماركت', style: TextStyle(color: Color(0xFFFFC107), fontWeight: FontWeight.bold)),
             Text('مرحباً، أيها المستخدم', style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
