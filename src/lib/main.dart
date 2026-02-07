@@ -12,16 +12,13 @@ class YemenMarketApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'يمن ماركت - المقتنيات',
+      title: 'يمن ماركت',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: const Color(0xFFD32F2F), // الأحمر العقيقي
-        scaffoldBackgroundColor: const Color(0xFF121212), // الأسود الفخم
-        cardTheme: CardTheme(
-          color: const Color(0xFF1E1E1E),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        ),
+        primaryColor: const Color(0xFFD32F2F),
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        useMaterial3: true,
       ),
       home: const MainNavigationPage(),
     );
@@ -37,7 +34,6 @@ class MainNavigationPage extends StatefulWidget {
 class _MainNavigationPageState extends State<MainNavigationPage> {
   int _selectedIndex = 0;
   
-  // الصفحات التي تربط ميزات مشروعك الحقيقية
   final List<Widget> _pages = [
     const HomePage(), 
     const WalletPage(),
@@ -45,25 +41,42 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // إشعار ترحيبي يظهر بعد ثانية من فتح التطبيق
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('مرحباً بك في يمن ماركت! استمتع بأفضل المقتنيات اليمنية.', 
+              textAlign: TextAlign.center,
+              style: TextStyle(fontFamily: 'Cairo'),
+            ),
+            backgroundColor: const Color(0xFFD32F2F),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_selectedIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.2), width: 0.5)),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: (index) => setState(() => _selectedIndex = index),
-          backgroundColor: const Color(0xFF121212),
-          selectedItemColor: const Color(0xFFFFC107), // الذهبي للبن والجنبية
-          unselectedItemColor: Colors.white54,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.store_mall_directory), label: 'السوق'),
-            BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'محفظتي'),
-            BottomNavigationBarItem(icon: Icon(Icons.auto_awesome), label: 'المساعد'),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
+        backgroundColor: const Color(0xFF121212),
+        selectedItemColor: const Color(0xFFFFC107),
+        unselectedItemColor: Colors.white54,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.store_mall_directory), label: 'السوق'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'محفظتي'),
+          BottomNavigationBarItem(icon: Icon(Icons.auto_awesome), label: 'المساعد'),
+        ],
       ),
     );
   }
