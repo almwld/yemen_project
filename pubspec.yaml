@@ -6,7 +6,11 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 dependencies:
   flutter:
+  assets:
+    - assets/images/
     sdk: flutter
   cupertino_icons: ^1.0.2
 flutter:
+  assets:
+    - assets/images/
   uses-material-design: true
