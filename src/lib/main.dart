@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// استيراد الصفحات الحقيقية
+// استيراد كافة الميزات الحقيقية بناءً على شجرة الملفات
 import 'features/home/home_page.dart';
 import 'features/payments/presentation/wallet_page.dart';
+import 'features/map/presentation/map_page.dart';
+import 'features/ai_concierge/presentation/ai_concierge_page.dart';
 import 'features/settings/presentation/settings_page.dart';
 import 'core/providers/cart_provider.dart';
 
@@ -31,10 +33,8 @@ class YemenMarketApp extends StatelessWidget {
         brightness: Brightness.dark,
         primaryColor: const Color(0xFFD32F2F),
         scaffoldBackgroundColor: Colors.black,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.black,
-          elevation: 0,
-        ),
+        colorScheme: const ColorScheme.dark(primary: Color(0xFFD32F2F)),
+        useMaterial3: true,
       ),
       home: const MainNavigationPage(),
     );
@@ -51,73 +51,31 @@ class MainNavigationPage extends StatefulWidget {
 class _MainNavigationPageState extends State<MainNavigationPage> {
   int _selectedIndex = 0;
   
+  // ربط الصفحات الحقيقية من المجلدات التي أرسلتها
   final List<Widget> _pages = [
-    const HomePage(),
-    const WalletPage(),
-    const SettingsPage(),
+    const HomePage(),           // الرئيسية
+    const MapPage(),            // الخريطة (features/map)
+    const AiConciergePage(),    // المساعد الذكي (ai_concierge)
+    const WalletPage(),         // المحفظة (features/payments)
+    const SettingsPage(),       // الإعدادات (features/settings)
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // إضافة شريط جانبي (Drawer)
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const UserAccountsDrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFFD32F2F)),
-              accountName: Text('مستخدم يمني'),
-              accountEmail: Text('user@yemen.com'),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person, color: Color(0xFFD32F2F)),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('الرئيسية'),
-              onTap: () => setState(() => _selectedIndex = 0),
-            ),
-            ListTile(
-              leading: const Icon(Icons.account_balance_wallet),
-              title: const Text('المحفظة المالية'),
-              onTap: () => setState(() => _selectedIndex = 1),
-            ),
-            ListTile(
-              leading: const Icon(Icons.shopping_bag),
-              title: const Text('طلباتي'),
-              onTap: () {},
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('الإعدادات'),
-              onTap: () => setState(() => _selectedIndex = 2),
-            ),
-            ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text('عن التطبيق'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('تسجيل الخروج', style: TextStyle(color: Colors.red)),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFFD32F2F),
         unselectedItemColor: Colors.white60,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.grey[900],
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'المحفظة'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'الخريطة'),
+          BottomNavigationBarItem(icon: Icon(Icons.psychology), label: 'المساعد'),
+          BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'المحفظة'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'الإعدادات'),
         ],
       ),
