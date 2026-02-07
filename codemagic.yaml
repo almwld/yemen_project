@@ -1,21 +1,14 @@
 workflows:
-  android-workflow:
-    name: Yemen Project Build
-    max_build_duration: 60
-    instance_type: mac_mini_m1
+  default-workflow:
+    name: Yemen Project Peaceful Build
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      java: 17
     scripts:
-      - name: Set up local.properties
-        script: echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
       - name: Get Flutter packages
         script: flutter pub get
-      - name: Fix JVM and Icon issues
-        script: |
-          sed -i 's/sourceCompatibility = JavaVersion.VERSION_1_8/sourceCompatibility = JavaVersion.VERSION_17/g' android/app/build.gradle
-          sed -i 's/targetCompatibility = JavaVersion.VERSION_1_8/targetCompatibility = JavaVersion.VERSION_17/g' android/app/build.gradle
-          sed -i 's/jvmTarget = "1.8"/jvmTarget = "17"/g' android/app/build.gradle
-          sed -i 's/@mipmap\/ic_launcher/@android:drawable\/sym_def_app_icon/g' android/app/src/main/AndroidManifest.xml
       - name: Build Android APK
-        script: |
-          flutter build apk --release --android-skip-build-dependency-validation
+        script: flutter build apk --release --no-tree-shake-icons
     artifacts:
-      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/flutter-apk/app-release.apk
