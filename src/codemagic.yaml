@@ -1,6 +1,6 @@
 workflows:
   android-workflow:
-    name: Yemen Market Final Fix
+    name: Yemen Market Final Release
     max_build_duration: 60
     environment:
       flutter: stable
@@ -8,25 +8,21 @@ workflows:
     scripts:
       - name: Reconstruct Project Structure
         script: |
-          # 1. إنشاء مشروع نظيف مؤقتاً في المجلد الرئيسي للسيرفر
+          # 1. إنشاء المشروع النظيف في مجلد منفصل تماماً
           flutter create --org com.yemen.market --project-name yemen_market temp_fix
           
-          # 2. نقل ملفات الأندرويد والـ Gradle الجديدة إلى مجلد مشروعك (src)
+          # 2. نقل ملفات الأندرويد السليمة إلى قلب مشروعك
+          # نستخدم المسار الكامل لضمان عدم الخطأ
           cp -r temp_fix/android src/
           
-          # 3. الدخول لمجلد مشروعك وتنظيفه
+          # 3. الدخول لمجلد الكود الحقيقي وتنفيذ العمليات هناك
           cd src
           flutter pub get
           
       - name: Build Android APK
         script: |
+          # الدخول للمسار الصحيح قبل البدء بالبناء
           cd src
-          # التأكد من وجود ملفات أندرويد قبل البدء
-          if [ -d "android" ]; then
-            flutter build apk --release --no-tree-shake-icons
-          else
-            echo "Error: Android folder not found!"
-            exit 1
-          fi
+          flutter build apk --release --no-tree-shake-icons
     artifacts:
       - src/build/app/outputs/flutter-apk/*.apk
