@@ -15,18 +15,47 @@ class _DeliveryPickerState extends State<DeliveryPicker> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('اختر وسيلة التوصيل المفضلة:', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Text('اختر خدمة التوصيل المفضلة لديك:', 
+            style: TextStyle(color: Colors.amber, fontSize: 16, fontWeight: FontWeight.bold)),
         ),
-        ...yemenDeliveryOptions.map((service) => RadioListTile(
-          value: service.id,
-          groupValue: selectedId,
-          onChanged: (val) => setState(() => selectedId = val.toString()),
-          title: Text(service.name, style: TextStyle(color: Colors.white)),
-          subtitle: Text('السعر: ${service.price} - الوقت: ${service.estimatedTime}', style: TextStyle(color: Colors.white54)),
-          secondary: Text(service.icon, style: TextStyle(fontSize: 25)),
-          activeColor: Colors.amber,
-        )).toList(),
+        Container(
+          height: 180,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            itemCount: yemenDeliveryOptions.length,
+            itemBuilder: (context, index) {
+              final service = yemenDeliveryOptions[index];
+              bool isSelected = selectedId == service.id;
+              return GestureDetector(
+                onTap: () => setState(() => selectedId = service.id),
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  width: 150,
+                  margin: EdgeInsets.all(5),
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.amber.withOpacity(0.2) : Colors.white10,
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: isSelected ? Colors.amber : Colors.transparent, width: 2),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(service.icon, style: TextStyle(fontSize: 30)),
+                      SizedBox(height: 10),
+                      Text(service.name, textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                      Text(service.price, style: TextStyle(color: Colors.amber, fontSize: 12)),
+                      Text(service.estimatedTime, style: TextStyle(color: Colors.white54, fontSize: 10)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ],
     );
   }

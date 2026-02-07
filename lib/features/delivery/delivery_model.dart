@@ -1,11 +1,12 @@
 class DeliveryService {
-  final String id, name, price, estimatedTime;
+  final String id, name, price, estimatedTime, description;
   final String icon;
-  DeliveryService(this.id, this.name, this.price, this.estimatedTime, this.icon);
+  DeliveryService(this.id, this.name, this.price, this.estimatedTime, this.description, this.icon);
 }
 
 final List<DeliveryService> yemenDeliveryOptions = [
-  DeliveryService('1', 'توصيل سريع (داخل صنعاء)', '١,٥٠٠ ريال', '٢-٤ ساعات', '⚡'),
-  DeliveryService('2', 'شركة النقل البري (للمحافظات)', '٣,٠٠٠ ريال', '١-٢ يوم', '🚚'),
-  DeliveryService('3', 'مندوب خاص', '٢,٠٠٠ ريال', 'فوري', '🏍️'),
+  DeliveryService('1', 'مزايا (Mazaya)', '١,٢٠٠ ريال', '٣٠-٤٥ دقيقة', 'الأسرع داخل الأمانة', '🚀'),
+  DeliveryService('2', 'توصيل (Tawseel)', '١,٥٠٠ ريال', '١-٢ ساعة', 'تغطية شاملة لضواحي صنعاء', '📦'),
+  DeliveryService('3', 'ماكس (Max Delivery)', '١,٠٠٠ ريال', '٤٠ دقيقة', 'توصيل اقتصادي وموثوق', '🛵'),
+  DeliveryService('4', 'النقل الجماعي (للمحافظات)', '٤,٠٠٠ ريال', '٢٤ ساعة', 'إرسال الطلبات إلى خارج صنعاء', '🚌'),
 ];
