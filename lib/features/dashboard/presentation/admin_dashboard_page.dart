@@ -8,82 +8,62 @@ class AdminDashboardPage extends StatefulWidget {
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
   int _selectedIndex = 4;
 
-  void _openAddAdSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
-      builder: (context) => Container(
-        padding: EdgeInsets.all(20),
-        height: MediaQuery.of(context).size.height * 0.8,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Center(child: Container(width: 50, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)))),
-            SizedBox(height: 20),
-            Text("إضافة إعلان جديد", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            SizedBox(height: 20),
-            TextField(textAlign: TextAlign.right, decoration: InputDecoration(labelText: "عنوان الإعلان", border: OutlineInputBorder())),
-            SizedBox(height: 15),
-            TextField(textAlign: TextAlign.right, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: "السعر (ريال يمني)", border: OutlineInputBorder())),
-            SizedBox(height: 15),
-            Container(
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(10)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Icon(Icons.arrow_drop_down), Text("اختر القسم")],
-              ),
-            ),
-            SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              height: 150,
-              decoration: BoxDecoration(color: Colors.orange[50], border: Border.all(color: Colors.orange), borderRadius: BorderRadius.circular(15)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [Icon(Icons.add_a_photo, size: 40, color: Colors.orange), Text("أضف صور المنتج")],
-              ),
-            ),
-            Spacer(),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange[800], shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                child: Text("نشر الإعلان الآن", style: TextStyle(color: Colors.white, fontSize: 18)),
-              ),
-            )
-          ],
+  // واجهة صفحة الإعدادات الحقيقية
+  Widget _buildSettingsPage() {
+    return ListView(
+      children: [
+        UserAccountsDrawerHeader(
+          decoration: BoxDecoration(color: Colors.orange[800]),
+          accountName: Text("مستخدم فليكس يمن"),
+          accountEmail: Text("Yemen@market.com"),
+          currentAccountPicture: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.person, size: 50, color: Colors.orange)),
         ),
-      ),
+        _settingsTile(Icons.dark_mode, "الثيم الليلي", "يتبع إعدادات الجهاز حالياً"),
+        _settingsTile(Icons.info_outline, "عن المنصة", "تعرف على فليكس يمن ماركت", onTap: () => _showAboutDialog()),
+        _settingsTile(Icons.privacy_tip_outlined, "سياسة الخصوصية", "كيف نحمي بياناتك"),
+        _settingsTile(Icons.language, "اللغة", "العربية"),
+        _settingsTile(Icons.contact_support_outlined, "اتصل بنا", "الدعم الفني المباشر"),
+        Divider(),
+        _settingsTile(Icons.logout, "تسجيل الخروج", "", color: Colors.red),
+      ],
+    );
+  }
+
+  ListTile _settingsTile(IconData icon, String title, String subtitle, {Color? color, VoidCallback? onTap}) {
+    return ListTile(
+      leading: Icon(icon, color: color ?? Colors.orange[800]),
+      title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: Text(subtitle),
+      onTap: onTap ?? () => print("فتح $title"),
+    );
+  }
+
+  void _showAboutDialog() {
+    showAboutDialog(
+      context: context,
+      applicationName: "فليكس يمن ماركت",
+      applicationVersion: "1.0.0",
+      applicationIcon: Icon(Icons.shop, color: Colors.orange),
+      children: [Text("أول منصة يمنية شاملة للمزادات والبيع المباشر في اليمن.")],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Icon(Icons.notifications_none, color: Colors.black),
-        title: Text("فليكس يمن ماركت", style: TextStyle(color: Colors.orange[800], fontWeight: FontWeight.bold)),
+        title: Text("فليكس يمن ماركت"),
         centerTitle: true,
+        backgroundColor: isDark ? Colors.grey[900] : Colors.orange[800],
       ),
-      body: Center(child: Text("تم استعادة التصميم المشرق\nاضغط على زر أضف إعلان بالأسفل", textAlign: TextAlign.center)),
+      body: _selectedIndex == 0 ? _buildSettingsPage() : Center(child: Text("مرحباً بك في سوق اليمن")),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.orange[800],
-        onTap: (index) {
-          if (index == 2) {
-            _openAddAdSheet();
-          } else {
-            setState(() => _selectedIndex = index);
-          }
-        },
+        onTap: (index) => setState(() => _selectedIndex = index),
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: "الإعدادات"),
           BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: "المفضلة"),
