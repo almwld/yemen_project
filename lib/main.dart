@@ -24,7 +24,8 @@ class MyApp extends StatelessWidget {
               primaryColor: const Color(0xFFD32F2F),
               scaffoldBackgroundColor: const Color(0xFF0F0F0F),
             ),
-            home: const DashboardPage(),
+            // قمنا بإزالة const لأن الكلاس قد لا يكون قسط في التعريف
+            home: DashboardPage(), 
           );
         },
       ),
