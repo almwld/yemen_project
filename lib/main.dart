@@ -13,14 +13,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<LanguageCubit>(
       create: (context) => LanguageCubit(),
-      child: MaterialApp(
-        title: 'Yemen Market',
-        theme: ThemeData(
-          primarySwatch: Colors.red,
-        ),
-        home: const Scaffold(
-          body: Center(child: Text('Yemen Market - Progressing')),
-        ),
+      child: BlocBuilder<LanguageCubit, Locale>(
+        builder: (context, locale) {
+          return MaterialApp(
+            locale: locale,
+            title: 'Yemen Market',
+            theme: ThemeData(primarySwatch: Colors.red),
+            home: const Scaffold(
+              body: Center(child: Text('يمن ماركت - تم الإصلاح بنجاح')),
+            ),
+          );
+        },
       ),
     );
   }
