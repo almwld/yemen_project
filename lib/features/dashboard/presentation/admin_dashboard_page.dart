@@ -1,3 +1,4 @@
+import "extra_pages.dart";
 import "add_product_page.dart";
 import 'package:flutter/material.dart';
 
@@ -68,7 +69,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       case 4: return _buildHome();
       case 3: return _buildExplorePage();
       case 2: return const AddProductPage();
-      case 1: return const Center(child: Text("المفضلة"));
+      case 1: return const FavoritesPage();
       case 0: return _buildProfilePage();
       default: return _buildHome();
     }
