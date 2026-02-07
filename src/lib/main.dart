@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+// استيراد الصفحة الرئيسية لمشروعك - تأكد من صحة هذا المسار في مجلداتك
+import 'features/home/presentation/pages/home_page.dart';
 
-void main() {
-  // إضافة تأمين لبداية التطبيق
+void main() async {
+  // التأكد من تهيئة الإطارات البرمجية (ضروري للخرائط والفايربيس)
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const YemenMarketApp());
+  
+  // هنا يمكنك إضافة كود تهيئة Firebase إذا كان مشروعك يعتمد عليه
+  // await Firebase.initializeApp();
+
+  runApp(
+    // إذا كنت تستخدم Provider لإدارة الحالة (المحفظة مثلاً) أضفه هنا
+    MultiProvider(
+      providers: [
+        // ChangeNotifierProvider(create: (_) => WalletProvider()),
+      ],
+      child: const YemenMarketApp(),
+    ),
+  );
 }
 
 class YemenMarketApp extends StatelessWidget {
@@ -15,21 +30,12 @@ class YemenMarketApp extends StatelessWidget {
       title: 'سوق اليمن الرقمي',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primaryColor: const Color(0xFFD32F2F), // اللون الأحمر المميز للهوية اليمنية
+        fontFamily: 'Cairo', // استخدم الخط الذي تفضله في مشروعك
         useMaterial3: true,
       ),
-      // سنضع صفحة مؤقتة هنا لضمان نجاح البناء واستلام الـ APK
-      // وبعدها يمكنك ربط صفحاتك الحقيقية بسهولة
-      home: Scaffold(
-        appBar: AppBar(title: const Text('سوق اليمن الرقمي')),
-        body: const Center(
-          child: Text(
-            'تم البناء بنجاح!\nجاري تجهيز الربط مع المجلدات الحقيقية',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
+      // تشغيل الصفحة الحقيقية لمشروعك
+      home: const HomePage(), 
     );
   }
 }
