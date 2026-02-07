@@ -1,3 +1,4 @@
+import '../delivery/delivery_picker_widget.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoomPage extends StatelessWidget {
@@ -28,6 +29,7 @@ class ChatRoomPage extends StatelessWidget {
               ),
             ),
           ),
+          DeliveryPicker(),
           Expanded(child: Container()), // مساحة الرسائل
           _buildOrderInput(),
         ],
