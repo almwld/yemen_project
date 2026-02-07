@@ -80,7 +80,7 @@ class MainNavigationPage extends StatefulWidget {
 class _MainNavigationPageState extends State<MainNavigationPage> {
   int _selectedIndex = 0;
   final List<Widget> _pages = [
-    const HomeScreen(),
+    const DashboardPage(),
     const CategoriesScreen(),
     const AddProductScreen(),
     const SettingsScreen(),
