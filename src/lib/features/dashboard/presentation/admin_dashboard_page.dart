@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  String searchQuery = "";
 
   @override
   Widget build(BuildContext context) {
@@ -9,123 +15,152 @@ class DashboardPage extends StatelessWidget {
       backgroundColor: const Color(0xFF0F0F0F),
       body: CustomScrollView(
         slivers: [
-          _buildAppBar(),
+          // 1. شريط البحث العلوي المتفاعل
+          SliverAppBar(
+            expandedHeight: 150.0,
+            pinned: true,
+            backgroundColor: const Color(0xFF1A1A1A),
+            flexibleSpace: FlexibleSpaceBar(
+              background: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: TextField(
+                      onChanged: (value) => setState(() => searchQuery = value),
+                      decoration: InputDecoration(
+                        hintText: 'ابحث عن منتج، تاجر، أو خدمة...',
+                        prefixIcon: const Icon(Icons.search, color: Color(0xFFFFC107)),
+                        filled: true,
+                        fillColor: Colors.white10,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+          ),
+
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionTitle('الخدمات السريعة'),
-                  _buildQuickServices(),
+                  _buildSectionHeader('جميع الخدمات'),
+                  _buildServicesGrid(),
                   const SizedBox(height: 25),
-                  _buildSectionTitle('أقسام التجار (الموردين)'),
-                  _buildVendorSections(),
+                  
+                  _buildSectionHeader('أقسام التجار المعتمدين'),
+                  _buildVendorScroll(),
                   const SizedBox(height: 25),
-                  _buildSectionTitle('استكشف القريب منك'),
-                  _buildMapPreview(),
+
+                  _buildSectionHeader('الخريطة التفاعلية للمتاجر'),
+                  _buildMapFeature(),
                 ],
               ),
             ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         backgroundColor: const Color(0xFFD32F2F),
-        child: const Icon(Icons.chat_bubble, color: Colors.white),
-        onPressed: () {
-          // ربط زر الدردشة بمجلد features/chat
-          print('فتح الدردشة الذكية');
-        },
+        icon: const Icon(Icons.chat),
+        label: const Text('دردشة فورية'),
+        onPressed: () {},
       ),
     );
   }
 
-  Widget _buildAppBar() {
-    return SliverAppBar(
-      expandedHeight: 120.0,
-      floating: false,
-      pinned: true,
-      backgroundColor: const Color(0xFF1A1A1A),
-      flexibleSpace: FlexibleSpaceBar(
-        title: const Text('سوق اليمن الشامل', style: TextStyle(fontSize: 16)),
-        background: Container(color: const Color(0xFFD32F2F).withOpacity(0.1)),
-      ),
+  Widget _buildSectionHeader(String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+        TextButton(onPressed: () {}, child: const Text('عرض الكل', style: TextStyle(color: Color(0xFFFFC107)))),
+      ],
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFFFC107))),
-    );
-  }
-
-  Widget _buildQuickServices() {
+  Widget _buildServicesGrid() {
     final services = [
-      {'n': 'عقارات', 'i': Icons.home_work, 'c': Colors.blue},
-      {'n': 'سيارات', 'i': Icons.directions_car, 'c': Colors.red},
-      {'n': 'إنترنت', 'i': Icons.wifi, 'c': Colors.orange},
-      {'n': 'مزادات', 'i': Icons.gavel, 'c': Colors.green},
+      {'n': 'عقارات', 'i': Icons.apartment, 'c': Colors.blue, 'img': 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200'},
+      {'n': 'سيارات', 'i': Icons.minor_crash, 'c': Colors.red, 'img': 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=200'},
+      {'n': 'مزادات', 'i': Icons.timer, 'c': Colors.green, 'img': 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=200'},
+      {'n': 'إلكترونيات', 'i': Icons.devices, 'c': Colors.orange, 'img': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=200'},
     ];
-    return GridView.count(
+    return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 4,
-      children: services.map((s) => Column(
-        children: [
-          CircleAvatar(backgroundColor: (s['c'] as Color).withOpacity(0.2), child: Icon(s['i'] as IconData, color: s['c'] as Color)),
-          const SizedBox(height: 5),
-          Text(s['n'] as String, style: const TextStyle(fontSize: 12)),
-        ],
-      )).toList(),
-    );
-  }
-
-  Widget _buildVendorSections() {
-    final vendors = [
-      {'n': 'كبار التجار', 'p': 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200'},
-      {'n': 'الأسر المنتجة', 'p': 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=200'},
-    ];
-    return Row(
-      children: vendors.map((v) => Expanded(
-        child: Container(
-          height: 100,
-          margin: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            image: DecorationImage(image: NetworkImage(v['p']!), fit: BoxFit.cover, opacity: 0.5),
-            color: Colors.black,
-          ),
-          child: Center(child: Text(v['n']!, style: const TextStyle(fontWeight: FontWeight.bold))),
+      itemCount: services.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.3, mainAxisSpacing: 10, crossAxisSpacing: 10),
+      itemBuilder: (context, i) => Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          image: DecorationImage(image: NetworkImage(services[i]['img'] as String), fit: BoxFit.cover, opacity: 0.4),
+          color: Colors.black,
         ),
-      )).toList(),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(services[i]['i'] as IconData, color: services[i]['c'] as Color, size: 30),
+              Text(services[i]['n'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildMapPreview() {
-    return Container(
-      height: 180,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white10),
-      ),
-      child: Stack(
+  Widget _buildVendorScroll() {
+    return SizedBox(
+      height: 120,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
         children: [
-          const Center(child: Icon(Icons.map_outlined, size: 50, color: Colors.white24)),
-          Positioned(
-            bottom: 10,
-            right: 10,
-            child: ElevatedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.location_on, size: 16),
-              label: const Text('فتح الخريطة'),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD32F2F)),
-            ),
-          )
+          _vendorAvatar('بن علوان', 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=100'),
+          _vendorAvatar('العاقل للصرافة', 'https://images.unsplash.com/photo-1580519542036-c47de6196ba5?w=100'),
+          _vendorAvatar('يمن موبايل', 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=100'),
+          _vendorAvatar('الأسرة السعيدة', 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'),
         ],
+      ),
+    );
+  }
+
+  Widget _vendorAvatar(String name, String url) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 15),
+      child: Column(
+        children: [
+          CircleAvatar(radius: 35, backgroundImage: NetworkImage(url), backgroundColor: Colors.white10),
+          const SizedBox(height: 5),
+          Text(name, style: const TextStyle(fontSize: 11)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMapFeature() {
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        image: const DecorationImage(
+          image: NetworkImage('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=500'),
+          fit: BoxFit.cover,
+          opacity: 0.5,
+        ),
+      ),
+      child: Center(
+        child: ElevatedButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.map),
+          label: const Text('تحديد التجار القريبين منك'),
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD32F2F)),
+        ),
       ),
     );
   }
