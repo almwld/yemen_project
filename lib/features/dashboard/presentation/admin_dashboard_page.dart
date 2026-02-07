@@ -26,7 +26,7 @@ class _DashboardPageState extends State<DashboardPage> {
           IconButton(icon: Icon(Icons.notifications_none, color: Colors.white), onPressed: () {}),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(backgroundColor: Color(0xFFFFC107), child: Icon(Icons.person, color: Colors.black)),
+            child: CircleAvatar(backgroundColor: Color(0xFFFFC107), child: IconButton(icon: Icon(Icons.person, color: Colors.black), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (c) => SettingsPage()))),
           ),
         ],
       ),
