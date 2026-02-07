@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// استيراد الأجزاء الحقيقية من مشروعك
+// استيراد الصفحات الحقيقية
 import 'features/home/home_page.dart';
 import 'features/payments/presentation/wallet_page.dart';
 import 'features/settings/presentation/settings_page.dart';
 import 'core/providers/cart_provider.dart';
-import 'core/theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,19 +27,13 @@ class YemenMarketApp extends StatelessWidget {
     return MaterialApp(
       title: 'سوق اليمن الرقمي',
       debugShowCheckedModeBanner: false,
-      // تحسين الثيم ليصبح فخماً (ليلي مع أحمر يمني)
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: const Color(0xFFD32F2F),
         scaffoldBackgroundColor: Colors.black,
-        cardTheme: CardTheme(
-          color: Colors.grey[900],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.black,
           elevation: 0,
-          centerTitle: true,
         ),
       ),
       home: const MainNavigationPage(),
@@ -48,7 +41,6 @@ class YemenMarketApp extends StatelessWidget {
   }
 }
 
-// إضافة شريط تنقل سفلي لربط (الرئيسية، المحفظة، الإعدادات)
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
 
@@ -60,14 +52,62 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   int _selectedIndex = 0;
   
   final List<Widget> _pages = [
-    const HomePage(),        // صفحة المنتجات التي ظهرت في الصورة
-    const WalletPage(),      // صفحة المحفظة الموجودة في ملفاتك
-    const SettingsPage(),    // صفحة الإعدادات الموجودة في ملفاتك
+    const HomePage(),
+    const WalletPage(),
+    const SettingsPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // إضافة شريط جانبي (Drawer)
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const UserAccountsDrawerHeader(
+              decoration: BoxDecoration(color: Color(0xFFD32F2F)),
+              accountName: Text('مستخدم يمني'),
+              accountEmail: Text('user@yemen.com'),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(Icons.person, color: Color(0xFFD32F2F)),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('الرئيسية'),
+              onTap: () => setState(() => _selectedIndex = 0),
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_balance_wallet),
+              title: const Text('المحفظة المالية'),
+              onTap: () => setState(() => _selectedIndex = 1),
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_bag),
+              title: const Text('طلباتي'),
+              onTap: () {},
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('الإعدادات'),
+              onTap: () => setState(() => _selectedIndex = 2),
+            ),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text('عن التطبيق'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text('تسجيل الخروج', style: TextStyle(color: Colors.red)),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
