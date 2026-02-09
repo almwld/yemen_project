@@ -13,12 +13,103 @@ class YemenMarketApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF121212),
         appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E1E1E), centerTitle: true),
       ),
-      home: const ProductDetailsScreen(),
+      home: const MainNavigator(),
     );
   }
 }
 
-// 1. واجهة تفاصيل المنتج (Product Details Screen)
+// --- المحرك الرئيسي للتنقل ---
+class MainNavigator extends StatefulWidget {
+  const MainNavigator({super.key});
+  @override
+  State<MainNavigator> createState() => _MainNavigatorState();
+}
+
+class _MainNavigatorState extends State<MainNavigator> {
+  int _index = 2;
+  final pages = [
+    const Center(child: Text('حسابي')),
+    const Center(child: Text('الخريطة')),
+    const HomeScreen(),
+    const Center(child: Text('الدردشة')),
+    const Center(child: Text('المزادات')),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: pages[_index],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _index,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.amber,
+        onTap: (i) => setState(() => _index = i),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'الخريطة'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'دردشة'),
+          BottomNavigationBarItem(icon: Icon(Icons.gavel), label: 'مزادات'),
+        ],
+      ),
+    );
+  }
+}
+
+// --- 1. الصفحة الرئيسية (نظام البحث والفلترة) ---
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('سوق اليمن الشامل'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'بحث في صنعاء، عدن، تعز...',
+                prefixIcon: const Icon(Icons.search, color: Colors.amber),
+                filled: true,
+                fillColor: Colors.black26,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+              ),
+            ),
+          ),
+        ),
+      ),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(10),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.8, crossAxisSpacing: 10, mainAxisSpacing: 10),
+        itemCount: 4,
+        itemBuilder: (context, i) => GestureDetector(
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductDetailsScreen())),
+          child: Card(
+            color: const Color(0xFF1E1E1E),
+            child: Column(
+              children: [
+                Expanded(child: Container(color: Colors.grey[800], child: const Icon(Icons.image, size: 50))),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text('تويوتا هايلوكس 2022', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('25,000 $', style: TextStyle(color: Colors.amber)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// --- 2. واجهة تفاصيل المنتج الاحترافية (Sliver Layout) ---
 class ProductDetailsScreen extends StatelessWidget {
   const ProductDetailsScreen({super.key});
 
@@ -27,104 +118,59 @@ class ProductDetailsScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // شريط علوي متحرك مع صورة المنتج
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                color: Colors.grey[900],
-                child: const Icon(Icons.image, size: 100, color: Colors.white24),
-              ),
+              background: Container(color: Colors.grey[900], child: const Icon(Icons.directions_car, size: 100, color: Colors.white24)),
             ),
-            actions: [
-              IconButton(icon: const Icon(Icons.favorite_border), onPressed: () {}),
-              IconButton(icon: const Icon(Icons.share), onPressed: () {}),
-            ],
           ),
-          
-          // محتوى التفاصيل
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('تويوتا هايلوكس 2022 وكالة', 
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
-                  const Text('25,000 $', 
-                    style: TextStyle(fontSize: 22, color: Colors.amber, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
-                  
-                  // معلومات البائع
-                  _buildSectionTitle('عن البائع'),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('تويوتا هايلوكس 2022', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                      Icon(Icons.verified, color: Colors.blue),
+                    ],
+                  ),
+                  const Text('25,000 $', style: TextStyle(fontSize: 20, color: Colors.amber, fontWeight: FontWeight.bold)),
+                  const Divider(height: 30),
+                  const Text('عن البائع', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: const CircleAvatar(child: Icon(Icons.person)),
-                    title: const Text('معرض الأمانة للسيارات'),
-                    subtitle: const Text('عضو منذ 2020 • صنعاء'),
-                    trailing: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.star, color: Colors.amber, size: 16),
-                        Text(' 4.8'),
-                      ],
-                    ),
+                    leading: const CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.person, color: Colors.black)),
+                    title: const Text('معرض الأمانة - صنعاء'),
+                    subtitle: const Text('تقييم البائع: ⭐⭐⭐⭐⭐'),
                   ),
-                  
                   const SizedBox(height: 20),
-                  _buildSectionTitle('الوصف'),
-                  const Text(
-                    'السيارة بحالة ممتازة جداً، ماشية 15,000 كم فقط. صيانة دورية في الوكالة، خالية من الصدمات والرش. المواصفات: فل كامل، فتحة سقف، شاشة، كاميرا خلفية.',
-                    style: TextStyle(height: 1.5, color: Colors.white70),
-                  ),
-                  
-                  const SizedBox(height: 100), // مساحة للأزرار السفلية
+                  const Text('الوصف', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+                  const Text('سيارة نظيفة جداً، مجمركة مرقمة، تواجد صنعاء. السعر قابل للتفاوض البسيط للجادين.', style: TextStyle(height: 1.5)),
                 ],
               ),
             ),
           ),
         ],
       ),
-      
-      // أزرار العمليات السفلية
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(15),
-        color: const Color(0xFF1E1E1E),
-        child: Row(
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                onPressed: () {},
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Icon(Icons.phone), SizedBox(width: 8), Text('اتصال')],
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
-                onPressed: () {},
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Icon(Icons.chat, color: Colors.black), SizedBox(width: 8), Text('دردشة', style: TextStyle(color: Colors.black))],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: _buildActionButtons(),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber)),
+  Widget _buildActionButtons() {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      color: const Color(0xFF1E1E1E),
+      child: Row(
+        children: [
+          Expanded(child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.phone), label: const Text('اتصال'), style: ElevatedButton.styleFrom(backgroundColor: Colors.green))),
+          const SizedBox(width: 10),
+          Expanded(child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.chat), label: const Text('دردشة'), style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black))),
+        ],
+      ),
     );
   }
 }
