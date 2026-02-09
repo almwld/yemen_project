@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(YemenShamelApp());
 
-// نموذج المنتج
 class Product {
   final String id, name, price, cat, desc;
   Product({required this.id, required this.name, required this.price, required this.cat, required this.desc});
 }
 
-// مخزن السلة (بسيط ومحلي)
 class CartProvider {
   static List<Product> items = [];
-  static double get total => items.fold(0, (sum, item) => sum + double.parse(item.price.replaceAll(',', '')));
+  static double get total => items.fold(0, (sum, item) => sum + double.parse(item.price));
 }
 
 class YemenShamelApp extends StatelessWidget {
@@ -19,7 +17,7 @@ class YemenShamelApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(brightness: Brightness.dark, primaryColor: Colors.amber),
+      theme: ThemeData(brightness: Brightness.dark, primaryColor: Colors.amber, scaffoldBackgroundColor: Color(0xFF0F0F0F)),
       home: MainNavigation(),
     );
   }
@@ -32,13 +30,13 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
-  void refresh() => setState(() {}); // لتحديث الواجهة عند إضافة منتج
+  void refresh() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
-    final screens = [HomeScreen(onAdd: refresh), ExploreScreen(), AddPostScreen(), FavoritesScreen(), CartScreen(onRemove: refresh)];
+    final screens = [HomeScreen(onAdd: refresh), ExploreScreen(), AddPostScreen(), FavoritesScreen(), ProfileScreen()];
     return Scaffold(
-      body: screens[_currentIndex],
+      body: IndexedStack(index: _currentIndex, children: screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
@@ -46,96 +44,86 @@ class _MainNavigationState extends State<MainNavigation> {
         selectedItemColor: Colors.amber,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'استكشف'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'إعلان'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'المفضلة'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'بحث'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'بيع'),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'السلة (${CartProvider.items.length})'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
         ],
       ),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  final VoidCallback onAdd;
-  HomeScreen({required this.onAdd});
+// --- شاشة البحث الذكي ---
+class ExploreScreen extends StatefulWidget {
+  @override
+  _ExploreScreenState createState() => _ExploreScreenState();
+}
 
-  final List<Product> products = [
-    Product(id: '1', name: 'عقيق كبدي فاخر', price: '45000', cat: 'تراثيات', desc: 'عقيق يماني أصلي.'),
-    Product(id: '2', name: 'جنبية صيفاني', price: '120000', cat: 'تراثيات', desc: 'جنبية قديمة أصلية.'),
+class _ExploreScreenState extends State<ExploreScreen> {
+  List<Product> allProducts = [
+    Product(id: '1', name: 'عقيق كبدي', price: '45000', cat: 'تراث', desc: ''),
+    Product(id: '2', name: 'جنبية صيفاني', price: '120000', cat: 'تراث', desc: ''),
+    Product(id: '3', name: 'تويوتا تندرا', price: '8000000', cat: 'سيارات', desc: ''),
   ];
+  List<Product> filtered = [];
+
+  @override
+  void initState() { filtered = allProducts; super.initState(); }
+
+  void _search(String query) {
+    setState(() {
+      filtered = allProducts.where((p) => p.name.contains(query)).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("سوق اليمن الشامل")),
+      appBar: AppBar(title: TextField(decoration: InputDecoration(hintText: "ابحث عن منتج..."), onChanged: _search)),
       body: ListView.builder(
-        itemCount: products.length,
-        itemBuilder: (context, i) => ListTile(
-          leading: Icon(Icons.image, color: Colors.amber),
-          title: Text(products[i].name),
-          subtitle: Text("${products[i].price} ريال"),
-          trailing: IconButton(
-            icon: Icon(Icons.add_shopping_cart, color: Colors.green),
-            onPressed: () {
-              CartProvider.items.add(products[i]);
-              onAdd();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تمت الإضافة للسلة!")));
-            },
-          ),
-        ),
+        itemCount: filtered.length,
+        itemBuilder: (c, i) => ListTile(title: Text(filtered[i].name), subtitle: Text(filtered[i].price)),
       ),
     );
   }
 }
 
-class CartScreen extends StatelessWidget {
-  final VoidCallback onRemove;
-  CartScreen({required this.onRemove});
-
+// --- شاشة الملف الشخصي ---
+class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("سلة المشتريات")),
-      body: CartProvider.items.isEmpty 
-        ? Center(child: Text("السلة فارغة"))
-        : Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: CartProvider.items.length,
-                  itemBuilder: (context, i) => ListTile(
-                    title: Text(CartProvider.items[i].name),
-                    subtitle: Text("${CartProvider.items[i].price} ريال"),
-                    trailing: IconButton(icon: Icon(Icons.delete, color: Colors.red), onPressed: () {
-                      CartProvider.items.removeAt(i);
-                      onRemove();
-                    }),
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.all(20),
-                color: Colors.white10,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("الإجمالي:", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    Text("${CartProvider.total} ريال", style: TextStyle(fontSize: 20, color: Colors.amber)),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: ElevatedButton(onPressed: () {}, child: Text("إتمام الشراء"), style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 50), backgroundColor: Colors.green)),
-              )
-            ],
-          ),
+      body: Column(
+        children: [
+          SizedBox(height: 60),
+          Center(child: CircleAvatar(radius: 50, backgroundColor: Colors.amber, child: Icon(Icons.person, size: 50, color: Colors.black))),
+          SizedBox(height: 10),
+          Text("مستخدم يمني فخور", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Divider(),
+          _profileTile(Icons.history, "سجل المشتريات"),
+          _profileTile(Icons.location_on, "عناوين التوصيل"),
+          _profileTile(Icons.settings, "الإعدادات"),
+          _profileTile(Icons.exit_to_app, "تسجيل الخروج", color: Colors.red),
+        ],
+      ),
+    );
+  }
+  Widget _profileTile(IconData icon, String title, {Color? color}) => ListTile(leading: Icon(icon, color: color ?? Colors.amber), title: Text(title));
+}
+
+// --- شاشة الرئيسية البسيطة ---
+class HomeScreen extends StatelessWidget {
+  final VoidCallback onAdd;
+  HomeScreen({required this.onAdd});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("سوق اليمن الشامل"), actions: [IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {})]),
+      body: Center(child: Text("مرحباً بك في النسخة الكاملة أوفلاين")),
     );
   }
 }
 
-// صفحات فرعية فارغة للتنقل
-class ExploreScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("استكشف")); }
-class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("أضف إعلانك")); }
-class FavoritesScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("المفضلة")); }
+class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("أضف إعلان")), body: Center(child: Text("واجهة رفع الصور"))); }
+class FavoritesScreen extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("المفضلة")), body: Center(child: Text("قائمة الرغبات"))); }
