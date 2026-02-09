@@ -18,104 +18,66 @@ class YemenMarketApp extends StatelessWidget {
   }
 }
 
-// --- نموذج العملية المالية ---
-class Transaction {
-  final String title, amount, date;
-  final bool isCredit;
-  Transaction({required this.title, required this.amount, required this.date, required this.isCredit});
+// --- نموذج الموقع ---
+class ItemLocation {
+  final String city, district;
+  final double lat, lng;
+  ItemLocation({required this.city, required this.district, required this.lat, required this.lng});
 }
 
-// --- واجهة المحفظة (Wallet Screen) ---
-class WalletScreen extends StatelessWidget {
-  const WalletScreen({super.key});
+// 1. واجهة استكشاف المواقع (Map Explorer Screen)
+class MapExplorerScreen extends StatelessWidget {
+  const MapExplorerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> paymentMethods = [
-      {"name": "جيب (Kuraimi)", "icon": Icons.account_balance_wallet, "color": Colors.blue},
-      {"name": "جوالي (CAC Bank)", "icon": Icons.phone_android, "color": Colors.orange},
-      {"name": "كاش (YKB)", "icon": Icons.money, "color": Colors.green},
-      {"name": "ام فلوس (Alkuraimi)", "icon": Icons.payments, "color": Colors.red},
-      {"name": "بوابة الكريمي", "icon": Icons.account_balance, "color": Colors.lightBlue},
-    ];
-
-    final List<Transaction> history = [
-      Transaction(title: "شراء خنجر تراثي", amount: "-15,000 ريال", date: "2026/02/08", isCredit: false),
-      Transaction(title: "إيداع عبر جيب", amount: "+50,000 ريال", date: "2026/02/05", isCredit: true),
-      Transaction(title: "رسوم مزاد سيارة", amount: "-2,000 ريال", date: "2026/02/01", isCredit: false),
-    ];
-
     return Scaffold(
-      appBar: AppBar(title: const Text('المحفظة المالية')),
-      body: SingleChildScrollView(
+      appBar: AppBar(title: const Text('إعلانات قريبة منك')),
+      body: Stack(
+        children: [
+          // خلفية تحاكي الخريطة
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.blueGrey[900],
+            child: CustomPaint(painter: MapGridPainter()),
+          ),
+          // دبابيس المواقع (Markers)
+          _buildMarker(context, 100, 200, "تويوتا هايلوكس", "صنعاء - السبعين"),
+          _buildMarker(context, 250, 350, "شقة للإيجار", "عدن - كريتر"),
+          _buildMarker(context, 150, 500, "جنبية صيفاني", "تعز - الحوبان"),
+          
+          // شريط البحث العلوي
+          Positioned(
+            top: 20, left: 20, right: 20,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(30)),
+              child: const TextField(
+                decoration: InputDecoration(hintText: "ابحث في منطقتك...", border: InputBorder.none, icon: Icon(Icons.my_location, color: Colors.amber)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMarker(BuildContext context, double top, double left, String title, String loc) {
+    return Positioned(
+      top: top, left: left,
+      child: GestureDetector(
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$title في $loc")));
+        },
         child: Column(
           children: [
-            // بطاقة الرصيد
             Container(
-              margin: const EdgeInsets.all(20),
-              padding: const EdgeInsets.all(25),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Colors.amber, Colors.orangeAccent]),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('إجمالي الرصيد المتاح', style: TextStyle(color: Colors.black54, fontSize: 16)),
-                  const SizedBox(height: 10),
-                  const Text('75,400 ريال يمني', style: TextStyle(color: Colors.black, fontSize: 32, fontWeight: FontWeight.bold)),
-                  const Text('\$125.50 دولار أمريكي', style: TextStyle(color: Colors.black87, fontSize: 18)),
-                ],
-              ),
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+              child: Text(title, style: const TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
             ),
-
-            // طرق الدفع اليمنية
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Align(alignment: Alignment.centerRight, child: Text('طرق الإيداع والدفع المحلية', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-            ),
-            SizedBox(
-              height: 120,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                itemCount: paymentMethods.length,
-                itemBuilder: (context, i) => Container(
-                  width: 100,
-                  margin: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(paymentMethods[i]['icon'], color: paymentMethods[i]['color'], size: 30),
-                      const SizedBox(height: 8),
-                      Text(paymentMethods[i]['name'], textAlign: TextAlign.center, style: const TextStyle(fontSize: 10)),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // سجل العمليات
-            const Padding(
-              padding: EdgeInsets.all(20),
-              child: Align(alignment: Alignment.centerRight, child: Text('آخر العمليات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: history.length,
-              itemBuilder: (context, i) => ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: history[i].isCredit ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
-                  child: Icon(history[i].isCredit ? Icons.arrow_downward : Icons.arrow_upward, color: history[i].isCredit ? Colors.green : Colors.red),
-                ),
-                title: Text(history[i].title),
-                subtitle: Text(history[i].date),
-                trailing: Text(history[i].amount, style: TextStyle(color: history[i].isCredit ? Colors.green : Colors.white, fontWeight: FontWeight.bold)),
-              ),
-            ),
+            const Icon(Icons.location_on, color: Colors.amber, size: 35),
           ],
         ),
       ),
@@ -123,28 +85,22 @@ class WalletScreen extends StatelessWidget {
   }
 }
 
-// --- بقية الواجهات الأساسية المحسنة ---
-class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+class MapGridPainter extends CustomPainter {
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.store_mall_directory, size: 80, color: Colors.amber),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, minimumSize: const Size(200, 50)),
-            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainNavigator())),
-            child: const Text('دخول كضيف', style: TextStyle(color: Colors.black)),
-          ),
-        ],
-      ),
-    ),
-  );
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()..color = Colors.white10..strokeWidth = 1;
+    for (double i = 0; i < size.width; i += 40) {
+      canvas.drawLine(Offset(i, 0), Offset(i, size.height), paint);
+    }
+    for (double i = 0; i < size.height; i += 40) {
+      canvas.drawLine(Offset(0, i), Offset(size.width, i), paint);
+    }
+  }
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+// 2. تحديث المحرك الرئيسي ليتضمن الخريطة
 class MainNavigator extends StatefulWidget {
   const MainNavigator({super.key});
   @override
@@ -152,46 +108,36 @@ class MainNavigator extends StatefulWidget {
 }
 
 class _MainNavigatorState extends State<MainNavigator> {
-  int _index = 0;
+  int _index = 2;
   @override
   Widget build(BuildContext context) {
-    final pages = [const ProfileScreen(), const Center(child: Text('الرئيسية'))];
+    final pages = [
+      const ProfileScreen(),
+      const MapExplorerScreen(), // إضافة الخريطة هنا
+      const HomeScreen(),
+      const Center(child: Text('الدردشة')),
+      const Center(child: Text('المزادات')),
+    ];
     return Scaffold(
-      body: pages[_index == 0 ? 0 : 1],
+      body: pages[_index],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _index,
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.amber,
         onTap: (i) => setState(() => _index = i),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
+          BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: 'الخريطة'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'دردشة'),
+          BottomNavigationBarItem(icon: Icon(Icons.gavel), label: 'مزادات'),
         ],
       ),
     );
   }
 }
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('حسابي')),
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          const CircleAvatar(radius: 40, child: Icon(Icons.person, size: 40)),
-          const Text('زائر (Guest)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
-          ListTile(
-            leading: const Icon(Icons.account_balance_wallet, color: Colors.amber),
-            title: const Text('المحفظة المالية'),
-            subtitle: const Text('إدارة الرصيد، الإيداع، والسحب'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletScreen())),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// الواجهات الأساسية المختصرة
+class HomeScreen extends StatelessWidget { const HomeScreen({super.key}); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('الرئيسية'))); }
+class ProfileScreen extends StatelessWidget { const ProfileScreen({super.key}); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('الملف الشخصي'))); }
+class WelcomeScreen extends StatelessWidget { const WelcomeScreen({super.key}); @override Widget build(BuildContext context) => Scaffold(body: Center(child: ElevatedButton(onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainNavigator())), child: const Text('دخول كضيف')))); }
