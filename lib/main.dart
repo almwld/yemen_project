@@ -7,19 +7,29 @@ class YemenShamelApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'سوق اليمن الشامل',
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.amber,
-        scaffoldBackgroundColor: Color(0xFF0A0A0A),
-        appBarTheme: AppBarTheme(backgroundColor: Color(0xFF1A1A1A)),
+        scaffoldBackgroundColor: Color(0xFF0D0D0D),
+        cardColor: Color(0xFF1A1A1A),
       ),
       home: MainNavigation(),
     );
   }
 }
 
-// --- نظام التنقل الرئيسي ---
+// --- قاعدة بيانات محلية (Offline Data) ---
+class LocalData {
+  static const List<Map<String, dynamic>> products = [
+    {'id': '1', 'name': 'عقيق كبدي فاخر', 'price': '45,000', 'cat': 'تراثيات', 'desc': 'عقيق يماني أصلي بلون كبدي مميز.'},
+    {'id': '2', 'name': 'جنبية صيفاني', 'price': '120,000', 'cat': 'تراثيات', 'desc': 'جنبية صيفاني قديمة بلمسة تراثية فريدة.'},
+    {'id': '3', 'name': 'تويوتا هايلوكس 2022', 'price': '15,000,000', 'cat': 'سيارات', 'desc': 'سيارة نظيفة جداً، استخدام شخصي.'},
+    {'id': '4', 'name': 'شقة في حدة', 'price': '50,000,000', 'cat': 'عقارات', 'desc': 'شقة واسعة في حي راقي قريبة من الخدمات.'},
+    {'id': '5', 'name': 'آيفون 15 برو', 'price': '950,000', 'cat': 'إلكترونيات', 'desc': 'جهاز جديد بضمان الوكيل.'},
+  ];
+}
+
+// --- التنقل الرئيسي ---
 class MainNavigation extends StatefulWidget {
   @override
   _MainNavigationState createState() => _MainNavigationState();
@@ -27,28 +37,21 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
-  final List<Widget> _screens = [
-    HomeScreen(),
-    ExploreScreen(),
-    AddPostScreen(),
-    FavoritesScreen(),
-    ProfileScreen(),
-  ];
+  final List<Widget> _screens = [HomeScreen(), ExploreScreen(), AddPostScreen(), FavoritesScreen(), ProfileScreen()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'استكشف'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle, size: 35), label: 'أضف إعلان'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'إعلان'),
           BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'المفضلة'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
         ],
@@ -57,157 +60,136 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 }
 
-// --- شاشة الرئيسية ---
+// --- شاشة الرئيسية المطورة ---
 class HomeScreen extends StatelessWidget {
   final List<Map<String, dynamic>> categories = [
     {'name': 'سيارات', 'icon': Icons.directions_car, 'color': Colors.red},
     {'name': 'عقارات', 'icon': Icons.home, 'color': Colors.blue},
     {'name': 'إلكترونيات', 'icon': Icons.laptop, 'color': Colors.purple},
-    {'name': 'وظائف', 'icon': Icons.work, 'color': Colors.orange},
+    {'name': 'تراثيات', 'icon': Icons.diamond, 'color': Colors.orange},
+    {'name': 'وظائف', 'icon': Icons.work, 'color': Colors.green},
     {'name': 'مزادات', 'icon': Icons.timer, 'color': Colors.yellow},
-    {'name': 'خدمات', 'icon': Icons.build, 'color': Colors.green},
   ];
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          title: Text("سوق اليمن الشامل", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-          floating: true,
-          actions: [IconButton(icon: Icon(Icons.notifications), onPressed: () {})],
-        ),
-        SliverToBoxAdapter(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildBanner(),
-              _sectionTitle("الأقسام"),
-              _buildCategoriesGrid(),
-              _sectionTitle("المقتنيات التراثية المميزة"),
-            ],
-          ),
-        ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => _buildProductCard(context, index),
-            childCount: 4,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBanner() {
-    return Container(
-      height: 160, margin: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        gradient: LinearGradient(colors: [Colors.orange.shade900, Colors.red.shade900]),
-      ),
-      child: Stack(
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Positioned(right: 20, top: 40, child: Text("مزاد الجنابي\nالأسبوعي", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))),
-          Positioned(left: 20, bottom: 20, child: Icon(Icons.gavel, size: 60, color: Colors.white24)),
+          _header(),
+          _banner(),
+          _sectionTitle("الأقسام المتاحة (أوفلاين)"),
+          _buildCategories(context),
+          _sectionTitle("أحدث الإعلانات"),
+          _buildOfflineProducts(context),
         ],
       ),
     );
   }
 
-  Widget _sectionTitle(String title) => Padding(
-    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+  Widget _header() => Padding(
+    padding: EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 10),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [Text("عرض الكل", style: TextStyle(color: Colors.amber)), Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))],
+      children: [
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text("سوق اليمن الشامل", style: TextStyle(fontSize: 22, color: Colors.amber, fontWeight: FontWeight.bold)),
+          Text("وضع العمل بدون إنترنت 🟢", style: TextStyle(fontSize: 12, color: Colors.green)),
+        ]),
+        CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.person, color: Colors.black)),
+      ],
     ),
   );
 
-  Widget _buildCategoriesGrid() {
-    return GridView.builder(
-      shrinkWrap: true, physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 1.1),
-      itemCount: categories.length,
-      itemBuilder: (context, i) => InkWell(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => CategoryDetailScreen(categories[i]['name']))),
-        child: Card(
-          color: Color(0xFF1A1A1A),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(categories[i]['icon'], color: categories[i]['color'], size: 30),
-              SizedBox(height: 8),
-              Text(categories[i]['name'], style: TextStyle(fontSize: 13)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  Widget _banner() => Container(
+    height: 140, width: double.infinity, margin: EdgeInsets.all(15),
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), gradient: LinearGradient(colors: [Colors.amber.shade700, Colors.orange.shade900])),
+    child: Center(child: Text("مزادات مباشرة قريباً", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))),
+  );
 
-  Widget _buildProductCard(BuildContext context, int index) {
-    List<String> names = ["عقيق كبدي فاخر", "جنبية صيفاني", "سيف حميري", "خاتم فضة قديم"];
-    List<String> prices = ["45,000", "120,000", "85,000", "15,000"];
-    return ListTile(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => ProductDetailScreen(names[index], prices[index]))),
-      leading: Container(width: 60, height: 60, decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(8)), child: Icon(Icons.image, color: Colors.amber)),
-      title: Text(names[index]),
-      subtitle: Text("${prices[index]} ريال يمني", style: TextStyle(color: Colors.greenAccent)),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16),
+  Widget _sectionTitle(String t) => Padding(padding: EdgeInsets.all(15), child: Text(t, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)));
+
+  Widget _buildCategories(BuildContext context) => GridView.builder(
+    shrinkWrap: true, physics: NeverScrollableScrollPhysics(),
+    padding: EdgeInsets.symmetric(horizontal: 10),
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 1.2),
+    itemCount: categories.length,
+    itemBuilder: (context, i) => InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => CategoryPage(categories[i]['name']))),
+      child: Card(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(categories[i]['icon'], color: categories[i]['color']), Text(categories[i]['name'])])),
+    ),
+  );
+
+  Widget _buildOfflineProducts(BuildContext context) => ListView.builder(
+    shrinkWrap: true, physics: NeverScrollableScrollPhysics(),
+    itemCount: LocalData.products.length,
+    itemBuilder: (context, i) {
+      final p = LocalData.products[i];
+      return ListTile(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => ProductDetail(p))),
+        leading: Icon(Icons.image, color: Colors.amber),
+        title: Text(p['name']),
+        subtitle: Text("${p['price']} ريال", style: TextStyle(color: Colors.greenAccent)),
+        trailing: Icon(Icons.chevron_right),
+      );
+    },
+  );
+}
+
+// --- صفحة القسم المتفاعلة ---
+class CategoryPage extends StatelessWidget {
+  final String categoryName;
+  CategoryPage(this.categoryName);
+  @override
+  Widget build(BuildContext context) {
+    final filtered = LocalData.products.where((p) => p['cat'] == categoryName).toList();
+    return Scaffold(
+      appBar: AppBar(title: Text("إعلانات $categoryName")),
+      body: filtered.isEmpty 
+        ? Center(child: Text("لا توجد إعلانات محملة لهذا القسم حالياً"))
+        : ListView.builder(
+            itemCount: filtered.length,
+            itemBuilder: (c, i) => ListTile(
+              title: Text(filtered[i]['name']),
+              subtitle: Text(filtered[i]['price']),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => ProductDetail(filtered[i]))),
+            ),
+          ),
     );
   }
 }
 
-// --- شاشة تفاصيل المنتج ---
-class ProductDetailScreen extends StatelessWidget {
-  final String name, price;
-  ProductDetailScreen(this.name, this.price);
+// --- صفحة تفاصيل المنتج ---
+class ProductDetail extends StatelessWidget {
+  final Map<String, dynamic> p;
+  ProductDetail(this.p);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(name)),
+      appBar: AppBar(title: Text(p['name'])),
       body: Column(
         children: [
-          Container(height: 300, width: double.infinity, color: Colors.white10, child: Icon(Icons.image, size: 100, color: Colors.white24)),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                Text("$price ريال يمني", style: TextStyle(fontSize: 22, color: Colors.greenAccent)),
-                SizedBox(height: 20),
-                Text("تفاصيل المنتج: هذا المنتج يعتبر من أندر القطع التراثية اليمنية الأصلية، يتميز بجودة عالية وضمان حقيقي.", style: TextStyle(color: Colors.grey, fontSize: 16)),
-              ],
-            ),
-          ),
+          Container(height: 250, width: double.infinity, color: Colors.white10, child: Icon(Icons.image, size: 80)),
+          Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(p['name'], style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            Text("${p['price']} ريال يمني", style: TextStyle(fontSize: 20, color: Colors.amber)),
+            Divider(height: 30),
+            Text(p['desc'], style: TextStyle(fontSize: 16, color: Colors.grey)),
+          ])),
           Spacer(),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Row(
-              children: [
-                Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.amber), onPressed: () {}, child: Text("اتصال الآن", style: TextStyle(color: Colors.black)))),
-                SizedBox(width: 10),
-                Expanded(child: OutlinedButton(onPressed: () {}, child: Text("إضافة للسلة", style: TextStyle(color: Colors.amber)))),
-              ],
-            ),
-          )
+          Padding(padding: EdgeInsets.all(20), child: ElevatedButton(
+            style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 50), backgroundColor: Colors.amber),
+            onPressed: () {}, child: Text("إضافة للسلة (محلي)", style: TextStyle(color: Colors.black)),
+          )),
         ],
       ),
     );
   }
 }
 
-// --- شاشات فرعية للمواصلة ---
-class CategoryDetailScreen extends StatelessWidget {
-  final String title;
-  CategoryDetailScreen(this.title);
-  @override
-  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("قسم $title")), body: Center(child: Text("قائمة إعلانات $title فارغة حالياً")));
-}
-
-class ExploreScreen extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("استكشف")), body: Center(child: Text("ابحث عن أي شيء في اليمن"))); }
-class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("أضف إعلانك")), body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.add_a_photo, size: 50), Text("قم بتصوير منتجك ورفعه هنا")]))); }
-class FavoritesScreen extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("المفضلة")), body: Center(child: Text("لا توجد إعلانات محفوظة"))); }
-class ProfileScreen extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("الملف الشخصي")), body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [CircleAvatar(radius: 40, child: Icon(Icons.person, size: 40)), Text("سجل الدخول لإدارة إعلاناتك")]))); }
+// بقية الصفحات
+class ExploreScreen extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(body: Center(child: Text("البحث أوفلاين متاح"))); }
+class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(body: Center(child: Text("سيتم حفظ الإعلان محلياً"))); }
+class FavoritesScreen extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(body: Center(child: Text("المفضلة فارغة"))); }
+class ProfileScreen extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(body: Center(child: Text("ملفك الشخصي (أوفلاين)"))); }
