@@ -1,0 +1,43 @@
+workflows:
+  flutter-apk-workflow:
+    name: APK Yemen Market (Final Victory)
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      flutter: stable
+      groups:
+        - google_play # اختياري إذا كان لديك إعدادات مسبقة
+    scripts:
+      - name: إنشاء بيئة بناء معزولة
+        script: | 
+          # 1. إنشاء المشروع الجديد وتطهير مجلداته
+          flutter create --platforms android temp_app
+          rm -rf temp_app/lib
+          
+          # 2. نقل كودك النظيف للمشروع المؤقت
+          cp -r lib temp_app/
+          cp pubspec.yaml temp_app/
+          [ -d assets ] && cp -r assets temp_app/ || true
+          
+          # 3. إعداد Firebase إذا وجد الملف
+          if [ -f google-services.json ]; then
+            mkdir -p temp_app/android/app
+            cp google-services.json temp_app/android/app/
+          fi
+
+          # 4. جلب المكتبات
+          cd temp_app
+          flutter pub get
+
+      - name: بناء APK Release
+        script: |
+          cd temp_app
+          # البناء مع تعطيل فحص الأيقونات لتجنب أي تعليق
+          flutter build apk --release --no-tree-shake-icons
+          
+          # 5. نقل الـ APK للمجلد الرئيسي ليراه Codemagic
+          mkdir -p $CM_BUILD_DIR/build/app/outputs/flutter-apk/
+          cp build/app/outputs/flutter-apk/app-release.apk $CM_BUILD_DIR/build/app/outputs/flutter-apk/
+
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
