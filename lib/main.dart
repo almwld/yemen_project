@@ -1,236 +1,147 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(YemenShamelApp());
-}
+void main() => runApp(const YemenMarketApp());
 
-class YemenShamelApp extends StatelessWidget {
+class YemenMarketApp extends StatelessWidget {
+  const YemenMarketApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'سوق اليمن الشامل',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Color(0xFFFFD700), // اللون الذهبي من شعارك
-        scaffoldBackgroundColor: Colors.black,
+      theme: ThemeData.dark().copyWith(
+        primaryColor: Colors.amber,
+        scaffoldBackgroundColor: const Color(0xFF121212),
       ),
-      home: MainNavigation(),
+      home: const MainNavigator(),
     );
   }
 }
 
-// التحكم في التنقل السفلي
-class MainNavigation extends StatefulWidget {
+class MainNavigator extends StatefulWidget {
+  const MainNavigator({super.key});
   @override
-  _MainNavigationState createState() => _MainNavigationState();
+  State<MainNavigator> createState() => _MainNavigatorState();
 }
 
-class _MainNavigationState extends State<MainNavigation> {
-  int _selectedIndex = 0;
-  final List<Widget> _pages = [HomeScreen(), ExploreScreen(), PostAdScreen(), FavoritesScreen(), SettingsScreen()];
+class _MainNavigatorState extends State<MainNavigator> {
+  int _index = 4;
+  final List<Widget> _pages = [
+    const Center(child: Text('الإعدادات', style: TextStyle(fontSize: 24))),
+    const Center(child: Text('المفضلة', style: TextStyle(fontSize: 24))),
+    const AddAdScreen(),
+    const Center(child: Text('استكشف', style: TextStyle(fontSize: 24))),
+    const HomeScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: _pages[_index],
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _index,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.black,
         selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.white60,
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'استكشف'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'أضف إعلان'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'المفضلة'),
+        unselectedItemColor: Colors.grey,
+        onTap: (i) => setState(() => _index = i),
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'الإعدادات'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'المفضلة'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'أضف إعلان'),
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'استكشف'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
         ],
       ),
     );
   }
 }
 
-// الواجهة الرئيسية (الموجودة في الصورة)
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(),
-          _buildBanner(),
-          _buildSectionHeader("الخدمات والأقسام"),
-          _buildCategoriesGrid(context),
-          _buildSectionHeader("المقتنيات التراثية المميزة"),
-          _buildFeaturedProducts(context),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('سوق اليمن الشامل', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Icon(Icons.notifications_none, size: 30),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text("سوق اليمن الشامل", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.amber)),
-              Text("مرحباً، أيها المستخدم", style: TextStyle(color: Colors.white70)),
-            ],
-          ),
-          CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.person, color: Colors.black)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBanner() {
-    return Container(
-      margin: EdgeInsets.all(15),
-      height: 150,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [Colors.orange, Colors.redAccent]),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Center(child: Text("مزاد الجنابي الأسبوعي", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))),
-    );
-  }
-
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("عرض الكل", style: TextStyle(color: Colors.amber)),
-          Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoriesGrid(BuildContext context) {
-    List<Map<String, dynamic>> cats = [
-      {"name": "سيارات", "icon": Icons.directions_car, "color": Colors.red},
-      {"name": "عقارات", "icon": Icons.home, "color": Colors.blue},
-      {"name": "إلكترونيات", "icon": Icons.laptop, "color": Colors.purple},
-      {"name": "وظائف", "icon": Icons.work, "color": Colors.orange},
-      {"name": "مزادات", "icon": Icons.timer, "color": Colors.yellow},
-      {"name": "خدمات صيانة", "icon": Icons.build, "color": Colors.green},
-    ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.all(15),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10),
-      itemCount: cats.length,
-      itemBuilder: (context, i) {
-        return InkWell(
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryPage(title: cats[i]['name']))),
-          child: Container(
-            decoration: BoxDecoration(color: Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(15)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              height: 150,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Colors.orange, Colors.redAccent]),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Center(child: Text('مزاد الجنابي الأسبوعي', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white))),
+            ),
+            const SizedBox(height: 25),
+            const Text('الأقسام الرئيسية', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 15),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 3,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
               children: [
-                Icon(cats[i]['icon'], color: cats[i]['color'], size: 30),
-                SizedBox(height: 10),
-                Text(cats[i]['name'], style: TextStyle(fontSize: 12)),
+                _catIcon(Icons.directions_car, 'سيارات', Colors.red),
+                _catIcon(Icons.home, 'عقارات', Colors.blue),
+                _catIcon(Icons.laptop, 'إلكترونيات', Colors.purple),
+                _catIcon(Icons.timer, 'مزادات', Colors.orange),
+                _catIcon(Icons.work, 'وظائف', Colors.brown),
+                _catIcon(Icons.build, 'صيانة', Colors.green),
               ],
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildFeaturedProducts(BuildContext context) {
+  Widget _catIcon(IconData icon, String label, Color color) {
     return Container(
-      height: 200,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
+      decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _productCard(context, "عقيق كبدي فاخر", "45 ألف", Icons.diamond),
-          _productCard(context, "جنبية صيفاني", "120 ألف", Icons.military_tech),
+          Icon(icon, color: color, size: 35),
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(fontSize: 13)),
         ],
       ),
     );
   }
-
-  Widget _productCard(BuildContext context, String name, String price, IconData icon) {
-    return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetails(name: name, price: price))),
-      child: Container(
-        width: 160,
-        margin: EdgeInsets.only(left: 15),
-        decoration: BoxDecoration(color: Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(15)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 50, color: Colors.amber),
-            Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(price, style: TextStyle(color: Colors.green)),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
-// واجهة الأقسام الجديدة
-class CategoryPage extends StatelessWidget {
-  final String title;
-  CategoryPage({required this.title});
+class AddAdScreen extends StatelessWidget {
+  const AddAdScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text("قائمة منتجات قسم $title")),
-    );
-  }
-}
-
-// واجهة تفاصيل المنتج والشراء
-class ProductDetails extends StatelessWidget {
-  final String name, price;
-  ProductDetails({required this.name, required this.price});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(name)),
+      appBar: AppBar(title: const Text('أضف إعلان جديد')),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Container(height: 200, color: Colors.grey[900], child: Icon(Icons.image, size: 100)),
-            SizedBox(height: 20),
-            Text(name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Text("السعر: $price ريال", style: TextStyle(fontSize: 20, color: Colors.green)),
-            Spacer(),
-            Row(
-              children: [
-                Expanded(child: ElevatedButton(onPressed: () {}, child: Text("إضافة للسلة"), style: ElevatedButton.styleFrom(backgroundColor: Colors.blue))),
-                SizedBox(width: 10),
-                Expanded(child: ElevatedButton(onPressed: () {}, child: Text("شراء الآن"), style: ElevatedButton.styleFrom(backgroundColor: Colors.green))),
-              ],
-            )
+            const TextField(decoration: InputDecoration(labelText: 'عنوان الإعلان', border: OutlineInputBorder())),
+            const SizedBox(height: 15),
+            const TextField(maxLines: 3, decoration: InputDecoration(labelText: 'وصف المنتج', border: OutlineInputBorder())),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, minimumSize: const Size(double.infinity, 50)),
+              onPressed: () {}, 
+              child: const Text('نشر الآن', style: TextStyle(color: Colors.black, fontSize: 18)),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-// صفحات فارغة لبقية القائمة
-class ExploreScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("استكشف")); }
-class PostAdScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("أضف إعلانك")); }
-class FavoritesScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("المفضلة")); }
-class SettingsScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("الإعدادات")); }
