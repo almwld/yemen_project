@@ -18,44 +18,50 @@ class YemenMarketApp extends StatelessWidget {
   }
 }
 
-// --- نموذج الموقع ---
-class ItemLocation {
-  final String city, district;
-  final double lat, lng;
-  ItemLocation({required this.city, required this.district, required this.lat, required this.lng});
+// --- نموذج التقييم ---
+class Review {
+  final String username, comment, date;
+  final double rating;
+  Review({required this.username, required this.comment, required this.date, required this.rating});
 }
 
-// 1. واجهة استكشاف المواقع (Map Explorer Screen)
-class MapExplorerScreen extends StatelessWidget {
-  const MapExplorerScreen({super.key});
+// 1. واجهة التقييمات (Reviews Screen)
+class ReviewsScreen extends StatelessWidget {
+  const ReviewsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final List<Review> reviews = [
+      Review(username: "محمد اليافعي", comment: "المنتج ممتاز جداً والتوصيل كان سريع في صنعاء.", date: "منذ يومين", rating: 5.0),
+      Review(username: "سارة العدني", comment: "الجودة جيدة جداً مقارنة بالسعر.", date: "منذ أسبوع", rating: 4.0),
+      Review(username: "أحمد تعز", comment: "التغليف يحتاج تحسين بسيط لكن المنتج شغال تمام.", date: "منذ شهر", rating: 3.5),
+    ];
+
     return Scaffold(
-      appBar: AppBar(title: const Text('إعلانات قريبة منك')),
-      body: Stack(
+      appBar: AppBar(title: const Text('آراء المشترين')),
+      body: Column(
         children: [
-          // خلفية تحاكي الخريطة
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.blueGrey[900],
-            child: CustomPaint(painter: MapGridPainter()),
+          // ملخص التقييمات العلوي
+          _buildRatingSummary(),
+          const Divider(),
+          // قائمة التعليقات
+          Expanded(
+            child: ListView.builder(
+              itemCount: reviews.length,
+              itemBuilder: (context, i) => _buildReviewItem(reviews[i]),
+            ),
           ),
-          // دبابيس المواقع (Markers)
-          _buildMarker(context, 100, 200, "تويوتا هايلوكس", "صنعاء - السبعين"),
-          _buildMarker(context, 250, 350, "شقة للإيجار", "عدن - كريتر"),
-          _buildMarker(context, 150, 500, "جنبية صيفاني", "تعز - الحوبان"),
-          
-          // شريط البحث العلوي
-          Positioned(
-            top: 20, left: 20, right: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(30)),
-              child: const TextField(
-                decoration: InputDecoration(hintText: "ابحث في منطقتك...", border: InputBorder.none, icon: Icon(Icons.my_location, color: Colors.amber)),
+          // زر إضافة تقييم
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.amber,
+                minimumSize: const Size(double.infinity, 50),
               ),
+              onPressed: () {},
+              icon: const Icon(Icons.rate_review, color: Colors.black),
+              label: const Text('إضافة تقييمك', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -63,44 +69,64 @@ class MapExplorerScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMarker(BuildContext context, double top, double left, String title, String loc) {
-    return Positioned(
-      top: top, left: left,
-      child: GestureDetector(
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$title في $loc")));
-        },
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
-              child: Text(title, style: const TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
-            ),
-            const Icon(Icons.location_on, color: Colors.amber, size: 35),
-          ],
-        ),
+  Widget _buildRatingSummary() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Column(
+            children: [
+              Text('4.2', style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.amber)),
+              Row(
+                children: [
+                  Icon(Icons.star, color: Colors.amber, size: 20),
+                  Icon(Icons.star, color: Colors.amber, size: 20),
+                  Icon(Icons.star, color: Colors.amber, size: 20),
+                  Icon(Icons.star, color: Colors.amber, size: 20),
+                  Icon(Icons.star_half, color: Colors.amber, size: 20),
+                ],
+              ),
+              Text('بناءً على 150 تقييم', style: TextStyle(color: Colors.grey, fontSize: 12)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReviewItem(Review review) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(review.username, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(review.date, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            ],
+          ),
+          Row(
+            children: List.generate(5, (index) {
+              return Icon(
+                index < review.rating ? Icons.star : Icons.star_border,
+                color: Colors.amber,
+                size: 16,
+              );
+            }),
+          ),
+          const SizedBox(height: 5),
+          Text(review.comment, style: const TextStyle(height: 1.4)),
+          const Divider(height: 30),
+        ],
       ),
     );
   }
 }
 
-class MapGridPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint()..color = Colors.white10..strokeWidth = 1;
-    for (double i = 0; i < size.width; i += 40) {
-      canvas.drawLine(Offset(i, 0), Offset(i, size.height), paint);
-    }
-    for (double i = 0; i < size.height; i += 40) {
-      canvas.drawLine(Offset(0, i), Offset(size.width, i), paint);
-    }
-  }
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// 2. تحديث المحرك الرئيسي ليتضمن الخريطة
+// 2. تحديث المحرك الرئيسي لربط الواجهة
 class MainNavigator extends StatefulWidget {
   const MainNavigator({super.key});
   @override
@@ -113,7 +139,7 @@ class _MainNavigatorState extends State<MainNavigator> {
   Widget build(BuildContext context) {
     final pages = [
       const ProfileScreen(),
-      const MapExplorerScreen(), // إضافة الخريطة هنا
+      const Center(child: Text('الخريطة')),
       const HomeScreen(),
       const Center(child: Text('الدردشة')),
       const Center(child: Text('المزادات')),
@@ -127,7 +153,7 @@ class _MainNavigatorState extends State<MainNavigator> {
         onTap: (i) => setState(() => _index = i),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
-          BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: 'الخريطة'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'الخريطة'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'دردشة'),
           BottomNavigationBarItem(icon: Icon(Icons.gavel), label: 'مزادات'),
@@ -137,7 +163,20 @@ class _MainNavigatorState extends State<MainNavigator> {
   }
 }
 
-// الواجهات الأساسية المختصرة
-class HomeScreen extends StatelessWidget { const HomeScreen({super.key}); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('الرئيسية'))); }
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ReviewsScreen())),
+          child: const Text('عرض تقييمات المنتج (تجربة)'),
+        ),
+      ),
+    );
+  }
+}
+
 class ProfileScreen extends StatelessWidget { const ProfileScreen({super.key}); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('الملف الشخصي'))); }
 class WelcomeScreen extends StatelessWidget { const WelcomeScreen({super.key}); @override Widget build(BuildContext context) => Scaffold(body: Center(child: ElevatedButton(onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainNavigator())), child: const Text('دخول كضيف')))); }
