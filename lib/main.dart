@@ -19,26 +19,17 @@ class YemenMarketApp extends StatelessWidget {
 }
 
 // --- النماذج ---
-class Product {
-  final String id, name, price, desc, category;
-  Product({required this.id, required this.name, required this.price, required this.desc, required this.category});
-}
-
 class AppNotification {
   final String title, body, time;
-  final bool isRead;
-  AppNotification({required this.title, required this.body, required this.time, this.isRead = false});
+  AppNotification({required this.title, required this.body, required this.time});
 }
 
 // --- البيانات العامة ---
-List<Product> globalCart = [];
-List<Product> myProducts = [];
 List<AppNotification> notifications = [
-  AppNotification(title: "مرحباً بك في سوق اليمن", body: "يمكنك الآن البدء ببيع وشرء السلع بكل سهولة كضيف.", time: "الآن"),
-  AppNotification(title: "تحديث جديد", body: "تم إضافة قسم المزادات الأسبوعية، تفقده الآن!", time: "منذ ساعة"),
+  AppNotification(title: "مرحباً بك", body: "استكشف سوق اليمن الشامل الآن.", time: "الآن"),
 ];
 
-// 1. صفحة الترحيب
+// 1. صفحة الترحيب (الدخول كضيف)
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
   @override
@@ -63,7 +54,7 @@ class WelcomeScreen extends StatelessWidget {
   }
 }
 
-// 2. المحرك الرئيسي
+// 2. المحرك الرئيسي للتنقل
 class MainNavigator extends StatefulWidget {
   const MainNavigator({super.key});
   @override
@@ -71,7 +62,7 @@ class MainNavigator extends StatefulWidget {
 }
 
 class _MainNavigatorState extends State<MainNavigator> {
-  int _index = 4;
+  int _index = 2; // البدء من الرئيسية
   void _update() => setState(() {});
 
   @override
@@ -79,9 +70,9 @@ class _MainNavigatorState extends State<MainNavigator> {
     final pages = [
       ProfileScreen(refresh: _update),
       const Center(child: Text('المفضلة')),
-      AddProductScreen(onAdded: _update),
+      const HomeScreen(),
       const Center(child: Text('البحث')),
-      HomeScreen(refresh: _update),
+      const Center(child: Text('المزادات')),
     ];
 
     return Scaffold(
@@ -91,72 +82,37 @@ class _MainNavigatorState extends State<MainNavigator> {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.amber,
         onTap: (i) => setState(() => _index = i),
-        items: [
-          const BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
-          const BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'مفضلة'),
-          const BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'بيع'),
-          const BottomNavigationBarItem(icon: Icon(Icons.search), label: 'بحث'),
-          BottomNavigationBarItem(icon: Badge(label: Text('${globalCart.length}'), child: const Icon(Icons.home)), label: 'الرئيسية'),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'مفضلة'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'بحث'),
+          BottomNavigationBarItem(icon: Icon(Icons.gavel), label: 'مزاد'),
         ],
       ),
     );
   }
 }
 
-// 3. الصفحة الرئيسية مع أيقونة الإشعارات
+// 3. الصفحة الرئيسية
 class HomeScreen extends StatelessWidget {
-  final VoidCallback refresh;
-  const HomeScreen({super.key, required this.refresh});
-
+  const HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text('سوق اليمن'),
         leading: IconButton(
-          icon: const Badge(child: Icon(Icons.notifications_none)),
+          icon: const Icon(Icons.notifications_none),
           onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsScreen())),
         ),
-        title: const Text('سوق اليمن الشامل'),
-        actions: [
-          IconButton(icon: const Icon(Icons.shopping_cart_outlined), onPressed: () {}),
-        ],
       ),
-      body: const Center(child: Text('استكشف أحدث العروض في اليمن')),
+      body: const Center(child: Text('محتوى السوق يظهر هنا')),
     );
   }
 }
 
-// 4. واجهة الإشعارات (Notifications Screen)
-class NotificationsScreen extends StatelessWidget {
-  const NotificationsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('التنبيهات')),
-      body: notifications.isEmpty
-          ? const Center(child: Text('لا توجد تنبيهات جديدة'))
-          : ListView.builder(
-              itemCount: notifications.length,
-              itemBuilder: (context, i) => Container(
-                margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.grey.withOpacity(0.2))),
-                ),
-                child: ListTile(
-                  leading: const CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.info_outline, color: Colors.black)),
-                  title: Text(notifications[i].title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text(notifications[i].body),
-                  trailing: Text(notifications[i].time, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                  onTap: () {},
-                ),
-              ),
-            ),
-    );
-  }
-}
-
-// 5. واجهة الملف الشخصي
+// 4. صفحة الملف الشخصي (موسعة)
 class ProfileScreen extends StatelessWidget {
   final VoidCallback refresh;
   const ProfileScreen({super.key, required this.refresh});
@@ -164,27 +120,114 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('الملف الشخصي')),
-      body: Column(children: [
-        const SizedBox(height: 20),
-        const CircleAvatar(radius: 40, child: Icon(Icons.person, size: 40)),
-        const Text('زائر (Guest)', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 20),
-        ListTile(
-          leading: const Icon(Icons.notifications, color: Colors.amber),
-          title: const Text('مركز التنبيهات'),
-          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsScreen())),
-        ),
-      ]),
+      appBar: AppBar(title: const Text('الإعدادات والمعلومات')),
+      body: ListView(
+        children: [
+          const SizedBox(height: 20),
+          const Center(child: CircleAvatar(radius: 40, child: Icon(Icons.person, size: 40))),
+          const Center(child: Text('زائر (Guest)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+          const SizedBox(height: 20),
+          _infoTile(context, Icons.info_outline, "عن سوق اليمن", const AboutUsScreen()),
+          _infoTile(context, Icons.help_outline, "الأسئلة الشائعة", const FAQScreen()),
+          _infoTile(context, Icons.description_outlined, "شروط الاستخدام", const PrivacyPolicyScreen()),
+          _infoTile(context, Icons.contact_support_outlined, "تواصل مع الإدارة", null),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.redAccent),
+            title: const Text('خروج'),
+            onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const WelcomeScreen())),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoTile(BuildContext context, IconData icon, String title, Widget? page) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.amber),
+      title: Text(title),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: () {
+        if (page != null) Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+      },
     );
   }
 }
 
-// واجهات تكميلية لمنع الخطأ
-class AddProductScreen extends StatelessWidget {
-  final VoidCallback onAdded;
-  const AddProductScreen({super.key, required this.onAdded});
+// 5. واجهة "عن التطبيق"
+class AboutUsScreen extends StatelessWidget {
+  const AboutUsScreen({super.key});
   @override
-  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('بيع')), body: const Center(child: Text('إضافة منتج')));
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('عن سوق اليمن')),
+      body: const Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text('سوق اليمن الشامل', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.amber)),
+            SizedBox(height: 10),
+            Text(
+              'أكبر منصة يمنية متكاملة تهدف لربط البائع بالمشتري في جميع محافظات الجمهورية. نحن نسعى لتسهيل عملية التجارة الإلكترونية وتقديم خدمات المزاد العلني بأحدث التقنيات.',
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 16, height: 1.5),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 6. واجهة "الأسئلة الشائعة"
+class FAQScreen extends StatelessWidget {
+  const FAQScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final faqs = [
+      {"q": "كيف يمكنني إضافة إعلان؟", "a": "اضغط على زر 'بيع' في القائمة السفلية واملأ بيانات السلعة."},
+      {"q": "هل استخدام التطبيق مجاني؟", "a": "نعم، التصفح وعرض السلع مجاني تماماً."},
+      {"q": "كيف أتواصل مع البائع؟", "a": "يمكنك الضغط على زر الواتساب أو الاتصال المباشر في صفحة السلعة."},
+    ];
+    return Scaffold(
+      appBar: AppBar(title: const Text('الأسئلة الشائعة')),
+      body: ListView.builder(
+        itemCount: faqs.length,
+        itemBuilder: (context, i) => ExpansionTile(
+          title: Text(faqs[i]['q']!, style: const TextStyle(color: Colors.amber)),
+          children: [Padding(padding: const EdgeInsets.all(15), child: Text(faqs[i]['a']!, textAlign: TextAlign.right))],
+        ),
+      ),
+    );
+  }
+}
+
+// 7. واجهة "الخصوصية والشروط"
+class PrivacyPolicyScreen extends StatelessWidget {
+  const PrivacyPolicyScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('شروط الاستخدام')),
+      body: const SingleChildScrollView(
+        padding: EdgeInsets.all(20),
+        child: Text(
+          '1. يمنع عرض السلع المحظورة قانوناً.\n'
+          '2. المتجر غير مسؤول عن عمليات الاحتيال، ننصح بالمعاينة قبل الدفع.\n'
+          '3. يجب أن تكون الصور حقيقية للسلعة المعروضة.\n'
+          '4. يحق للإدارة حذف أي إعلان مخالف دون سابق إنذار.',
+          textAlign: TextAlign.right,
+          style: TextStyle(height: 2.0),
+        ),
+      ),
+    );
+  }
+}
+
+// 8. واجهة الإشعارات
+class NotificationsScreen extends StatelessWidget {
+  const NotificationsScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('التنبيهات')), body: const Center(child: Text('لا توجد تنبيهات حالياً')));
 }
