@@ -1,7 +1,7 @@
 name: yemen_project
-description: "Yemen Comprehensive Market - Full Version"
+description: "Yemen Comprehensive Market"
 publish_to: 'none'
-version: 1.0.6+1
+version: 1.0.7+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -14,6 +14,14 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/logo.png"
 
 flutter:
   uses-material-design: true
