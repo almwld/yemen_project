@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:image_picker/image_picker.dart';
 
 void main() => runApp(YemenMarketApp());
 
@@ -7,76 +7,42 @@ class YemenMarketApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'سوق اليمن الشامل',
       debugShowCheckedModeBanner: false,
-      textDirection: TextDirection.rtl,
-      theme: ThemeData.dark().copyWith(
-        primaryColor: Color(0xFFCE1126),
-        scaffoldBackgroundColor: Colors.black,
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.amber,
+        scaffoldBackgroundColor: Color(0xFF121212),
       ),
-      home: SplashScreen(), // البداية من شاشة الترحيب
+      home: WelcomeScreen(),
     );
   }
 }
 
-// --- شاشة الترحيب (Splash Screen) ---
-class SplashScreen extends StatefulWidget {
-  @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // الانتقال للرئيسية بعد 3 ثوانٍ
-    Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MainNavigation()),
-      );
-    });
-  }
-
+// --- شاشة الترحيب (اللوجو + دخول الضيف) ---
+class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.black, Color(0xFF1A0000)],
-          ),
-        ),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // صورة خريطة اليمن مع تأثير بسيط
-            TweenAnimationBuilder(
-              tween: Tween<double>(begin: 0, end: 1),
-              duration: Duration(seconds: 2),
-              builder: (context, double value, child) {
-                return Opacity(
-                  opacity: value,
-                  child: Image.asset('assets/yemen_map.png', width: 250),
-                );
-              },
-            ),
-            SizedBox(height: 30),
-            Text(
-              "سوق اليمن الشامل",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.amber,
-                letterSpacing: 1.2,
-              ),
-            ),
-            SizedBox(height: 10),
-            CircularProgressIndicator(color: Colors.red),
+            Image.asset('assets/logo.png', width: 150, errorBuilder: (context, error, stackTrace) {
+              return Icon(Icons.store, size: 100, color: Colors.amber);
+            }),
+            SizedBox(height: 20),
+            Text('سوق اليمن الشامل', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
             SizedBox(height: 50),
-            Text("بكل فخر.. من صنعاء إلى كل اليمن", style: TextStyle(color: Colors.white54)),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
+              onPressed: () {}, 
+              child: Padding(padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15), child: Text('تسجيل الدخول')),
+            ),
+            TextButton(
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen())),
+              child: Text('الدخول كضيف', style: TextStyle(color: Colors.amber, fontSize: 16)),
+            ),
           ],
         ),
       ),
@@ -84,38 +50,60 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// --- الكود السابق للواجهة الرئيسية (تم دمجه هنا ليعمل المشروع كاملاً) ---
-class MainNavigation extends StatefulWidget {
-  @override
-  _MainNavigationState createState() => _MainNavigationState();
-}
-
-class _MainNavigationState extends State<MainNavigation> {
-  int _selectedIndex = 0;
-  final List<Widget> _pages = [HomePage(), SearchPage(), SellPage(), CartPage(), SettingsPage()];
+// --- واجهة السوق (الأقسام + رفع الصور) ---
+class HomeScreen extends StatelessWidget {
+  final List<Map<String, dynamic>> categories = [
+    {'name': 'سيارات', 'icon': Icons.directions_car},
+    {'name': 'عقارات', 'icon': Icons.home},
+    {'name': 'جوالات', 'icon': Icons.phone_android},
+    {'name': 'إلكترونيات', 'icon': Icons.tv},
+    {'name': 'وظائف', 'icon': Icons.work},
+    {'name': 'خدمات', 'icon': Icons.build},
+    {'name': 'أزياء', 'icon': Icons.checkroom},
+    {'name': 'أدوات منزلية', 'icon': Icons.kitchen},
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.white60,
-        backgroundColor: Color(0xFF0D0D0D),
-        onTap: (index) => setState(() => _selectedIndex = index),
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'بحث'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle, size: 35), label: 'بيع'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: 'السلة'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'الإعدادات'),
-        ],
+      appBar: AppBar(title: Text('أقسام السوق'), centerTitle: true),
+      body: GridView.builder(
+        padding: EdgeInsets.all(15),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15),
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {}, // هنا يتم عرض منتجات القسم
+            child: Card(
+              color: Color(0xFF1E1E1E),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(categories[index]['icon'], size: 45, color: Colors.amber),
+                  SizedBox(height: 10),
+                  Text(categories[index]['name'], style: TextStyle(fontSize: 18)),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _pickImage(context),
+        label: Text('أضف إعلان'),
+        icon: Icon(Icons.add_a_photo),
+        backgroundColor: Colors.amber,
       ),
     );
   }
-}
 
-// (ملاحظة: كلاسات HomePage و SettingsPage و Product تظل كما هي في الكود السابق)
-// ... أضف هنا كلاسات HomePage و Product و SettingsPage من الكود السابق ...
+  Future<void> _pickImage(BuildContext context) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم اختيار الصورة: ${image.name}')));
+    }
+  }
+}
