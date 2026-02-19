@@ -7,16 +7,25 @@ class YemenMarketApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      textDirection: TextDirection.rtl, // دعم اللغة العربية
+      textDirection: TextDirection.rtl,
       theme: ThemeData.dark().copyWith(
         primaryColor: Color(0xFFCE1126),
         scaffoldBackgroundColor: Colors.black,
-        cardColor: Color(0xFF1E1E1E),
+        cardColor: Color(0xFF1A1A1A),
         colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.amber),
       ),
       home: MainNavigation(),
     );
   }
+}
+
+// نموذج البيانات للمنتجات
+class Product {
+  final String name;
+  final String price;
+  final String location;
+  final IconData icon;
+  Product(this.name, this.price, this.location, this.icon);
 }
 
 class MainNavigation extends StatefulWidget {
@@ -37,13 +46,13 @@ class _MainNavigationState extends State<MainNavigation> {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.amber,
         unselectedItemColor: Colors.white60,
-        backgroundColor: Color(0xFF121212),
+        backgroundColor: Color(0xFF0D0D0D),
         onTap: (index) => setState(() => _selectedIndex = index),
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'الرئيسية'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'بحث'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'بيع'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_basket), label: 'السلة'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_circle, size: 35), label: 'بيع'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: 'السلة'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'الإعدادات'),
         ],
       ),
@@ -51,43 +60,52 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 }
 
-// --- واجهة الرئيسية مع عرض المنتجات ---
 class HomePage extends StatelessWidget {
+  final List<Product> products = [
+    Product("عسل سدر ملكي دوعني", "45,000 ريال", "حضرموت", Icons.BakeryDining),
+    Product("جنبية صيفاني قديم", "120,000 ريال", "صنعاء", Icons.security),
+    Product("بن خولاني درجة أولى", "8,000 ريال", "صعدة", Icons.coffee),
+    Product("تويوتا هايلوكس 2022", "18,000,000 ريال", "عدن", Icons.directions_car),
+    Product("بساط تهامي يدوي", "5,500 ريال", "الحديدة", Icons.texture),
+    Product("عقيق يماني أحمر", "12,000 ريال", "ذمار", Icons.gem),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("سوق اليمن الشامل", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
         centerTitle: true,
-        leading: Padding(padding: EdgeInsets.all(8), child: Image.asset('assets/logo.png', errorBuilder: (c,e,s) => Icon(Icons.store))),
+        actions: [IconButton(icon: Icon(Icons.notifications_active_outlined), onPressed: () {})],
       ),
       body: ListView(
         children: [
-          _buildGuestBanner(),
-          _buildSectionTitle("الأقسام"),
+          _buildHeroSection(),
+          _buildSectionTitle("الأقسام الرئيسية"),
           _buildCategories(),
-          _buildSectionTitle("أحدث المنتجات"),
+          _buildSectionTitle("منتجات مميزة"),
           _buildProductGrid(),
         ],
       ),
     );
   }
 
-  Widget _buildGuestBanner() {
+  Widget _buildHeroSection() {
     return Container(
       margin: EdgeInsets.all(12),
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-      child: Row(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [Colors.red.shade900, Colors.black]),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.account_circle, size: 40, color: Colors.amber),
-          SizedBox(width: 15),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("مرحباً بك (ضيف)", style: TextStyle(fontWeight: FontWeight.bold)),
-            Text("سجل دخول لبيع وشراء أسرع", style: TextStyle(fontSize: 12)),
-          ]),
-          Spacer(),
-          ElevatedButton(onPressed: () {}, child: Text("دخول"), style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black))
+          Text("كل ما تحتاجه في مكان واحد", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Text("تصفح آلاف الإعلانات من جميع محافظات اليمن", style: TextStyle(color: Colors.white70)),
+          SizedBox(height: 15),
+          ElevatedButton(onPressed: () {}, child: Text("ابدأ التسوق"))
         ],
       ),
     );
@@ -95,25 +113,41 @@ class HomePage extends StatelessWidget {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white70)),
+      padding: EdgeInsets.fromLTRB(15, 20, 15, 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text("عرض الكل", style: TextStyle(color: Colors.amber, fontSize: 12)),
+        ],
+      ),
     );
   }
 
   Widget _buildCategories() {
-    List<Map> cats = [{'n':'سيارات','i':Icons.car_repair}, {'n':'عقارات','i':Icons.home}, {'n':'جوالات','i':Icons.phone_iphone}, {'n':'وظائف','i':Icons.work}];
+    List<Map> cats = [
+      {'n':'سيارات','i':Icons.directions_car},
+      {'n':'عقارات','i':Icons.apartment},
+      {'n':'إلكترونيات','i':Icons.laptop_mac},
+      {'n':'تراثيات','i':Icons.history_edu},
+      {'n':'ملابس','i':Icons.checkroom}
+    ];
     return Container(
-      height: 100,
+      height: 110,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 10),
         itemCount: cats.length,
-        itemBuilder: (ctx, i) => Container(
-          width: 80,
-          child: Column(children: [
-            CircleAvatar(backgroundColor: Color(0xFF222222), child: Icon(cats[i]['i'], color: Colors.amber)),
-            SizedBox(height: 5),
-            Text(cats[i]['n'], style: TextStyle(fontSize: 12))
-          ]),
+        itemBuilder: (ctx, i) => Column(
+          children: [
+            Container(
+              margin: EdgeInsets.all(8),
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(color: Color(0xFF222222), shape: BoxShape.circle),
+              child: Icon(cats[i]['i'], color: Colors.amber, size: 28),
+            ),
+            Text(cats[i]['n'], style: TextStyle(fontSize: 11))
+          ],
         ),
       ),
     );
@@ -123,28 +157,58 @@ class HomePage extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.all(10),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.8, crossAxisSpacing: 10, mainAxisSpacing: 10),
-      itemCount: 4,
-      itemBuilder: (ctx, i) => Card(
-        clipBehavior: Clip.antiAlias,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Expanded(child: Container(color: Colors.grey[800], child: Center(child: Icon(Icons.image, color: Colors.white24)))),
+      padding: EdgeInsets.all(12),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, childAspectRatio: 0.75, crossAxisSpacing: 12, mainAxisSpacing: 12
+      ),
+      itemCount: products.length,
+      itemBuilder: (ctx, i) => _buildProductCard(products[i]),
+    );
+  }
+
+  Widget _buildProductCard(Product p) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xFF1A1A1A),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[900],
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+              ),
+              child: Center(child: Icon(p.icon, size: 50, color: Colors.white24)),
+            ),
+          ),
           Padding(
-            padding: EdgeInsets.all(8),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text("اسم المنتج التجريبي $i", maxLines: 1, overflow: TextOverflow.ellipsis),
-              Text("15,000 ريال", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-              Text("صنعاء", style: TextStyle(fontSize: 10, color: Colors.grey)),
-            ]),
+            padding: EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(p.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13), maxLines: 1),
+                SizedBox(height: 5),
+                Text(p.price, style: TextStyle(color: Colors.amber, fontSize: 14, fontWeight: FontWeight.w900)),
+                Row(
+                  children: [
+                    Icon(Icons.location_on, size: 10, color: Colors.grey),
+                    Text(" ${p.location}", style: TextStyle(color: Colors.grey, fontSize: 10)),
+                  ],
+                ),
+              ],
+            ),
           )
-        ]),
+        ],
       ),
     );
   }
 }
 
-// --- واجهة الإعدادات الكاملة ---
+// باقي الصفحات (الإعدادات، الرفع، إلخ) تبقى كما صممناها سابقاً مع تحسينات طفيفة
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -152,38 +216,20 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(title: Text("الإعدادات")),
       body: ListView(
         children: [
-          _settingItem(Icons.language, "اللغة", "العربية"),
-          _settingItem(Icons.dark_mode, "الوضع الليلي", "مفعل"),
-          _settingItem(Icons.notifications, "التنبيهات", "كل الإشعارات"),
-          Divider(color: Colors.white10),
-          _settingItem(Icons.info_outline, "عن التطبيق", "الإصدار 1.0.2"),
-          _settingItem(Icons.contact_support, "تواصل معنا", "دعم فني 24/7"),
-          _settingItem(Icons.policy, "سياسة الخصوصية", ""),
-          SizedBox(height: 20),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: OutlinedButton.icon(
-              onPressed: () {},
-              icon: Icon(Icons.logout, color: Colors.red),
-              label: Text("تسجيل الخروج", style: TextStyle(color: Colors.red)),
-              style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.red)),
-            ),
-          ),
+          _item(Icons.language, "اللغة", "العربية"),
+          _item(Icons.dark_mode, "الوضع الليلي", "تلقائي"),
+          _item(Icons.shield, "الأمان والخصوصية", ""),
+          _item(Icons.help_center, "مركز المساعدة", ""),
+          _item(Icons.info, "عن التطبيق", "نسخة 1.0.3"),
+          SizedBox(height: 30),
+          Center(child: Text("صنع بكل فخر في اليمن", style: TextStyle(color: Colors.grey[700], fontSize: 12))),
         ],
       ),
     );
   }
-
-  Widget _settingItem(IconData icon, String title, String trailing) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.amber),
-      title: Text(title),
-      trailing: Text(trailing, style: TextStyle(color: Colors.grey)),
-      onTap: () {},
-    );
-  }
+  Widget _item(IconData i, String t, String s) => ListTile(leading: Icon(i, color: Colors.amber), title: Text(t), trailing: Text(s), onTap: (){});
 }
 
-class SearchPage extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("البحث"))); }
-class SellPage extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("إضافة إعلان"))); }
+class SearchPage extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("ابحث عن طلبك"))); }
+class SellPage extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("إضافة إعلان جديد"))); }
 class CartPage extends StatelessWidget { @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("سلة المشتريات"))); }
