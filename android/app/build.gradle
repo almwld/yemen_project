@@ -13,7 +13,7 @@ if (localPropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.example.yemen_project"
+    namespace "com.almwld.yemen_project"
     compileSdk 36
 
     compileOptions {
@@ -26,7 +26,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.yemen_project"
+        applicationId "com.almwld.yemen_project"
         minSdk 21
         targetSdk 36
         versionCode 1
