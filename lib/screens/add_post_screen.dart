@@ -11,57 +11,75 @@ class AddPostScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // منطقة رفع الصور
+            // منطقة الصور (كما هي)
             Container(
               height: 150,
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Color(0xFF1E1E1E),
                 borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.amber.withOpacity(0.5), strokeAlign: 0),
+                border: Border.all(color: Colors.amber.withOpacity(0.3)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_a_photo, color: Colors.amber, size: 40),
+                  Icon(Icons.add_a_photo_outlined, color: Colors.amber, size: 40),
                   SizedBox(height: 10),
-                  Text("اضغط لإضافة صور الإعلان", style: TextStyle(color: Colors.grey)),
+                  Text("إضافة صور للمنتج", style: TextStyle(color: Colors.grey)),
                 ],
               ),
             ),
             SizedBox(height: 25),
             
-            _buildField("عنوان الإعلان", "مثال: تويوتا كورولا 2020 نظيف"),
-            _buildField("السعر (\$)", "أدخل السعر", isNumber: true),
+            _buildField("عنوان الإعلان", "ماذا تبيع؟"),
+            _buildField("السعر (\$)", "0.00", isNumber: true),
             
-            Text("القسم", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+            // ميزة تحديد الموقع الجديدة
+            Text("موقع السلعة", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
-            DropdownButtonFormField(
-              decoration: InputDecoration(filled: true, fillColor: Color(0xFF1E1E1E), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
-              items: [
-                DropdownMenuItem(child: Text("سيارات"), value: "1"),
-                DropdownMenuItem(child: Text("عقارات"), value: "2"),
-                DropdownMenuItem(child: Text("جوالات"), value: "3"),
-              ],
-              onChanged: (val) {},
-              hint: Text("اختر القسم"),
+            InkWell(
+              onTap: () {
+                // محاكاة فتح خريطة أو قائمة مدن
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                decoration: BoxDecoration(
+                  color: Color(0xFF1E1E1E),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.location_on, color: Colors.amber),
+                    SizedBox(width: 10),
+                    Text("حدد المدينة (صنعاء، عدن، تعز...)", style: TextStyle(color: Colors.white70)),
+                    Spacer(),
+                    Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                  ],
+                ),
+              ),
             ),
             
-            SizedBox(height: 20),
-            _buildField("وصف المنتج", "اكتب تفاصيل المنتج وحالته...", maxLines: 4),
+            SizedBox(height: 25),
+            _buildField("وصف الإعلان", "اكتب مواصفات السلعة بدقة...", maxLines: 4),
             
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تم نشر إعلانك بنجاح في فلكس يمن")));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("جاري معالجة الإعلان ونشره على Flex Yemen..."),
+                    backgroundColor: Colors.amber,
+                  )
+                );
               },
-              child: Text("نشر الإعلان الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
+              child: Text("نشر الإعلان الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.amber,
                 minimumSize: Size(double.infinity, 55),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
             ),
+            SizedBox(height: 20),
           ],
         ),
       ),
