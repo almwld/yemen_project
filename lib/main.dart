@@ -1,3 +1,4 @@
+import 'screens/notifications_center_screen.dart';
 import 'widgets/scrolling_banners.dart';
 import 'services/ad_popup_service.dart';
 import 'package:flutter/material.dart';
