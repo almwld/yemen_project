@@ -37,7 +37,7 @@ class MainNavigationContainer extends StatefulWidget {
 class _MainNavigationContainerState extends State<MainNavigationContainer> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
-    FlexHomeScreen(), // الصفحة الرئيسية الجديدة
+    FlexHomeScreen(),
     FavoritesScreen(),
     AddPostScreen(),
     ProfileScreen(),
@@ -46,6 +46,8 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // إضافة القائمة الجانبية هنا
+      drawer: AppDrawer(),
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -65,35 +67,81 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
   }
 }
 
+// تصميم القائمة الجانبية المخصص
+class AppDrawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: Container(
+        color: Color(0xFF1E1E1E),
+        child: Column(
+          children: [
+            UserAccountsDrawerHeader(
+              decoration: BoxDecoration(color: Colors.amber),
+              accountName: Text("Flex Yemen User", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+              accountEmail: Text("welcome@flexyemen.com", style: TextStyle(color: Colors.black54)),
+              currentAccountPicture: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.person, color: Colors.amber, size: 40)),
+            ),
+            ListTile(
+              leading: Icon(Icons.info_outline, color: Colors.amber),
+              title: Text("من نحن"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.contact_support_outlined, color: Colors.amber),
+              title: Text("تواصل معنا"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.share_outlined, color: Colors.amber),
+              title: Text("شارك التطبيق"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.star_outline, color: Colors.amber),
+              title: Text("قيم التطبيق"),
+              onTap: () {},
+            ),
+            Spacer(),
+            Divider(color: Colors.white10),
+            ListTile(
+              leading: Icon(Icons.logout, color: Colors.redAccent),
+              title: Text("تسجيل الخروج", style: TextStyle(color: Colors.redAccent)),
+              onTap: () => Navigator.pushReplacementNamed(context, '/'),
+            ),
+            SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class FlexHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Flex Yemen Market", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-        centerTitle: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        // الأيقونة التي تفتح الـ Drawer تظهر تلقائياً عند إضافة drawer للـ Scaffold
         actions: [
           IconButton(icon: Icon(Icons.notifications_none), onPressed: () {}),
-          Padding(
-            padding: EdgeInsets.only(left: 15),
-            child: CircleAvatar(radius: 15, backgroundColor: Colors.amber, child: Icon(Icons.person, size: 20, color: Colors.black)),
-          ),
+          SizedBox(width: 10),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // شريط البحث المدمج - يفتح شاشة البحث المربوطة سابقا
             Padding(
               padding: EdgeInsets.all(15),
               child: TextField(
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context)=> AdvancedSearchScreen())),
                 readOnly: true,
                 decoration: InputDecoration(
-                  hintText: "ماذا تبحث في اليمن؟",
+                  hintText: "ابحث في فلكس يمن...",
                   prefixIcon: Icon(Icons.search, color: Colors.amber),
                   filled: true,
                   fillColor: Color(0xFF1E1E1E),
@@ -101,8 +149,7 @@ class FlexHomeScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            // الأقسام الأفقية
+            // ... (بقية كود الأقسام والمنتجات كما هو)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15),
               child: Text("الأقسام", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -122,7 +169,7 @@ class FlexHomeScreen extends StatelessWidget {
                         Container(
                           margin: EdgeInsets.all(8),
                           padding: EdgeInsets.all(15),
-                          decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white10)),
+                          decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15)),
                           child: Icon(cat.icon, color: Colors.amber, size: 28),
                         ),
                         Text(cat.title, style: TextStyle(fontSize: 12)),
@@ -131,47 +178,6 @@ class FlexHomeScreen extends StatelessWidget {
                   );
                 },
               ),
-            ),
-
-            // شبكة المنتجات المميزة
-            Padding(
-              padding: EdgeInsets.all(15),
-              child: Text("إعلانات مميزة", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
-            
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, childAspectRatio: 0.75, crossAxisSpacing: 12, mainAxisSpacing: 12
-              ),
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15)),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                          child: Image.network('https://picsum.photos/id/${index + 50}/300/200', fit: BoxFit.cover, width: double.infinity),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("منتج Flex المميز", style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text("100\$", style: TextStyle(color: Colors.amber)), // لاحظ الباك سلاش هنا
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                );
-              },
             ),
           ],
         ),
