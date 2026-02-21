@@ -79,7 +79,7 @@ class ProductDetailsScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () {},
                     icon: Icon(Icons.chat, color: Colors.black),
-                    label: Text("تواصل مع المعلن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    label: Text("شراء الآن (دفع مضمون)", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.amber,
                       minimumSize: Size(double.infinity, 55),
