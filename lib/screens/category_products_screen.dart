@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'chat_screen.dart';
 
 class CategoryProductsScreen extends StatefulWidget {
   final String categoryName;
