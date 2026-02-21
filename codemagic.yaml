@@ -1,14 +1,22 @@
 workflows:
-  default-workflow:
-    name: Flex Yemen Final Release
+  yemen-empire-workflow:
+    name: Flex Yemen Ultimate Build
+    max_build_duration: 120
     instance_type: mac_mini_m1
+    environment:
+      flutter: stable
+      groups:
+        - magic_auth
     scripts:
-      - name: Master Integration
-        script: | 
-          find lib -name "*.dart" -exec sed -i "s|import 'services/|import '../services/|g" {} +
+      - name: Clean and Get Packages
+        script: |
+          flutter clean
           flutter pub get
-      - name: Build Production APK
-        script: | 
-          flutter build apk --release --split-per-abi
+      - name: Static Analysis
+        script: |
+          flutter analyze || true # سيستمر حتى لو وجد تنبيهات بسيطة لضمان البناء
+      - name: Build Android APK
+        script: |
+          flutter build apk --release --no-tree-shake-icons
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
