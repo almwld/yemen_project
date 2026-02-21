@@ -1,80 +1,71 @@
 import 'package:flutter/material.dart';
-import 'screens/product_details.dart'; // استيراد الشاشة الجديدة
+import 'models/category_model.dart';
+import 'screens/product_list_screen.dart';
 
-void main() {
-  runApp(YemenMarketApp());
-}
+void main() => runApp(YemenMarketApp());
 
 class YemenMarketApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'سوق اليمن',
-      theme: ThemeData(primarySwatch: Colors.red, fontFamily: 'Cairo'),
-      home: HomeScreen(),
+      theme: ThemeData(
+        fontFamily: 'Cairo', 
+        brightness: Brightness.dark,
+        primaryColor: Colors.orangeAccent
+      ),
+      home: MainCategoriesScreen(),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  final List<Map<String, String>> products = [
-    {'title': 'تويوتا كورولا 2020', 'price': '12,000$', 'image': 'https://via.placeholder.com/150'},
-    {'title': 'آيفون 15 برو', 'price': '1,100$', 'image': 'https://via.placeholder.com/150'},
-    {'title': 'شقة للإيجار - حدة', 'price': '400$', 'image': 'https://via.placeholder.com/150'},
-    {'title': 'لابتوب HP مستخدم', 'price': '350$', 'image': 'https://via.placeholder.com/150'},
-  ];
-
+class MainCategoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('سوق اليمن المفتوح'), centerTitle: true),
+      backgroundColor: Color(0xFF121212),
+      appBar: AppBar(
+        title: Text('أقسام السوق'),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: GridView.builder(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(15),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.8,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
+          crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15, childAspectRatio: 1.1
         ),
-        itemCount: products.length,
+        itemCount: yemenMarketCategories.length,
         itemBuilder: (context, index) {
+          var cat = yemenMarketCategories[index];
           return GestureDetector(
             onTap: () {
-              // الانتقال لشاشة التفاصيل عند الضغط
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProductDetailsScreen(
-                    title: products[index]['title']!,
-                    price: products[index]['price']!,
-                    image: products[index]['image']!,
-                  ),
-                ),
-              );
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => ProductListScreen(categoryName: cat.title)
+              ));
             },
-            child: Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFF1E1E1E),
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                      child: Image.network(products[index]['image']!, fit: BoxFit.cover, width: double.infinity),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(products[index]['title']!, style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                  Text(products[index]['price']!, style: TextStyle(color: Colors.green)),
-                  SizedBox(height: 5),
+                  Icon(cat.icon, size: 50, color: Colors.orangeAccent),
+                  SizedBox(height: 10),
+                  Text(cat.title, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        label: Text("أضف إعلان"),
+        icon: Icon(Icons.camera_alt),
+        backgroundColor: Colors.amber,
       ),
     );
   }
