@@ -65,7 +65,7 @@ class MallExplorerScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.amber,
         child: Icon(Icons.search, color: Colors.black),
-        onPressed: () {}, // سيتم ربطه بمحرك البحث العالمي
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryProductsScreen(categoryName: 'البحث العالمي'))),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
