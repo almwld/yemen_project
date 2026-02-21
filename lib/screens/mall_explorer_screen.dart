@@ -3,46 +3,46 @@ import 'package:flutter/material.dart';
 class MallExplorerScreen extends StatelessWidget {
   final List<Map<String, dynamic>> categories = [
     {
-      "name": "بورصة اليمن (صرف وذهب)",
-      "icon": "📈",
-      "color": Colors.greenAccent,
-      "sub": ["أسعار الصرف (صنعاء/عدن)", "أسعار الذهب والفضة لحظياً", "أخبار السوق المحلي", "حاسبة العملات"]
+      "name": "الرعاية الصحية والطبية",
+      "icon": "🏥",
+      "color": Colors.red,
+      "sub": ["دليل المستشفيات والمراكز", "صيدليات الحراسة (المناوبة)", "أطباء واستشاريين", "خدمات التمريض المنزلي"]
     },
     {
-      "name": "عالم الألعاب والبطاقات",
-      "icon": "🎮",
-      "color": Colors.purpleAccent,
-      "sub": ["شحن ألعاب (ببجي/فيري فاير)", "بطاقات جوجل وبلايستيشن", "أجهزة كونسول", "حسابات ألعاب مميزة"]
+      "name": "التموين والسوبر ماركت",
+      "icon": "🛒",
+      "color": Colors.green,
+      "sub": ["مواد غذائية أساسية", "خضروات وفواكه طازجة", "لحوم ودواجن بلدي", "مستلزمات نظافة"]
     },
     {
-      "name": "السفر والسياحة",
-      "icon": "✈️",
-      "color": Colors.blueAccent,
-      "sub": ["مواعيد رحلات الطيران", "حجز باصات النقل الجماعي", "تأشيرات ومعاملات", "فنادق ومنتجعات يمنية"]
+      "name": "الخدمات اللوجستية والشحن",
+      "icon": "🚚",
+      "color": Colors.orangeAccent,
+      "sub": ["شحن داخلي (بين المحافظات)", "شحن دولي", "خدمات التوصيل المنزلي", "تخليص جمركي"]
     },
     {
-      "name": "المناسبات والاحتفالات",
-      "icon": "🎊",
-      "color": Colors.pinkAccent,
-      "sub": ["حجز قاعات الأفراح", "منظمي حفلات ودي جي", "فرق رقص شعبي وزمامل", "استئجار سيارات الزفاف"]
+      "name": "الخدمات العامة والمنزلية",
+      "icon": "🚿",
+      "color": Colors.cyan,
+      "sub": ["وايتات مياه (كوثر/عادي)", "أسطوانات غاز", "شفط بيارات ومجاري", "صيانة مصاعد ومولدات"]
     },
     {
-      "name": "خدمات الدفع والشحن",
-      "icon": "💳",
-      "color": Colors.tealAccent,
-      "sub": ["تسديد فواتير (إنترنت/هاتف)", "باقات فورجي (4G)", "تعبئة رصيد فوري", "اشتراكات قنوات VIP"]
+      "name": "سوق الحرف والمهن اليدوية",
+      "icon": "🎨",
+      "color": Colors.deepOrange,
+      "sub": ["نجارة وحدادة", "أعمال جبس وديكور", "خياطة وتطريز يماني", "نقش حناء وفنون"]
     },
     {
-      "name": "سوق المقاولات والتعمير",
-      "icon": "🏗️",
-      "color": Colors.orange,
-      "sub": ["حديد وإسمنت بالجملة", "أدوات سباكة وكهرباء", "مهندسين معماريين", "رخام وحجر يماني"]
+      "name": "السيارات المهجورة والقطع النادرة",
+      "icon": "⚙️",
+      "color": Colors.blueGrey,
+      "sub": ["تشليح سيارات", "قطع غيار لمحركات قديمة", "إطارات وبطاريات", "زيوت وفلاتر"]
     },
     {
-      "name": "التعليم والتدريب",
-      "icon": "🎓",
-      "color": Colors.redAccent,
-      "sub": ["دورات لغات وحاسوب", "مدرسين خصوصيين", "كتب ومستلزمات مدرسية", "خدمات ترجمة وبحوث"]
+      "name": "دليل الأرقام والخدمات",
+      "icon": "📞",
+      "color": Colors.yellow,
+      "sub": ["أرقام الطوارئ والدفاع المدني", "شركات الاتصالات والإنترنت", "خدمات سداد الكهرباء والماء"]
     }
   ];
 
@@ -51,49 +51,52 @@ class MallExplorerScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFF0A0A0A),
       body: CustomScrollView(
+        physics: BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 180.0,
+            expandedHeight: 200.0,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              title: Text("محيط فلكس يمن الشامل", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.amber.withOpacity(0.4), Colors.black],
+              title: Text("فلكس يمن: المحيط الشامل", 
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 10)])),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    "https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                    fit: BoxFit.cover,
                   ),
-                ),
-                child: Center(child: Icon(Icons.blur_on_rounded, size: 100, color: Colors.amber)),
+                  Container(decoration: BoxDecoration(color: Colors.black.withOpacity(0.5))),
+                ],
               ),
             ),
           ),
           SliverPadding(
-            padding: EdgeInsets.all(12),
+            padding: EdgeInsets.all(10),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final cat = categories[index];
-                  return Container(
+                  return AnimatedContainer(
+                    duration: Duration(milliseconds: 500),
                     margin: EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
+                    child: Card(
                       color: Color(0xFF1E1E1E),
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [BoxShadow(color: cat['color'].withOpacity(0.1), blurRadius: 10)],
-                    ),
-                    child: ExpansionTile(
-                      leading: CircleAvatar(
-                        backgroundColor: cat['color'].withOpacity(0.1),
-                        child: Text(cat['icon'], style: TextStyle(fontSize: 22)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: cat['color'].withOpacity(0.5), width: 1)),
+                      elevation: 5,
+                      child: ExpansionTile(
+                        leading: CircleAvatar(
+                          backgroundColor: cat['color'].withOpacity(0.2),
+                          child: Text(cat['icon'], style: TextStyle(fontSize: 24)),
+                        ),
+                        title: Text(cat['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                        children: (cat['sub'] as List<String>).map((sub) => ListTile(
+                          title: Text(sub, style: TextStyle(fontSize: 14, color: Colors.grey[300])),
+                          trailing: Icon(Icons.arrow_right_alt, color: Colors.amber),
+                          onTap: () {},
+                        )).toList(),
                       ),
-                      title: Text(cat['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      children: (cat['sub'] as List<String>).map((sub) => ListTile(
-                        title: Text(sub, style: TextStyle(fontSize: 13, color: Colors.grey[300])),
-                        trailing: Icon(Icons.arrow_circle_left_outlined, color: Colors.amber, size: 18),
-                        onTap: () {},
-                      )).toList(),
                     ),
                   );
                 },
