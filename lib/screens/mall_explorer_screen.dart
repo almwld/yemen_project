@@ -1,108 +1,117 @@
 import 'package:flutter/material.dart';
 
 class MallExplorerScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> categories = [
+  final List<Map<String, dynamic>> megaCategories = [
     {
-      "name": "قطاع النفط والغاز والطاقة",
-      "icon": "⛽",
-      "color": Colors.orange,
-      "sub": ["معدات حفر الآبار الارتوازية", "خزانات وقود ومضخات", "زيوت وشحوم صناعية", "تجهيزات محطات الغاز"]
+      "name": "تكنولوجيا الفضاء والأقمار الصناعية",
+      "icon": "🛰️",
+      "color": Colors.indigoAccent,
+      "sub": ["أجهزة استقبال الإشارة الفضائية", "تكنولوجيا الـ GPS والملاحة", "أبحاث الفلك والمناظير", "خدمات إنترنت الأقمار (Starlink)"]
     },
     {
-      "name": "خطوط الإنتاج والمصانع",
-      "icon": "🏭",
-      "color": Colors.blueGrey,
-      "sub": ["ماكينات تعبئة وتغليف", "خطوط إنتاج مياه وعصائر", "معدات تصنيع البلاستيك", "ماكينات الخراطة واللحام"]
-    },
-    {
-      "name": "الأنظمة الذكية والأتمتة",
+      "name": "الذكاء الاصطناعي والبيانات الضخمة",
       "icon": "🧠",
-      "color": Colors.cyanAccent,
-      "sub": ["أنظمة تحكم (PLC)", "حساسات ومجسات صناعية", "روبوتات التنظيف والإنتاج", "شبكات ألياف ضوئية"]
-    },
-    {
-      "name": "سوق المقاولات الكبرى",
-      "icon": "🏗️",
-      "color": Colors.yellow,
-      "sub": ["خلاطات خرسانة مركزية", "رافعات برجية (Cranes)", "قواعد حديدية وجسور", "تجهيزات طرق وجسور"]
-    },
-    {
-      "name": "عالم الكيماويات والمختبرات",
-      "icon": "🧪",
       "color": Colors.purpleAccent,
-      "sub": ["مواد كيميائية للصناعة", "أدوات فحص ومختبرات", "أسمدة زراعية متخصصة", "تجهيزات معامل كيمياء"]
+      "sub": ["تطوير نماذج AI مخصصة", "تحليل البيانات الضخمة للشركات", "أنظمة الأتمتة الروبوتية", "خدمات الحوسبة السحابية"]
     },
     {
-      "name": "التموين البحري واللوجستيات",
-      "icon": "🚢",
+      "name": "الطاقة البديلة والنووية السلمية",
+      "icon": "⚛️",
+      "color": Colors.lightGreenAccent,
+      "sub": ["معدات الفحص الإشعاعي الطبي", "منظومات الهيدروجين الأخضر", "تطوير طاقة الرياح والبحار", "دراسات الطاقة المستدامة"]
+    },
+    {
+      "name": "الخدمات الدبلوماسية والمنظمات",
+      "icon": "🌐",
       "color": Colors.blueAccent,
-      "sub": ["قطع غيار بواخر وقوارب", "أنظمة ملاحة بحرية", "خدمات الموانئ والجمارك", "تأجير مستودعات مبردة"]
+      "sub": ["تخليص معاملات القنصليات", "خدمات لوجستية للمنظمات", "ترجمة دولية معتمدة", "تنسيق مؤتمرات وفعاليات"]
     },
     {
-      "name": "إدارة المدن والنفايات",
-      "icon": "♻️",
-      "color": Colors.greenAccent,
-      "sub": ["سيارات ضواغط نفايات", "أنظمة تدوير البلاستيك", "تجهيزات إنارة شوارع", "خدمات تشجير وتنسيق"]
+      "name": "سوق المقتنيات الملكية والنوادر",
+      "icon": "👑",
+      "color": Colors.amberAccent,
+      "sub": ["ساعات نادرة (Rolex/Patek)", "أحجار كريمة غير مصقولة", "لوحات فنية عالمية", "سيارات ليموزين رئاسية"]
     },
     {
-      "name": "سوق الاستثمار في المعادن",
-      "icon": "🧱",
-      "color": Colors.brown,
-      "sub": ["محاجر رخام وجرانيت", "خامات الحديد والنحاس", "مناجم الملح الصخري", "معدات فحص التربة"]
+      "name": "الصناعات التحويلية والكبرى",
+      "icon": "⚙️",
+      "color": Colors.grey,
+      "sub": ["صناعة هياكل السفن", "تصنيع المحركات العملاقة", "تكرير الزيوت والمعادن", "تجهيزات المصانع الغذائية"]
+    },
+    {
+      "name": "الأمن القومي والحماية المدنية",
+      "icon": "🚔",
+      "color": Colors.redAccent,
+      "sub": ["أنظمة إطفاء الحرائق الآلية", "تصفيح السيارات والحمايات", "أجهزة كشف المتفجرات والممنوعات", "تدريب أطقم الأمن"]
     }
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF00050A),
+      backgroundColor: Colors.black,
       body: CustomScrollView(
         physics: BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 300.0,
+            expandedHeight: 320.0,
             pinned: true,
+            stretch: true,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              title: Text("أعماق فلكس يمن السيادية", 
-                style: TextStyle(fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 2)),
-              background: Image.network(
-                "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1350&q=80",
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.darken),
+              title: Text("إمبراطورية فلكس: 1000+ فرع", 
+                style: TextStyle(fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5)),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    "https://images.unsplash.com/photo-1510511459019-5dee99c48f8d?auto=format&fit=crop&w=1350&q=80",
+                    fit: BoxFit.cover,
+                  ),
+                  Container(decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.black, Colors.transparent, Colors.indigo.withOpacity(0.8)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    )
+                  )),
+                ],
               ),
             ),
           ),
           SliverPadding(
-            padding: EdgeInsets.fromLTRB(10, 20, 10, 100),
+            padding: EdgeInsets.fromLTRB(15, 20, 15, 120),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  final cat = categories[index];
+                  final cat = megaCategories[index];
                   return Container(
-                    margin: EdgeInsets.only(bottom: 15),
+                    margin: EdgeInsets.only(bottom: 25),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF001F3F), Color(0xFF00050A)],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: cat['color'].withOpacity(0.3)),
+                      color: Color(0xFF0D0D0D),
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: cat['color'].withOpacity(0.4), width: 1.5),
+                      boxShadow: [
+                        BoxShadow(color: cat['color'].withOpacity(0.1), blurRadius: 25, spreadRadius: 2)
+                      ],
                     ),
                     child: ExpansionTile(
-                      leading: Icon(Icons.waves, color: cat['color'], size: 20),
-                      title: Text(cat['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      trailing: Text(cat['icon'], style: TextStyle(fontSize: 24)),
+                      leading: CircleAvatar(
+                        backgroundColor: cat['color'].withOpacity(0.2),
+                        child: Text(cat['icon'], style: TextStyle(fontSize: 22)),
+                      ),
+                      title: Text(cat['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                      subtitle: Text("اكتشف المحيط المعلوماتي لهذا الفرع", style: TextStyle(color: Colors.grey, fontSize: 11)),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded, color: cat['color'], size: 18),
                       children: (cat['sub'] as List<String>).map((sub) => ListTile(
-                        title: Text(sub, style: TextStyle(color: Colors.white70, fontSize: 13)),
-                        leading: Icon(Icons.anchor, size: 14, color: cat['color']),
+                        title: Text(sub, style: TextStyle(color: Colors.white70, fontSize: 14)),
+                        leading: Icon(Icons.bolt, color: cat['color'], size: 16),
                         onTap: () {},
                       )).toList(),
                     ),
                   );
                 },
-                childCount: categories.length,
+                childCount: megaCategories.length,
               ),
             ),
           ),
