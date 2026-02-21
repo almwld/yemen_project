@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     Future.delayed(Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => MainLayout(),
+        builder: (context) => MainLayout(onThemeToggle: () {}, isDarkMode: true),
       ));
     });
   }
