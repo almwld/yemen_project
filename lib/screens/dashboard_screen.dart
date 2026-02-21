@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'chat_screen.dart';
 import 'category_products_screen.dart';
+import 'wallet_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -16,7 +17,7 @@ class DashboardScreen extends StatelessWidget {
           _menuItem(context, Icons.list_alt, "إدارة إعلاناتي", () => _navTo(context, "إعلاناتي")),
           _menuItem(context, Icons.chat, "الرسائل والمحادثات", () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(peerName: "مركز الرسائل")))),
           _menuItem(context, Icons.favorite, "المفضلة", () => _navTo(context, "المفضلة")),
-          _menuItem(context, Icons.account_balance_wallet, "المحفظة والرصيد", () => _navTo(context, "المحفظة")),
+          _menuItem(context, Icons.account_balance_wallet, "المحفظة والرصيد", () => Navigator.push(context, MaterialPageRoute(builder: (context) => WalletScreen()))),
           _menuItem(context, Icons.settings, "إعدادات الحساب", () => _navTo(context, "الإعدادات")),
           _menuItem(context, Icons.support_agent, "الدعم الفني", () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(peerName: "الدعم الفني")))),
           Divider(color: Colors.amber),
