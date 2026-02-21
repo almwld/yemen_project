@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'checkout_screen.dart'; // استيراد شاشة الدفع
 
 class ProductDetailsScreen extends StatelessWidget {
   final String title;
@@ -9,80 +10,60 @@ class ProductDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // تحويل النص السعري إلى رقم (Double) لعمليات الحساب
+    double numericPrice = double.tryParse(price.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0.0;
+
     return Scaffold(
       backgroundColor: Color(0xFF121212),
-      appBar: AppBar(title: Text("تفاصيل المنتج"), backgroundColor: Colors.transparent, elevation: 0),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // صورة المنتج
-            Hero(
-              tag: title,
-              child: Image.network(image, height: 300, width: double.infinity, fit: BoxFit.cover),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Hero(
+                tag: image,
+                child: Image.network(image, fit: BoxFit.cover),
+              ),
             ),
-            
-            Padding(
-              padding: EdgeInsets.all(16),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-                  SizedBox(height: 8),
-                  Text(price, style: TextStyle(fontSize: 22, color: Colors.amber, fontWeight: FontWeight.bold)),
-                  Divider(color: Colors.white12, height: 30),
+                  Text(title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.amber)),
+                  SizedBox(height: 10),
+                  Text(price, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Divider(color: Colors.white10, height: 40),
                   
-                  Text("وصف المنتج:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text("وصف المنتج", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   Text(
-                    "هذا المنتج متاح حالياً في سوق اليمن. حالة المنتج ممتازة والسعر قابل للتفاوض البسيط.",
-                    style: TextStyle(color: Colors.grey[400], fontSize: 16),
-                  ),
-                  
-                  SizedBox(height: 30),
-                  
-                  // قسم التقييمات (Reviews Section)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("التعليقات والتقييمات", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber)),
-                      Row(
-                        children: [
-                          Icon(Icons.star, color: Colors.amber, size: 20),
-                          Text(" 4.8 (12 تقييم)", style: TextStyle(color: Colors.grey)),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 15),
-                  
-                  // قائمة تعليقات تجريبية
-                  _buildCommentItem("أحمد محمد", "المنتج ممتاز جداً وتواصل البائع كان سريعاً.", 5),
-                  _buildCommentItem("خالد عبدالله", "جودة جيدة مقابل السعر المذكور.", 4),
-                  
-                  SizedBox(height: 20),
-                  
-                  // حقل إضافة تعليق
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: "أضف تعليقك هنا...",
-                      suffixIcon: IconButton(icon: Icon(Icons.send, color: Colors.amber), onPressed: () {}),
-                      filled: true,
-                      fillColor: Color(0xFF1E1E1E),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-                    ),
+                    "هذا المنتج متاح عبر خدمة 'الدفع المضمون' من فلكس يمن. يتم حجز المبلغ وحماية حقوق الطرفين.",
+                    style: TextStyle(color: Colors.white70, height: 1.5),
                   ),
                   
                   SizedBox(height: 40),
                   
-                  // زر التواصل
-                  ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: Icon(Icons.chat, color: Colors.black),
-                    label: Text("شراء الآن (دفع مضمون)", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                  // زر الشراء الذي يفتح شاشة التأكيد
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CheckoutScreen(
+                            productTitle: title,
+                            price: numericPrice,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text("شراء الآن (دفع مضمون)", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.amber,
-                      minimumSize: Size(double.infinity, 55),
+                      minimumSize: Size(double.infinity, 60),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     ),
                   ),
@@ -90,30 +71,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // widget مخصص لبناء عنصر التعليق
-  Widget _buildCommentItem(String name, String comment, int rating) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 15),
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(name, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-              Row(children: List.generate(5, (i) => Icon(Icons.star, size: 14, color: i < rating ? Colors.amber : Colors.grey))),
-            ],
           ),
-          SizedBox(height: 5),
-          Text(comment, style: TextStyle(color: Colors.grey[300], fontSize: 14)),
         ],
       ),
     );
