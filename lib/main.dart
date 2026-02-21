@@ -1,109 +1,81 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'screens/product_details.dart'; // استيراد الشاشة الجديدة
 
-void main() => runApp(YemenMarketApp());
+void main() {
+  runApp(YemenMarketApp());
+}
 
 class YemenMarketApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'سوق اليمن الشامل',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.amber,
-        scaffoldBackgroundColor: Color(0xFF121212),
-      ),
-      home: WelcomeScreen(),
+      title: 'سوق اليمن',
+      theme: ThemeData(primarySwatch: Colors.red, fontFamily: 'Cairo'),
+      home: HomeScreen(),
     );
   }
 }
 
-// --- شاشة الترحيب (اللوجو + دخول الضيف) ---
-class WelcomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/logo.png', width: 150, errorBuilder: (context, error, stackTrace) {
-              return Icon(Icons.store, size: 100, color: Colors.amber);
-            }),
-            SizedBox(height: 20),
-            Text('سوق اليمن الشامل', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
-            SizedBox(height: 50),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
-              onPressed: () {}, 
-              child: Padding(padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15), child: Text('تسجيل الدخول')),
-            ),
-            TextButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen())),
-              child: Text('الدخول كضيف', style: TextStyle(color: Colors.amber, fontSize: 16)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// --- واجهة السوق (الأقسام + رفع الصور) ---
 class HomeScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> categories = [
-    {'name': 'سيارات', 'icon': Icons.directions_car},
-    {'name': 'عقارات', 'icon': Icons.home},
-    {'name': 'جوالات', 'icon': Icons.phone_android},
-    {'name': 'إلكترونيات', 'icon': Icons.tv},
-    {'name': 'وظائف', 'icon': Icons.work},
-    {'name': 'خدمات', 'icon': Icons.build},
-    {'name': 'أزياء', 'icon': Icons.checkroom},
-    {'name': 'أدوات منزلية', 'icon': Icons.kitchen},
+  final List<Map<String, String>> products = [
+    {'title': 'تويوتا كورولا 2020', 'price': '12,000$', 'image': 'https://via.placeholder.com/150'},
+    {'title': 'آيفون 15 برو', 'price': '1,100$', 'image': 'https://via.placeholder.com/150'},
+    {'title': 'شقة للإيجار - حدة', 'price': '400$', 'image': 'https://via.placeholder.com/150'},
+    {'title': 'لابتوب HP مستخدم', 'price': '350$', 'image': 'https://via.placeholder.com/150'},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('أقسام السوق'), centerTitle: true),
+      appBar: AppBar(title: Text('سوق اليمن المفتوح'), centerTitle: true),
       body: GridView.builder(
-        padding: EdgeInsets.all(15),
+        padding: EdgeInsets.all(10),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15),
-        itemCount: categories.length,
+          crossAxisCount: 2,
+          childAspectRatio: 0.8,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
+        itemCount: products.length,
         itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {}, // هنا يتم عرض منتجات القسم
+          return GestureDetector(
+            onTap: () {
+              // الانتقال لشاشة التفاصيل عند الضغط
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductDetailsScreen(
+                    title: products[index]['title']!,
+                    price: products[index]['price']!,
+                    image: products[index]['image']!,
+                  ),
+                ),
+              );
+            },
             child: Card(
-              color: Color(0xFF1E1E1E),
+              elevation: 5,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(categories[index]['icon'], size: 45, color: Colors.amber),
-                  SizedBox(height: 10),
-                  Text(categories[index]['name'], style: TextStyle(fontSize: 18)),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                      child: Image.network(products[index]['image']!, fit: BoxFit.cover, width: double.infinity),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(products[index]['title']!, style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Text(products[index]['price']!, style: TextStyle(color: Colors.green)),
+                  SizedBox(height: 5),
                 ],
               ),
             ),
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _pickImage(context),
-        label: Text('أضف إعلان'),
-        icon: Icon(Icons.add_a_photo),
-        backgroundColor: Colors.amber,
-      ),
     );
-  }
-
-  Future<void> _pickImage(BuildContext context) async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم اختيار الصورة: ${image.name}')));
-    }
   }
 }
