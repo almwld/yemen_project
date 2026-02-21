@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 // حل تصادم الأسماء عبر استخدام 'as'
-import 'package:carousel_slider/carousel_slider.dart' as slider;
+
 import 'screens/splash_screen.dart';
 import 'screens/auctions_screen.dart';
 import 'screens/real_estate_screen.dart';
