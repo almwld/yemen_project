@@ -12,24 +12,26 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "سوق اليمن الشامل",
+                "Flex Yemen Market",
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 35,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontFamily: 'Cairo',
+                  color: Colors.amber,
+                  letterSpacing: 1.2,
                 ),
               ),
-              SizedBox(height: 60),
-              // زر تسجيل الدخول
+              SizedBox(height: 10),
+              Text(
+                "فلكس يمن ماركت",
+                style: TextStyle(color: Colors.white70, fontSize: 18, fontFamily: 'Cairo'),
+              ),
+              SizedBox(height: 80),
               ElevatedButton(
-                onPressed: () {
-                  // هنا ننتقل للرئيسية عند الضغط
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
+                onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
                 child: Text(
                   "تسجيل الدخول",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black, fontFamily: 'Cairo'),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.amber,
@@ -38,14 +40,11 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              // زر الدخول كضيف
               TextButton(
-                onPressed: () {
-                   Navigator.pushReplacementNamed(context, '/home');
-                },
+                onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
                 child: Text(
                   "الدخول كضيف",
-                  style: TextStyle(color: Colors.amber, fontSize: 16, decoration: TextDecoration.underline),
+                  style: TextStyle(color: Colors.amber, fontSize: 16, fontFamily: 'Cairo'),
                 ),
               ),
             ],

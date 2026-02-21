@@ -7,20 +7,19 @@ import 'screens/add_post_screen.dart';
 import 'screens/favorites_screen.dart';
 import 'screens/search_screen.dart';
 
-void main() => runApp(YemenMarketApp());
+void main() => runApp(FlexYemenApp());
 
-class YemenMarketApp extends StatelessWidget {
+class FlexYemenApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'سوق اليمن الشامل',
+      title: 'Flex Yemen Market',
       theme: ThemeData(
         fontFamily: 'Cairo', 
         brightness: Brightness.dark,
         primarySwatch: Colors.amber,
       ),
-      // جعل شاشة تسجيل الدخول هي البداية
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),
@@ -30,7 +29,6 @@ class YemenMarketApp extends StatelessWidget {
   }
 }
 
-// الكود السابق للملاحة الرئيسية مع الحفاظ على كل المميزات
 class MainNavigationContainer extends StatefulWidget {
   @override
   _MainNavigationContainerState createState() => _MainNavigationContainerState();
@@ -72,7 +70,7 @@ class MainCategoriesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("أقسام السوق", style: TextStyle(color: Colors.amber)),
+        title: Text("Flex Yemen Market", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
