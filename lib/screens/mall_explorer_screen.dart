@@ -3,46 +3,46 @@ import 'package:flutter/material.dart';
 class MallExplorerScreen extends StatelessWidget {
   final List<Map<String, dynamic>> categories = [
     {
-      "name": "المعدات الثقيلة والآليات",
-      "icon": "🚜",
-      "color": Colors.yellowAccent,
-      "sub": ["حراثات زراعية", "بوكلينات وشيولات", "مولدات كهرباء ضخمة", "شاحنات نقل ثقيل", "معدات حفر الآبار"]
+      "name": "بورصة اليمن (صرف وذهب)",
+      "icon": "📈",
+      "color": Colors.greenAccent,
+      "sub": ["أسعار الصرف (صنعاء/عدن)", "أسعار الذهب والفضة لحظياً", "أخبار السوق المحلي", "حاسبة العملات"]
     },
     {
-      "name": "سوق الجملة (للتجار)",
-      "icon": "📦",
-      "color": Colors.grey,
-      "sub": ["مواد غذائية بالجملة", "كراتين مياه وعصائر", "منظفات ومعقمات", "تجهيزات مطاعم وفنادق"]
+      "name": "عالم الألعاب والبطاقات",
+      "icon": "🎮",
+      "color": Colors.purpleAccent,
+      "sub": ["شحن ألعاب (ببجي/فيري فاير)", "بطاقات جوجل وبلايستيشن", "أجهزة كونسول", "حسابات ألعاب مميزة"]
     },
     {
-      "name": "الأسر المنتجة والصناعات اليدوية",
-      "icon": "🍲",
+      "name": "السفر والسياحة",
+      "icon": "✈️",
+      "color": Colors.blueAccent,
+      "sub": ["مواعيد رحلات الطيران", "حجز باصات النقل الجماعي", "تأشيرات ومعاملات", "فنادق ومنتجعات يمنية"]
+    },
+    {
+      "name": "المناسبات والاحتفالات",
+      "icon": "🎊",
       "color": Colors.pinkAccent,
-      "sub": ["بخور وعطور لحجية", "أشغال يدوية وحياكة", "طبخ منزلي وحلويات", "هدايا وتوزيعات مناسبات"]
+      "sub": ["حجز قاعات الأفراح", "منظمي حفلات ودي جي", "فرق رقص شعبي وزمامل", "استئجار سيارات الزفاف"]
     },
     {
-      "name": "سوق المقايضة (بدلني)",
-      "icon": "🔄",
+      "name": "خدمات الدفع والشحن",
+      "icon": "💳",
       "color": Colors.tealAccent,
-      "sub": ["بدل سيارتك بسيارة أخرى", "مقايضة أجهزة إلكترونية", "تبادل عقارات وأراضي"]
+      "sub": ["تسديد فواتير (إنترنت/هاتف)", "باقات فورجي (4G)", "تعبئة رصيد فوري", "اشتراكات قنوات VIP"]
     },
     {
-      "name": "عالم الأثاث والمفروشات",
-      "icon": "🛋️",
-      "color": Colors.brown,
-      "sub": ["مجالس عربية وستاير", "غرف نوم فخمة", "مطابخ ألمنيوم", "أدوات منزلية ومواعين"]
+      "name": "سوق المقاولات والتعمير",
+      "icon": "🏗️",
+      "color": Colors.orange,
+      "sub": ["حديد وإسمنت بالجملة", "أدوات سباكة وكهرباء", "مهندسين معماريين", "رخام وحجر يماني"]
     },
     {
-      "name": "المستلزمات الطبية والبيطرية",
-      "icon": "🏥",
-      "color": Colors.blue,
-      "sub": ["أدوات طبية للمنازل", "أدوية وفيتامينات بيطرية", "تجهيزات عيادات", "كراسي متحركة"]
-    },
-    {
-      "name": "وظائف وفرص عمل",
-      "icon": "💼",
-      "color": Colors.indigo,
-      "sub": ["وظائف شاغرة", "طلب عمل (سير ذاتية)", "دورات تدريبية", "منح دراسية"]
+      "name": "التعليم والتدريب",
+      "icon": "🎓",
+      "color": Colors.redAccent,
+      "sub": ["دورات لغات وحاسوب", "مدرسين خصوصيين", "كتب ومستلزمات مدرسية", "خدمات ترجمة وبحوث"]
     }
   ];
 
@@ -53,39 +53,45 @@ class MallExplorerScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 150.0,
-            floating: false,
+            expandedHeight: 180.0,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text("فلكس مول السيادي", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              centerTitle: true,
+              title: Text("محيط فلكس يمن الشامل", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               background: Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [Colors.black, Color(0xFF1A1A1A)])
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.amber.withOpacity(0.4), Colors.black],
+                  ),
                 ),
-                child: Center(child: Icon(Icons.storefront, size: 80, color: Colors.amber.withOpacity(0.3))),
+                child: Center(child: Icon(Icons.blur_on_rounded, size: 100, color: Colors.amber)),
               ),
             ),
           ),
           SliverPadding(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(12),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final cat = categories[index];
                   return Container(
-                    margin: EdgeInsets.only(bottom: 10),
+                    margin: EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: Color(0xFF1A1A1A),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: cat['color'].withOpacity(0.3), width: 0.5),
+                      color: Color(0xFF1E1E1E),
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [BoxShadow(color: cat['color'].withOpacity(0.1), blurRadius: 10)],
                     ),
                     child: ExpansionTile(
-                      leading: Text(cat['icon'], style: TextStyle(fontSize: 28)),
+                      leading: CircleAvatar(
+                        backgroundColor: cat['color'].withOpacity(0.1),
+                        child: Text(cat['icon'], style: TextStyle(fontSize: 22)),
+                      ),
                       title: Text(cat['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      subtitle: Text("${cat['sub'].length} أقسام فرعية", style: TextStyle(color: Colors.grey, fontSize: 11)),
                       children: (cat['sub'] as List<String>).map((sub) => ListTile(
                         title: Text(sub, style: TextStyle(fontSize: 13, color: Colors.grey[300])),
-                        trailing: Icon(Icons.arrow_right, color: Colors.amber),
+                        trailing: Icon(Icons.arrow_circle_left_outlined, color: Colors.amber, size: 18),
                         onTap: () {},
                       )).toList(),
                     ),
