@@ -1,3 +1,4 @@
+import 'terms_screen.dart';
 import 'admin_panel_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -40,6 +41,7 @@ class SettingsScreen extends StatelessWidget {
               child: Text("تسجيل الخروج", style: TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
+          ListTile(leading: Icon(Icons.description, color: Colors.grey), title: Text("الشروط والأحكام"), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TermsScreen()))),
           _buildAdminEntry(context),
           Center(child: Text("إصدار التطبيق 2.0.1", style: TextStyle(color: Colors.grey, fontSize: 12))),
         ],
