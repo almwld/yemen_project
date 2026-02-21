@@ -8,12 +8,11 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   String _searchQuery = "";
   
-  // مثال للبيانات المترابطة التي يبحث فيها النظام
   final List<Map<String, String>> _allData = [
-    {"title": "سيارة تويوتا 2022", "type": "سيارات", "price": "15,000$"},
-    {"title": "شقة في حدة", "type": "عقارات", "price": "80,000$"},
-    {"title": "جنبية صيفاني قديمة", "type": "مزادات", "price": "2,000$"},
-    {"title": "آيفون 15 برو", "type": "إلكترونيات", "price": "1,100$"},
+    {"title": "سيارة تويوتا 2022", "type": "سيارات", "price": "15,000\$"},
+    {"title": "شقة في حدة", "type": "عقارات", "price": "80,000\$"},
+    {"title": "جنبية صيفاني قديمة", "type": "مزادات", "price": "2,000\$"},
+    {"title": "آيفون 15 برو", "type": "إلكترونيات", "price": "1,100\$"},
   ];
 
   @override
