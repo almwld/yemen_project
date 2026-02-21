@@ -1,3 +1,4 @@
+import 'screens/real_estate_screen.dart';
 import 'screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
