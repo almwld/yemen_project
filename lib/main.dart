@@ -1,30 +1,24 @@
-import 'screens/mall_explorer_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'providers/app_data.dart';
-import 'screens/splash_screen.dart';
+import 'screens/home_screen.dart'; // تأكد أن هذا هو اسم ملف صفحتك الرئيسية
+import 'screens/mall_explorer_screen.dart';
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => AppData(),
-      child: FlexYemenApp(),
-    ),
-  );
+  runApp(FlexYemenApp());
 }
 
 class FlexYemenApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'فلكس يمن',
       debugShowCheckedModeBanner: false,
-      title: 'فلكس يمن ماركت',
-      theme: ThemeData.dark().copyWith(
-        primaryColor: Colors.amber,
-        scaffoldBackgroundColor: Color(0xFF0A0A0A),
-        appBarTheme: AppBarTheme(backgroundColor: Color(0xFF1A1A1A)),
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.amber,
+        scaffoldBackgroundColor: Colors.black,
       ),
-      home: SplashScreen(),
+      // هنا نجعل التطبيق يبدأ من "مستكشف المول" أو "الصفحة الرئيسية" مباشرة
+      home: MallExplorerScreen(), 
     );
   }
 }
