@@ -7,6 +7,7 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  shimmer: ^3.0.0
   fl_chart: ^0.66.0
   url_launcher: ^6.1.0
   flutter:
@@ -14,6 +15,7 @@ dependencies:
   image_picker: ^1.0.7
 
 dev_dependencies:
+  shimmer: ^3.0.0
   fl_chart: ^0.66.0
   url_launcher: ^6.1.0
   flutter_test:
