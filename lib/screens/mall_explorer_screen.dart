@@ -3,86 +3,66 @@ import 'package:flutter/material.dart';
 class MallExplorerScreen extends StatelessWidget {
   final List<Map<String, dynamic>> megaCategories = [
     {
-      "name": "حاضنة الاختراعات والابتكار",
-      "icon": "💡",
-      "color": Colors.amber,
-      "sub": ["براءات اختراع يمنية للبيع", "نماذج صناعية أولية", "تمويل مشاريع الابتكار", "مختبرات التصنيع الرقمي (FabLabs)"]
+      "name": "جناح الـ VIP والمراسم الملكية",
+      "icon": "👑",
+      "color": Colors.amberAccent,
+      "sub": ["حجز طائرات خاصة (Business Jets)", "مواكب الحراسة والسيارات المصفحة", "تنظيم المؤتمرات والقمم الدولية", "خدمات السكرتارية التنفيذية"]
     },
     {
-      "name": "تكنولوجيا المدن الذكية (Smart Cities)",
-      "icon": "🏙️",
-      "color": Colors.cyanAccent,
-      "sub": ["أنظمة المنازل الذكية", "إضاءة الشوارع بالطاقة الشمسية", "حاويات نفايات ذكية", "شبكات المراقبة والتحليل"]
+      "name": "العقارات الفاخرة والقصور",
+      "icon": "🏰",
+      "color": Colors.deepOrange,
+      "sub": ["بيع واستئجار القصور", "جزر خاصة ومنتجعات", "أبراج تجارية واستثمارية", "تصميم داخلي (قصور ومكاتب رئاسية)"]
     },
     {
-      "name": "سوق الميتافيرس والأصول الرقمية",
-      "icon": "🌐",
-      "color": Colors.purpleAccent,
-      "sub": ["بيع أراضي افتراضية", "تصميم شخصيات Avatars", "NFTs وتصاميم رقمية", "خدمات الواقع المعزز (AR)"]
-    },
-    {
-      "name": "الخدمات اللوجستية العابرة للقارات",
-      "icon": "🌍",
+      "name": "الوساطة التجارية العالمية",
+      "icon": "🤝",
       "color": Colors.blueAccent,
-      "sub": ["حجز خطوط ملاحية دولية", "تأمين الشحنات الكبرى", "مخازن جمركية (Bonded)", "تتبع الشحنات بالأقمار الصناعية"]
+      "sub": ["عقود توريد حكومية", "تنسيق شراكات دولية", "تمثيل العلامات التجارية العالمية", "الاستشارات القانونية الدولية"]
     },
     {
-      "name": "قطاع الطاقة الخضراء والبيئة",
-      "icon": "🌿",
-      "color": Colors.greenAccent,
-      "sub": ["إعادة تدوير البلاستيك والمعادن", "فلاتر تنقية المياه العملاقة", "تكنولوجيا معالجة الانبعاثات", "مشاتل الغابات والتشجير"]
+      "name": "المزادات السرية والنوادر",
+      "icon": "🕵️",
+      "color": Colors.grey,
+      "sub": ["مقتنيات تاريخية لا تقدر بثمن", "أحجار كريمة نادرة (شهادات دولية)", "ساعات ليمتد إيديشن", "أرقام لوحات ملكية"]
     },
     {
-      "name": "سوق التحف والتاريخ العالمي",
-      "icon": "🏺",
-      "color": Colors.deepOrangeAccent,
-      "sub": ["عملات إسلامية قديمة", "مخطوطات تاريخية نادرة", "تماثيل وتحف برونزية", "أطقم مائدة ملكية قديمة"]
+      "name": "خدمات الرعاية الصحية النخبوية",
+      "icon": "⚕️",
+      "color": Colors.redAccent,
+      "sub": ["إخلاء طبي جوي", "أطباء خصوصيين للمنازل", "حجز في أرقى المستشفيات العالمية", "تأمين صحي دولي VIP"]
     },
     {
-      "name": "عالم النقل الجوي والخاص",
-      "icon": "🛩️",
-      "color": Colors.lightBlue,
-      "sub": ["تأجير طائرات خاصة", "خدمات الهليكوبتر", "تجهيزات المطارات الخاصة", "صيانة الطائرات الخفيفة"]
-    },
-    {
-      "name": "سوق المواد الأولية الخام",
-      "icon": "🧱",
-      "color": Colors.brown,
-      "sub": ["توريد كراتين وورق بالجملة", "خامات الزجاج والسيراميك", "مواد دباغة الجلود", "أصباغ وألوان صناعية"]
+      "name": "سوق الاستثمارات السيادية",
+      "icon": "🏛️",
+      "color": Colors.teal,
+      "sub": ["تمويل مشاريع البنية التحتية", "صكوك وسندات استثمارية", "شراكات في قطاع الموانئ والنفط", "إدارة المحافظ المالية الكبرى"]
     }
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF010101),
+      backgroundColor: Color(0xFF050505), // أسود ملكي
       body: CustomScrollView(
         physics: BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 350.0,
+            expandedHeight: 300.0,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              title: Text("فلكس يمن: الامتداد اللانهائي", 
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: 1.5,
-                shadows: [Shadow(color: Colors.black, blurRadius: 20)])),
+              title: Text("نادي VIP فلكس يمن", 
+                style: TextStyle(fontWeight: FontWeight.w900, color: Colors.amberAccent, letterSpacing: 2)),
               background: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage("https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1350&q=80"),
+                    image: NetworkImage("https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1350&q=80"),
                     fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.6), BlendMode.darken),
                   ),
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.black, Colors.transparent, Colors.black],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    )
-                  ),
-                ),
+                child: Center(child: Icon(Icons.stars, size: 120, color: Colors.amberAccent.withOpacity(0.5))),
               ),
             ),
           ),
@@ -93,20 +73,21 @@ class MallExplorerScreen extends StatelessWidget {
                 (context, index) {
                   final cat = megaCategories[index];
                   return Container(
-                    margin: EdgeInsets.only(bottom: 25),
+                    margin: EdgeInsets.only(bottom: 30),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [Color(0xFF1A1A1A), Color(0xFF0D0D0D)]),
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: cat['color'].withOpacity(0.3), width: 1.5),
+                      gradient: LinearGradient(colors: [Color(0xFF1A1300), Color(0xFF000000)]),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.amberAccent.withOpacity(0.5), width: 2),
+                      boxShadow: [BoxShadow(color: Colors.amberAccent.withOpacity(0.1), blurRadius: 20)],
                     ),
                     child: ExpansionTile(
                       leading: Text(cat['icon'], style: TextStyle(fontSize: 35)),
-                      title: Text(cat['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-                      subtitle: Text("انقر للغوص في التفاصيل", style: TextStyle(color: Colors.grey, fontSize: 11)),
-                      trailing: Icon(Icons.arrow_circle_left_outlined, color: cat['color'], size: 28),
+                      title: Text(cat['name'], style: TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold, fontSize: 18)),
+                      subtitle: Text("حصري للأعضاء المميزين", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      trailing: Icon(Icons.verified, color: Colors.amberAccent),
                       children: (cat['sub'] as List<String>).map((sub) => ListTile(
-                        title: Text(sub, style: TextStyle(color: Colors.white70, fontSize: 14)),
-                        leading: Icon(Icons.stars_rounded, color: cat['color'], size: 18),
+                        title: Text(sub, style: TextStyle(color: Colors.white, fontSize: 14)),
+                        leading: Icon(Icons.workspace_premium, color: Colors.amberAccent, size: 16),
                         onTap: () {},
                       )).toList(),
                     ),
