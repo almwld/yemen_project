@@ -4,6 +4,7 @@ import 'screens/product_list_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/add_post_screen.dart';
 import 'screens/favorites_screen.dart';
+import 'dart:async'; // لإضافة التمرير التلقائي للسلايدر
 
 void main() => runApp(YemenMarketApp());
 
@@ -27,7 +28,7 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     MainCategoriesScreen(),
-    FavoritesScreen(), // تم تفعيل شاشة المفضلة هنا
+    FavoritesScreen(),
     AddPostScreen(),
     ProfileScreen(),
   ];
@@ -54,44 +55,112 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
   }
 }
 
-class MainCategoriesScreen extends StatelessWidget {
+class MainCategoriesScreen extends StatefulWidget {
+  @override
+  _MainCategoriesScreenState createState() => _MainCategoriesScreenState();
+}
+
+class _MainCategoriesScreenState extends State<MainCategoriesScreen> {
+  final PageController _sliderController = PageController();
+  int _sliderIndex = 0;
+
+  final List<String> _bannerImages = [
+    'https://picsum.photos/id/10/800/400', // صور عشوائية للعروض
+    'https://picsum.photos/id/20/800/400',
+    'https://picsum.photos/id/30/800/400',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // تمرير تلقائي للسلايدر كل 3 ثواني
+    Timer.periodic(Duration(seconds: 3), (Timer timer) {
+      if (_sliderIndex < _bannerImages.length - 1) {
+        _sliderIndex++;
+      } else {
+        _sliderIndex = 0;
+      }
+      if (_sliderController.hasClients) {
+        _sliderController.animateToPage(
+          _sliderIndex,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeIn,
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("سوق اليمن", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text("سوق اليمن", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [IconButton(icon: Icon(Icons.search), onPressed: () {})],
       ),
-      body: GridView.builder(
-        padding: EdgeInsets.all(15),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15, childAspectRatio: 1.1
-        ),
-        itemCount: yemenMarketCategories.length,
-        itemBuilder: (context, index) {
-          var cat = yemenMarketCategories[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) => ProductListScreen(categoryName: cat.title)
-              ));
-            },
-            child: Container(
-              decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(20)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(cat.icon, size: 50, color: Colors.amber),
-                  SizedBox(height: 10),
-                  Text(cat.title, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // السلايدر (Image Slider)
+            Container(
+              height: 180,
+              margin: EdgeInsets.all(15),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: PageView.builder(
+                  controller: _sliderController,
+                  itemCount: _bannerImages.length,
+                  itemBuilder: (context, index) {
+                    return Image.network(_bannerImages[index], fit: BoxFit.cover);
+                  },
+                ),
               ),
             ),
-          );
-        },
+            
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text("الأقسام الرئيسية", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+
+            // شبكة الأقسام
+            GridView.builder(
+              shrinkWrap: true, // مهم جداً داخل SingleChildScrollView
+              physics: NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.all(15),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15, childAspectRatio: 1.2
+              ),
+              itemCount: yemenMarketCategories.length,
+              itemBuilder: (context, index) {
+                var cat = yemenMarketCategories[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => ProductListScreen(categoryName: cat.title)
+                    ));
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFF1E1E1E),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white10),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(cat.icon, size: 45, color: Colors.amber),
+                        SizedBox(height: 8),
+                        Text(cat.title, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
