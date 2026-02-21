@@ -3,100 +3,101 @@ import 'package:flutter/material.dart';
 class MallExplorerScreen extends StatelessWidget {
   final List<Map<String, dynamic>> categories = [
     {
-      "name": "الرعاية الصحية والطبية",
-      "icon": "🏥",
-      "color": Colors.red,
-      "sub": ["دليل المستشفيات والمراكز", "صيدليات الحراسة (المناوبة)", "أطباء واستشاريين", "خدمات التمريض المنزلي"]
+      "name": "عالم الذكاء الاصطناعي والبرمجة",
+      "icon": "🤖",
+      "color": Colors.cyanAccent,
+      "sub": ["خدمات ChatGPT و Midjourney", "برمجة تطبيقات ومواقع", "بوتات واتساب وتلجرام", "الأمن السيبراني"]
     },
     {
-      "name": "التموين والسوبر ماركت",
-      "icon": "🛒",
-      "color": Colors.green,
-      "sub": ["مواد غذائية أساسية", "خضروات وفواكه طازجة", "لحوم ودواجن بلدي", "مستلزمات نظافة"]
+      "name": "الإنتاج الفني والإعلامي",
+      "icon": "🎬",
+      "color": Colors.redAccent,
+      "sub": ["تصوير ومونتاج فيديوهات", "تصميم جرافيك وشعارات", "تسجيل صوتي (دوبلاج)", "تغطية مناسبات واحتفالات"]
     },
     {
-      "name": "الخدمات اللوجستية والشحن",
-      "icon": "🚚",
+      "name": "الطاقة المتجددة المتقدمة",
+      "icon": "🔋",
+      "color": Colors.lightGreenAccent,
+      "sub": ["منظومات الري بالرياح", "صيانة توربينات", "ابتكارات الطاقة البديلة", "استشارات ترشيد الطاقة"]
+    },
+    {
+      "name": "سوق المال والعملات الرقمية",
+      "icon": "₿",
       "color": Colors.orangeAccent,
-      "sub": ["شحن داخلي (بين المحافظات)", "شحن دولي", "خدمات التوصيل المنزلي", "تخليص جمركي"]
+      "sub": ["تعليم التداول والـ P2P", "أجهزة تعدين", "استشارات مالية رقمية", "محفظات باردة (Hardware Wallets)"]
     },
     {
-      "name": "الخدمات العامة والمنزلية",
-      "icon": "🚿",
-      "color": Colors.cyan,
-      "sub": ["وايتات مياه (كوثر/عادي)", "أسطوانات غاز", "شفط بيارات ومجاري", "صيانة مصاعد ومولدات"]
+      "name": "الخدمات الزراعية المتطورة",
+      "icon": "🌱",
+      "color": Colors.green,
+      "sub": ["بيوت محمية ذكية", "أسمدة ومبيدات عضوية", "شتلات فواكه نادرة", "تصدير البن والمنتجات المحلية"]
     },
     {
-      "name": "سوق الحرف والمهن اليدوية",
-      "icon": "🎨",
-      "color": Colors.deepOrange,
-      "sub": ["نجارة وحدادة", "أعمال جبس وديكور", "خياطة وتطريز يماني", "نقش حناء وفنون"]
+      "name": "المزادات العالمية الفاخرة",
+      "icon": "💎",
+      "color": Colors.amberAccent,
+      "sub": ["ساعات ماركات عالمية", "لوحات فنية نادرة", "أرقام هواتف مميزة جداً", "سيارات كلاسيكية ونادرة"]
     },
     {
-      "name": "السيارات المهجورة والقطع النادرة",
-      "icon": "⚙️",
-      "color": Colors.blueGrey,
-      "sub": ["تشليح سيارات", "قطع غيار لمحركات قديمة", "إطارات وبطاريات", "زيوت وفلاتر"]
-    },
-    {
-      "name": "دليل الأرقام والخدمات",
-      "icon": "📞",
-      "color": Colors.yellow,
-      "sub": ["أرقام الطوارئ والدفاع المدني", "شركات الاتصالات والإنترنت", "خدمات سداد الكهرباء والماء"]
+      "name": "مركز التدريب والاستشارات",
+      "icon": "🧠",
+      "color": Colors.blueAccent,
+      "sub": ["دورات صناعة المحتوى", "استشارات إدارة مشاريع", "تنمية مهارات القيادة", "تعليم لغات برمجية"]
     }
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0A0A0A),
+      backgroundColor: Color(0xFF050505),
       body: CustomScrollView(
         physics: BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 200.0,
+            expandedHeight: 250.0,
             pinned: true,
+            stretch: true,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              title: Text("فلكس يمن: المحيط الشامل", 
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 10)])),
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    "https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                    fit: BoxFit.cover,
-                  ),
-                  Container(decoration: BoxDecoration(color: Colors.black.withOpacity(0.5))),
-                ],
+              title: Text("إمبراطورية فلكس يمن", 
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, letterSpacing: 1.5,
+                shadows: [Shadow(color: Colors.black, blurRadius: 15)])),
+              background: Image.network(
+                "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                fit: BoxFit.cover,
               ),
             ),
           ),
           SliverPadding(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.fromLTRB(15, 20, 15, 100),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final cat = categories[index];
-                  return AnimatedContainer(
-                    duration: Duration(milliseconds: 500),
-                    margin: EdgeInsets.only(bottom: 12),
-                    child: Card(
-                      color: Color(0xFF1E1E1E),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: cat['color'].withOpacity(0.5), width: 1)),
-                      elevation: 5,
-                      child: ExpansionTile(
-                        leading: CircleAvatar(
-                          backgroundColor: cat['color'].withOpacity(0.2),
-                          child: Text(cat['icon'], style: TextStyle(fontSize: 24)),
-                        ),
-                        title: Text(cat['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                        children: (cat['sub'] as List<String>).map((sub) => ListTile(
-                          title: Text(sub, style: TextStyle(fontSize: 14, color: Colors.grey[300])),
-                          trailing: Icon(Icons.arrow_right_alt, color: Colors.amber),
-                          onTap: () {},
-                        )).toList(),
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF1A1A1A), Color(0xFF121212)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(color: cat['color'].withOpacity(0.05), blurRadius: 20, spreadRadius: 2)
+                      ],
+                      border: Border.all(color: cat['color'].withOpacity(0.2), width: 0.5),
+                    ),
+                    child: ExpansionTile(
+                      leading: Text(cat['icon'], style: TextStyle(fontSize: 30)),
+                      title: Text(cat['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17)),
+                      subtitle: Text("اكتشف آفاقاً جديدة", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      trailing: Icon(Icons.keyboard_arrow_down, color: cat['color']),
+                      children: (cat['sub'] as List<String>).map((sub) => ListTile(
+                        title: Text(sub, style: TextStyle(fontSize: 14, color: Colors.grey[300])),
+                        leading: Icon(Icons.auto_awesome, size: 14, color: cat['color']),
+                        onTap: () {},
+                      )).toList(),
                     ),
                   );
                 },
