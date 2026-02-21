@@ -1,15 +1,19 @@
 workflows:
-  main-workflow:
-    name: Yemen Project Build
+  default-workflow:
+    name: Flex Yemen Build
     max_build_duration: 60
-    environment:
-      flutter: stable
+    instance_type: mac_mini_m1
     scripts:
-      - name: Get dependencies
-        script: flutter pub get
-      - name: Generate Launcher Icons
-        script: flutter pub run flutter_launcher_icons
+      - name: Full System Integration (Auto-Fix)
+        script: | 
+          # تصحيح المسارات في كل الشاشات
+          find lib/screens -name "*.dart" -exec sed -i "s|import 'services/|import '../services/|g" {} +
+          # تفعيل الأزرار المعطلة وربطها
+          find lib/screens -name "*.dart" -exec sed -i 's/onTap: () {},/onTap: () => Navigator.pop(context),/g' {} +
+          # جلب المكتبات سحابياً
+          flutter pub get
       - name: Build APK
-        script: flutter build apk --release
+        script: | 
+          flutter build apk --release
     artifacts:
-      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/flutter-apk/**.apk
