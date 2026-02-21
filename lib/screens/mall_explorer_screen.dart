@@ -3,29 +3,46 @@ import 'package:flutter/material.dart';
 class MallExplorerScreen extends StatelessWidget {
   final List<Map<String, dynamic>> categories = [
     {
-      "name": "سوق السيارات",
+      "name": "سوق السيارات والمحركات",
       "icon": "🚗",
-      "sub": ["تويوتا", "هيونداي", "مرسيدس", "قطع غيار", "شاحنات"]
+      "color": Colors.blueAccent,
+      "sub": ["تويوتا (ملكة الخط)", "هيونداي", "سيارات اقتصادية", "دراجات نارية (تكتك/باجما)", "قطع غيار وتشليح"]
     },
     {
-      "name": "العقارات والاستثمارات",
-      "icon": "🏢",
-      "sub": ["فلل للبيع", "شقق إيجار", "أراضي سكنية", "مزارع", "مكاتب"]
+      "name": "عالم الطاقة الشمسية",
+      "icon": "☀️",
+      "color": Colors.orangeAccent,
+      "sub": ["ألواح شمسية (أحدث التقنيات)", "بطاريات (جل/ليثيوم)", "محولات (Inverters)", "غطاسات ومنظومات زراعية"]
     },
     {
-      "name": "المزاد اليمني الأصيل",
+      "name": "المزاد اليمني والنوادر",
       "icon": "🗡️",
-      "sub": ["جنابي صيفاني", "سيوف قديمة", "عقيق يماني", "تحف ونوادر"]
+      "color": Colors.amber,
+      "sub": ["جنابي صيفاني وعزيري", "سيوف أثرية", "عقيق يماني أصلي", "عملات ورقميات قديمة"]
     },
     {
-      "name": "الإلكترونيات والتقنية",
+      "name": "العقارات والأراضي",
+      "icon": "🏠",
+      "color": Colors.greenAccent,
+      "sub": ["بيوت وفلل", "أراضي سكنية (صنعاء/عدن)", "محلات تجارية للإيجار", "مزارع واستراحات"]
+    },
+    {
+      "name": "الإلكترونيات والجوالات",
       "icon": "📱",
-      "sub": ["هواتف ذكية", "لابتوبات", "كاميرات", "أنظمة طاقة شمسية"]
+      "color": Colors.purpleAccent,
+      "sub": ["آيفون وسامسونج", "أجهزة مستخدمة نظيف", "لابتوبات مهندسين", "كاميرات مراقبة"]
     },
     {
-      "name": "المستلزمات الشخصية",
-      "icon": "👔",
-      "sub": ["ملابس رجالية", "أزياء نسائية", "ساعات", "عطور"]
+      "name": "سوق المواشي والمنتجات الزراعية",
+      "icon": "🐑",
+      "color": Colors.brown,
+      "sub": ["أغنام وبلدي", "عسل سدر ملكي", "بن يماني أصيل", "مواشي للمناسبات"]
+    },
+    {
+      "name": "المهن والخدمات (دليل الفنيين)",
+      "icon": "🛠️",
+      "color": Colors.redAccent,
+      "sub": ["مهندسين طاقة", "مقاولات وديكور", "نقل عفش", "خدمات وساطة تجارية"]
     }
   ];
 
@@ -33,22 +50,34 @@ class MallExplorerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF0A0A0A),
-      appBar: AppBar(title: Text("أقسام المول الكبير"), centerTitle: true),
+      appBar: AppBar(
+        title: Text("فلكس مول - تصفح بلا حدود", style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        elevation: 0,
+      ),
       body: ListView.builder(
-        padding: EdgeInsets.all(15),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         itemCount: categories.length,
         itemBuilder: (context, index) {
-          return ExpansionTile(
-            leading: Text(categories[index]['icon'], style: TextStyle(fontSize: 25)),
-            title: Text(categories[index]['name'], style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber)),
-            children: (categories[index]['sub'] as List<String>).map((sub) => ListTile(
-              title: Text(sub, style: TextStyle(fontSize: 14, color: Colors.grey[300])),
-              trailing: Icon(Icons.chevron_left, size: 16, color: Colors.amber),
-              onTap: () {
-                // هنا يتم الربط بصفحة الفلترة العميقة
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("جاري فتح قسم $sub...")));
-              },
-            )).toList(),
+          return Card(
+            color: Color(0xFF1A1A1A),
+            margin: EdgeInsets.only(bottom: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            child: ExpansionTile(
+              leading: CircleAvatar(
+                backgroundColor: categories[index]['color'].withOpacity(0.2),
+                child: Text(categories[index]['icon'], style: TextStyle(fontSize: 20)),
+              ),
+              title: Text(categories[index]['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              iconColor: Colors.amber,
+              children: (categories[index]['sub'] as List<String>).map((sub) => ListTile(
+                title: Text(sub, style: TextStyle(fontSize: 14, color: Colors.grey[400])),
+                trailing: Icon(Icons.double_arrow_rounded, size: 14, color: Colors.amber.withOpacity(0.5)),
+                onTap: () {
+                  // هنا نفتح الفلترة العميقة لكل قسم
+                },
+              )).toList(),
+            ),
           );
         },
       ),
