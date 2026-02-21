@@ -8,7 +8,7 @@ import 'screens/chat_service_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/wallet_screen.dart';
 import 'screens/add_post_screen.dart';
-import 'services/ad_popup_service.dart';
+import '../services/ad_popup_service.dart';
 import 'widgets/scrolling_banners.dart';
 
 void main() => runApp(FlexYemenApp());

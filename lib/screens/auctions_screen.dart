@@ -1,5 +1,5 @@
 import 'promote_ad_screen.dart';
-import 'services/share_service.dart';
+import '../services/share_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
