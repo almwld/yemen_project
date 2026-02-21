@@ -1,3 +1,4 @@
+import 'widgets/scrolling_banners.dart';
 import 'services/ad_popup_service.dart';
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
@@ -117,6 +118,8 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             _buildTickerTape(), // شريط متحرك للعروض
+            SizedBox(height: 10),
+            ScrollingBanners(),
             _buildDoubleAuctionBanner(context), // بنر المزادات المزدوج
             _buildCategoryGrid(context),
             _buildTrendingSection(),
