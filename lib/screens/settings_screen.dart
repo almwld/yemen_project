@@ -1,3 +1,4 @@
+import 'admin_panel_screen.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -39,6 +40,7 @@ class SettingsScreen extends StatelessWidget {
               child: Text("تسجيل الخروج", style: TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
+          _buildAdminEntry(context),
           Center(child: Text("إصدار التطبيق 2.0.1", style: TextStyle(color: Colors.grey, fontSize: 12))),
         ],
       ),
@@ -66,3 +68,14 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
+
+  Widget _buildAdminEntry(BuildContext context) {
+    return ListTile(
+      leading: Icon(Icons.admin_panel_settings, color: Colors.grey[800]),
+      title: Text("لوحة التحكم (للمسؤول فقط)", style: TextStyle(color: Colors.grey[800])),
+      onTap: () {
+        // هنا يمكنك إضافة طلب كلمة مرور مستقبلاً
+        Navigator.push(context, MaterialPageRoute(builder: (context) => AdminPanelScreen()));
+      },
+    );
+  }
