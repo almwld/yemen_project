@@ -1,3 +1,4 @@
+import 'screens/terms_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'models/category_model.dart';
