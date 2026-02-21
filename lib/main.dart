@@ -1,3 +1,4 @@
+import 'screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'models/category_model.dart';
 import 'screens/product_list_screen.dart';
