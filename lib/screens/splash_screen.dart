@@ -1,3 +1,4 @@
+import 'onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 
@@ -20,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     Future.delayed(Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => MainLayout(onThemeToggle: () {}, isDarkMode: true),
+        builder: (context) => OnboardingScreen(),
       ));
     });
   }
