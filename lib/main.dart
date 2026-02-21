@@ -1,3 +1,4 @@
+import 'screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'screens/auctions_screen.dart';
@@ -19,7 +20,7 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
       debugShowCheckedModeBanner: false,
       title: 'Flex Yemen Market',
       theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
-      home: MainLayout(
+      home: SplashScreen(
         onThemeChanged: () => setState(() => isDarkMode = !isDarkMode),
         isDarkMode: isDarkMode,
       ),
