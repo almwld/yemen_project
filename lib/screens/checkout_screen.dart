@@ -8,7 +8,8 @@ class CheckoutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double commission = price * 0.05; // احتساب عمولة 5% للمنصة
+    // احتساب العمولة 5%
+    double commission = price * 0.05; 
     double total = price + commission;
 
     return Scaffold(
@@ -21,11 +22,14 @@ class CheckoutScreen extends StatelessWidget {
           children: [
             Text("ملخص الفاتورة", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.amber)),
             SizedBox(height: 20),
+            
+            // هنا قمنا بتصحيح طريقة عرض علامة الدولار لتجنب خطأ Codemagic
             _buildSummaryRow("اسم المنتج", productTitle),
-            _buildSummaryRow("سعر المنتج", "\\$"),
-            _buildSummaryRow("رسوم الخدمة (5%)", "\\$"),
+            _buildSummaryRow("سعر المنتج", price.toStringAsFixed(2) + " \$"),
+            _buildSummaryRow("رسوم الخدمة (5%)", commission.toStringAsFixed(2) + " \$"),
+            
             Divider(color: Colors.white24, height: 40),
-            _buildSummaryRow("الإجمالي المطلوب", "\\$", isTotal: true),
+            _buildSummaryRow("الإجمالي المطلوب", total.toStringAsFixed(2) + " \$", isTotal: true),
             
             SizedBox(height: 40),
             Text("اختر وسيلة الدفع", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -35,9 +39,7 @@ class CheckoutScreen extends StatelessWidget {
             
             Spacer(),
             ElevatedButton(
-              onPressed: () {
-                _showSuccessDialog(context);
-              },
+              onPressed: () => _showSuccessDialog(context),
               child: Text("تأكيد ودفع الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.amber,
@@ -58,7 +60,7 @@ class CheckoutScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: TextStyle(color: isTotal ? Colors.white : Colors.white70, fontSize: isTotal ? 18 : 16, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
-          Text(value, style: TextStyle(color: isTotal ? Colors.amber : Colors.white, fontSize: isTotal ? 20 : 16, fontWeight: isTotal ? FontWeight.bold : FontWeight.bold)),
+          Text(value, style: TextStyle(color: isTotal ? Colors.amber : Colors.white, fontSize: isTotal ? 20 : 16, fontWeight: FontWeight.bold)),
         ],
       ),
     );
