@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'screens/auctions_screen.dart';
+import 'screens/settings_screen.dart';
 
 void main() => runApp(FlexYemenApp());
 
@@ -16,6 +17,7 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'Flex Yemen Market',
       theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
       home: MainLayout(
         onThemeChanged: () => setState(() => isDarkMode = !isDarkMode),
@@ -35,11 +37,9 @@ class MainLayout extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<MainLayout> {
-  
   @override
   void initState() {
     super.initState();
-    // إظهار الإعلان المنبثق بعد ثانية من دخول التطبيق
     Future.delayed(Duration(seconds: 1), () => _showPopupAd(context));
   }
 
@@ -68,15 +68,6 @@ class _MainLayoutState extends State<MainLayout> {
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  padding: EdgeInsets.all(15),
-                  color: Colors.black54,
-                  child: Text("عرض اليوم: خصم 50% على اشتراكات التاجر الموثق!", 
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-                ),
-              )
             ],
           ),
         ),
@@ -88,60 +79,59 @@ class _MainLayoutState extends State<MainLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("فلكس يمن ماركت", style: TextStyle(color: Colors.amber)),
+        title: Text("فلكس يمن ماركت", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
         actions: [
-          IconButton(icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode), onPressed: widget.onThemeChanged),
-          IconButton(icon: Icon(Icons.notifications_active), onPressed: () {}),
+          IconButton(
+            icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+            onPressed: widget.onThemeChanged,
+          ),
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsScreen())),
+          ),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // شريط البحث
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(15),
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: "ابحث عن سيارات، عقارات، جوالات...",
+                  hintText: "بحث عن سيارات، عقارات، جوالات...",
                   prefixIcon: Icon(Icons.search, color: Colors.amber),
                   filled: true,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
                 ),
               ),
             ),
-            
-            // شريط العروض الأسبوعية
-            Container(
-              height: 120,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildOfferTile("عروض كجيب", Colors.green),
-                  _buildOfferTile("تخفيضات جوالي", Colors.blue),
-                  _buildOfferTile("مزادات حية", Colors.red),
-                ],
-              ),
-            ),
-
-            // زر المزايدات
-            ListTile(
-              leading: Icon(Icons.gavel, color: Colors.amber),
-              title: Text("دخول ساحة المزايدات"),
-              trailing: Icon(Icons.arrow_forward_ios, size: 15),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AuctionsScreen())),
-            ),
+            _buildActionCard(context, "ساحة المزايدات الحية", Icons.gavel, Colors.redAccent, () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AuctionsScreen()));
+            }),
+            _buildActionCard(context, "العروض الأسبوعية", Icons.local_offer, Colors.blueAccent, () {}),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildOfferTile(String title, Color color) {
-    return Container(
-      width: 200,
-      margin: EdgeInsets.all(10),
-      decoration: BoxDecoration(color: color.withOpacity(0.8), borderRadius: BorderRadius.circular(15)),
-      child: Center(child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
+  Widget _buildActionCard(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(15), border: Border.all(color: color.withOpacity(0.5))),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 30),
+            SizedBox(width: 20),
+            Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Spacer(),
+            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+          ],
+        ),
+      ),
     );
   }
 }
