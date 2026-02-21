@@ -6,10 +6,10 @@ class ProductListScreen extends StatelessWidget {
   ProductListScreen({required this.categoryName});
 
   final List<Map<String, String>> dummyProducts = [
-    {'title': 'تويوتا تندرا 2021', 'price': '25,000$', 'loc': 'صنعاء', 'time': 'قبل ساعة'},
-    {'title': 'آيفون 14 برو ماكس', 'price': '900$', 'loc': 'عدن', 'time': 'قبل 3 ساعات'},
-    {'title': 'شقة للإيجار - الميناء', 'price': '300$', 'loc': 'المكلا', 'time': 'قبل يوم'},
-    {'title': 'سماعات بلوتوث', 'price': '50$', 'loc': 'تعز', 'time': 'الآن'},
+    {'title': 'تويوتا تندرا 2021', 'price': '25,000\$', 'loc': 'صنعاء', 'time': 'قبل ساعة'},
+    {'title': 'آيفون 14 برو ماكس', 'price': '900\$', 'loc': 'عدن', 'time': 'قبل 3 ساعات'},
+    {'title': 'شقة للإيجار - الميناء', 'price': '300\$', 'loc': 'المكلا', 'time': 'قبل يوم'},
+    {'title': 'سماعات بلوتوث', 'price': '50\$', 'loc': 'تعز', 'time': 'الآن'},
   ];
 
   @override
@@ -35,46 +35,25 @@ class ProductListScreen extends StatelessWidget {
             },
             child: Container(
               decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15)),
-              child: Stack(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                          child: Image.network('https://picsum.photos/id/${index + 30}/400/300', fit: BoxFit.cover, width: double.infinity),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(product['title']!, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13), maxLines: 1),
-                            SizedBox(height: 4),
-                            Text(product['price']!, style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(product['loc']!, style: TextStyle(color: Colors.grey, fontSize: 10)),
-                                Icon(Icons.verified, size: 14, color: Colors.blue),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                      child: Image.network('https://picsum.photos/id/${index + 30}/400/300', fit: BoxFit.cover, width: double.infinity),
+                    ),
                   ),
-                  Positioned(
-                    top: 8, left: 8,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.black45,
-                      radius: 16,
-                      child: IconButton(
-                        icon: Icon(Icons.favorite_border, size: 16, color: Colors.white),
-                        onPressed: () {},
-                      ),
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(product['title']!, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13), maxLines: 1),
+                        SizedBox(height: 4),
+                        Text(product['price']!, style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+                        Text(product['loc']!, style: TextStyle(color: Colors.grey, fontSize: 10)),
+                      ],
                     ),
                   ),
                 ],
