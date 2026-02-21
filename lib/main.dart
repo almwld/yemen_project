@@ -1,3 +1,4 @@
+import 'screens/mall_explorer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/app_data.dart';
