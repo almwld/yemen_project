@@ -1,3 +1,4 @@
+import 'category_products_screen.dart';
 import 'package:flutter/material.dart';
 
 class MallExplorerScreen extends StatelessWidget {
@@ -81,7 +82,7 @@ class MallExplorerScreen extends StatelessWidget {
                       children: (cat['sub'] as List<String>).map((sub) => ListTile(
                         title: Text(sub, style: TextStyle(color: Colors.grey[300], fontSize: 13)),
                         leading: Icon(Icons.verified_user, size: 14, color: cat['color']),
-                        onTap: () {},
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryProductsScreen(categoryName: sub))),
                       )).toList(),
                     ),
                   );
