@@ -80,7 +80,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       builder: (context) => AlertDialog(
         title: Text("تم بنجاح"),
         content: Text("إعلانك الآن قيد المراجعة وسيظهر للجميع فوراً."),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text("حسناً"))],
+        actions: [TextButton(onPressed: () => Navigator.pushNamed(context, "/"), child: Text("حسناً"))],
       ),
     );
   }

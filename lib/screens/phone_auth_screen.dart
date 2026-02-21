@@ -60,7 +60,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                   setState(() => isCodeSent = true);
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تم إرسال الرمز إلى ${phoneController.text}")));
                 } else {
-                  Navigator.pop(context); // العودة بعد النجاح
+                  Navigator.pushNamed(context, "/"); // العودة بعد النجاح
                 }
               },
               child: Text(isCodeSent ? "تأكيد الرمز" : "إرسال رمز التحقق", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),

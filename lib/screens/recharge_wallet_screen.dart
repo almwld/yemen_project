@@ -82,7 +82,7 @@ class RechargeWalletScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, "/");
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تم إرسال طلبك، سيتم مراجعته فوراً")));
               },
               child: Text("إرسال الطلب للمراجعة", style: TextStyle(color: Colors.black)),

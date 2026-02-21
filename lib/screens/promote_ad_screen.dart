@@ -24,7 +24,7 @@ class PromoteAdScreen extends StatelessWidget {
             Spacer(),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, "/");
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تم طلب التمويل، سيتم الخصم من محفظتك وتفعيل الإعلان")));
               },
               child: Text("تأكيد ودفع من المحفظة", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),

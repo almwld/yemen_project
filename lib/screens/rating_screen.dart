@@ -47,7 +47,7 @@ class _RatingScreenState extends State<RatingScreen> {
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, "/");
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("شكرًا لك! تقييمك يساعد في بناء مجتمع آمن.")));
               },
               child: Text("إرسال التقييم", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),

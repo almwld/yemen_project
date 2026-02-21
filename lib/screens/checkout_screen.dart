@@ -91,7 +91,7 @@ class CheckoutScreen extends StatelessWidget {
         title: Icon(Icons.check_circle, color: Colors.green, size: 60),
         content: Text("تم حجز المبلغ بنجاح! سيتم تحويله للتاجر فور استلامك للمنتج.", textAlign: TextAlign.center),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text("موافق", style: TextStyle(color: Colors.amber))),
+          TextButton(onPressed: () => Navigator.pushNamed(context, "/"), child: Text("موافق", style: TextStyle(color: Colors.amber))),
         ],
       ),
     );
