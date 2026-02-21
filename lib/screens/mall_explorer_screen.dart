@@ -3,106 +3,113 @@ import 'package:flutter/material.dart';
 class MallExplorerScreen extends StatelessWidget {
   final List<Map<String, dynamic>> categories = [
     {
-      "name": "عالم الذكاء الاصطناعي والبرمجة",
-      "icon": "🤖",
-      "color": Colors.cyanAccent,
-      "sub": ["خدمات ChatGPT و Midjourney", "برمجة تطبيقات ومواقع", "بوتات واتساب وتلجرام", "الأمن السيبراني"]
-    },
-    {
-      "name": "الإنتاج الفني والإعلامي",
-      "icon": "🎬",
-      "color": Colors.redAccent,
-      "sub": ["تصوير ومونتاج فيديوهات", "تصميم جرافيك وشعارات", "تسجيل صوتي (دوبلاج)", "تغطية مناسبات واحتفالات"]
-    },
-    {
-      "name": "الطاقة المتجددة المتقدمة",
-      "icon": "🔋",
-      "color": Colors.lightGreenAccent,
-      "sub": ["منظومات الري بالرياح", "صيانة توربينات", "ابتكارات الطاقة البديلة", "استشارات ترشيد الطاقة"]
-    },
-    {
-      "name": "سوق المال والعملات الرقمية",
-      "icon": "₿",
-      "color": Colors.orangeAccent,
-      "sub": ["تعليم التداول والـ P2P", "أجهزة تعدين", "استشارات مالية رقمية", "محفظات باردة (Hardware Wallets)"]
-    },
-    {
-      "name": "الخدمات الزراعية المتطورة",
-      "icon": "🌱",
-      "color": Colors.green,
-      "sub": ["بيوت محمية ذكية", "أسمدة ومبيدات عضوية", "شتلات فواكه نادرة", "تصدير البن والمنتجات المحلية"]
-    },
-    {
-      "name": "المزادات العالمية الفاخرة",
-      "icon": "💎",
-      "color": Colors.amberAccent,
-      "sub": ["ساعات ماركات عالمية", "لوحات فنية نادرة", "أرقام هواتف مميزة جداً", "سيارات كلاسيكية ونادرة"]
-    },
-    {
-      "name": "مركز التدريب والاستشارات",
-      "icon": "🧠",
+      "name": "تكنولوجيا الطيران والدرونز",
+      "icon": "🛸",
       "color": Colors.blueAccent,
-      "sub": ["دورات صناعة المحتوى", "استشارات إدارة مشاريع", "تنمية مهارات القيادة", "تعليم لغات برمجية"]
+      "sub": ["درونز التصوير الاحترافي", "طائرات رش المبيدات", "قطع غيار وصيانة مراوح", "دورات قيادة الدرونز"]
+    },
+    {
+      "name": "سوق الأسلحة التقليدية والتحف",
+      "icon": "⚔️",
+      "color": Colors.brown,
+      "sub": ["صيانة الجنابي والسيوف", "ترميم البنادق التراثية", "صناعة الغمد (العسوب)", "نوادر الفضة والذهب"]
+    },
+    {
+      "name": "الرياضة والرشاقة",
+      "icon": "⚽",
+      "color": Colors.greenAccent,
+      "sub": ["أدوات بناء الأجسام", "مستلزمات كرة القدم", "أجهزة السير والركض", "مكملات غذائية معتمدة"]
+    },
+    {
+      "name": "سوق الهواة والحيوانات النادرة",
+      "icon": "🦜",
+      "color": Colors.orange,
+      "sub": ["طيور الزينة والبلابل", "خيول عربية أصيلة", "مستلزمات الصيد والبر", "أحواض أسماك الزينة"]
+    },
+    {
+      "name": "الصناعات البلاستيكية والكيماوية",
+      "icon": "🧪",
+      "color": Colors.purple,
+      "sub": ["قوالب بلاستيك", "مواد خام (بي في سي)", "صناعة المنظفات", "أسمدة زراعية متطورة"]
+    },
+    {
+      "name": "مركز الاستثمار والمشاريع الكبرى",
+      "icon": "💰",
+      "color": Colors.amber,
+      "sub": ["فرص شراكة تجارية", "تمويل مشاريع ناشئة", "دراسات جدوى معتمدة", "بيع حصص في شركات"]
+    },
+    {
+      "name": "سوق الكتب والمعرفة",
+      "icon": "📚",
+      "color": Colors.deepAlpha,
+      "sub": ["مخطوطات يمنية قديمة", "كتب علمية وجامعية", "روايات وأدب", "مستلزمات القرطاسية بالجملة"]
+    },
+    {
+      "name": "عالم السينما والترفيه المنزلي",
+      "icon": "🍿",
+      "color": Colors.redAccent,
+      "sub": ["أنظمة مسرح منزلي", "أجهزة عرض (Projectors)", "اشتراكات بث رقمي", "إكسسوارات سينمائية"]
+    },
+    {
+      "name": "الخدمات القانونية والعقود",
+      "icon": "⚖️",
+      "color": Colors.blueGrey,
+      "sub": ["توثيق عقود البيع", "استشارات قانونية", "محامون معتمدون", "فض النزاعات التجارية"]
     }
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF050505),
+      backgroundColor: Color(0xFF020202),
       body: CustomScrollView(
-        physics: BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 250.0,
+            expandedHeight: 220.0,
+            floating: false,
             pinned: true,
-            stretch: true,
             flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Text("إمبراطورية فلكس يمن", 
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, letterSpacing: 1.5,
-                shadows: [Shadow(color: Colors.black, blurRadius: 15)])),
-              background: Image.network(
-                "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                fit: BoxFit.cover,
+              title: Text("فلكس يمن: 1000+ قسم", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              background: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1350&q=80"),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.6), BlendMode.darken),
+                  ),
+                ),
+                child: Center(child: Icon(Icons.all_inclusive, size: 80, color: Colors.amber)),
               ),
             ),
           ),
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(15, 20, 15, 100),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final cat = categories[index];
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF1A1A1A), Color(0xFF121212)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: [
-                        BoxShadow(color: cat['color'].withOpacity(0.05), blurRadius: 20, spreadRadius: 2)
-                      ],
-                      border: Border.all(color: cat['color'].withOpacity(0.2), width: 0.5),
-                    ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final cat = categories[index];
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Theme(
+                    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                     child: ExpansionTile(
-                      leading: Text(cat['icon'], style: TextStyle(fontSize: 30)),
-                      title: Text(cat['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17)),
-                      subtitle: Text("اكتشف آفاقاً جديدة", style: TextStyle(color: Colors.grey, fontSize: 12)),
-                      trailing: Icon(Icons.keyboard_arrow_down, color: cat['color']),
+                      backgroundColor: Color(0xFF111111),
+                      collapsedBackgroundColor: Color(0xFF0A0A0A),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      leading: CircleAvatar(
+                        backgroundColor: cat['color'].withOpacity(0.1),
+                        child: Text(cat['icon'], style: TextStyle(fontSize: 20)),
+                      ),
+                      title: Text(cat['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      subtitle: Text("استكشف المزيد من الفرص", style: TextStyle(color: Colors.grey, fontSize: 10)),
                       children: (cat['sub'] as List<String>).map((sub) => ListTile(
-                        title: Text(sub, style: TextStyle(fontSize: 14, color: Colors.grey[300])),
-                        leading: Icon(Icons.auto_awesome, size: 14, color: cat['color']),
+                        title: Text(sub, style: TextStyle(fontSize: 13, color: Colors.amber[100])),
+                        leading: Icon(Icons.circle, size: 6, color: Colors.amber),
                         onTap: () {},
                       )).toList(),
                     ),
-                  );
-                },
-                childCount: categories.length,
-              ),
+                  ),
+                );
+              },
+              childCount: categories.length,
             ),
           ),
         ],
