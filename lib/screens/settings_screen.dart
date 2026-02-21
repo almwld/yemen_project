@@ -1,83 +1,35 @@
-import 'terms_screen.dart';
-import 'admin_panel_screen.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF121212),
-      appBar: AppBar(
-        title: Text("الإعدادات"),
-        centerTitle: true,
-        elevation: 0,
-      ),
+      appBar: AppBar(title: Text("إعدادات الحساب")),
       body: ListView(
-        padding: EdgeInsets.all(15),
         children: [
-          _buildSectionTitle("الحساب الشخصي"),
-          _buildSettingsItem(Icons.person_outline, "تعديل الملف الشخصي", "تغيير الاسم، الصورة، والرقم"),
-          _buildSettingsItem(Icons.security, "الأمان وكلمة المرور", "تحديث بيانات الدخول"),
-          
-          SizedBox(height: 20),
-          _buildSectionTitle("المعاملات المالية"),
-          _buildSettingsItem(Icons.history, "سجل عمليات المحفظة", "متابعة دفعات كجيب وجوالي"),
-          _buildSettingsItem(Icons.account_balance_wallet_outlined, "إدارة البطاقات البنكية", "ربط وسائل الدفع"),
-
-          SizedBox(height: 20),
-          _buildSectionTitle("التفضيلات"),
-          _buildSettingsItem(Icons.language, "لغة التطبيق", "العربية (الافتراضية)"),
-          _buildSettingsItem(Icons.notifications_none, "إعدادات الإشعارات", "التحكم في التنبيهات المنبثقة"),
-
-          SizedBox(height: 20),
-          _buildSectionTitle("الدعم والقانونية"),
-          _buildSettingsItem(Icons.help_outline, "مركز المساعدة", "الأسئلة الشائعة وتواصل معنا"),
-          _buildSettingsItem(Icons.description_outlined, "سياسة الخصوصية", "كيف نحمي بياناتك"),
-
-          SizedBox(height: 30),
-          Center(
-            child: TextButton(
-              onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
-              child: Text("تسجيل الخروج", style: TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)),
-            ),
+          _settingItem(Icons.person, "تعديل الملف الشخصي", "الاسم، الصورة، رقم الهاتف"),
+          _settingItem(Icons.security, "الأمان والخصوصية", "كلمة المرور، التحقق الثنائي"),
+          _settingItem(Icons.history, "سجل عمليات المحفظة", "جميع التحويلات والعمولات"),
+          _settingItem(Icons.credit_card, "إدارة البطاقات والدفع", "الكريمي، النجم، موبايل ماني"),
+          _settingItem(Icons.language, "لغة التطبيق", "العربية (Yemen)"),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.exit_to_app, color: Colors.red),
+            title: Text("تسجيل الخروج", style: TextStyle(color: Colors.red)),
+            onTap: () {},
           ),
-          ListTile(leading: Icon(Icons.description, color: Colors.grey), title: Text("الشروط والأحكام"), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TermsScreen()))),
-          _buildAdminEntry(context),
-          Center(child: Text("إصدار التطبيق 2.0.1", style: TextStyle(color: Colors.grey, fontSize: 12))),
         ],
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-      child: Text(title, style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 14)),
-    );
-  }
-
-  Widget _buildSettingsItem(IconData icon, String title, String subtitle) {
-    return Card(
-      color: Color(0xFF1E1E1E),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.amber),
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(subtitle, style: TextStyle(color: Colors.grey, fontSize: 12)),
-        trailing: Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-        onTap: () {},
-      ),
+  Widget _settingItem(IconData icon, String title, String sub) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.amber),
+      title: Text(title),
+      subtitle: Text(sub, style: TextStyle(fontSize: 12)),
+      trailing: Icon(Icons.arrow_forward_ios, size: 14),
+      onTap: () {},
     );
   }
 }
-
-  Widget _buildAdminEntry(BuildContext context) {
-    return ListTile(
-      leading: Icon(Icons.admin_panel_settings, color: Colors.grey[800]),
-      title: Text("لوحة التحكم (للمسؤول فقط)", style: TextStyle(color: Colors.grey[800])),
-      onTap: () {
-        // هنا يمكنك إضافة طلب كلمة مرور مستقبلاً
-        Navigator.push(context, MaterialPageRoute(builder: (context) => AdminPanelScreen()));
-      },
-    );
-  }

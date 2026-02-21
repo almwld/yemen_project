@@ -1,5 +1,3 @@
-import 'screens/search_screen.dart';
-import 'screens/add_post_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
 import 'screens/auctions_screen.dart';
@@ -7,6 +5,7 @@ import 'screens/real_estate_screen.dart';
 import 'screens/chat_service_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/wallet_screen.dart';
+import 'screens/add_post_screen.dart';
 
 void main() => runApp(FlexYemenApp());
 
@@ -18,6 +17,8 @@ class FlexYemenApp extends StatefulWidget {
 class _FlexYemenAppState extends State<FlexYemenApp> {
   bool isDarkMode = true;
 
+  void toggleTheme() => setState(() => isDarkMode = !isDarkMode);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,14 +26,18 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
       title: 'Flex Yemen Market',
       theme: isDarkMode ? ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Color(0xFF0A0A0A),
-        appBarTheme: AppBarTheme(backgroundColor: Color(0xFF0A0A0A), elevation: 0),
+        primaryColor: Colors.amber,
       ) : ThemeData.light(),
-      home: SplashScreen(),
+      home: MainLayout(onThemeToggle: toggleTheme, isDarkMode: isDarkMode),
     );
   }
 }
 
 class MainLayout extends StatefulWidget {
+  final VoidCallback onThemeToggle;
+  final bool isDarkMode;
+  MainLayout({required this.onThemeToggle, required this.isDarkMode});
+
   @override
   _MainLayoutState createState() => _MainLayoutState();
 }
@@ -42,113 +47,118 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      HomeScreen(onThemeToggle: widget.onThemeToggle),
+      Center(child: Text("استكشف الأقسام")),
+      AddPostScreen(),
+      Center(child: Text("المفضلة")),
+      SettingsScreen(),
+    ];
+
     return Scaffold(
-      body: _buildPage(_currentIndex),
+      body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.black,
         selectedItemColor: Colors.amber,
         unselectedItemColor: Colors.grey,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسية"),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: "استكشف"),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline, size: 35), label: "أضف إعلان"),
+          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "الرئيسية"),
+          BottomNavigationBarItem(icon: Icon(Icons.explore_outlined), label: "استكشف"),
+          BottomNavigationBarItem(icon: Icon(Icons.add_box, size: 40, color: Colors.amber), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: "المفضلة"),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "الإعدادات"),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "حسابي"),
         ],
       ),
+      floatingActionButton: _buildChatMenu(),
     );
   }
 
-  Widget _buildPage(int index) {
-    if (index == 0) return HomeScreen();
-    if (index == 2) return AddPostScreen();
-    if (index == 4) return SettingsScreen();
-    return Center(child: Text("قيد التطوير"));
+  // نظام الدردشة الثلاثي المنبثق
+  Widget _buildChatMenu() {
+    return PopupMenuButton<int>(
+      icon: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(color: Colors.amber, shape: BoxShape.circle),
+        child: Icon(Icons.chat_bubble, color: Colors.black),
+      ),
+      onSelected: (item) => _handleChatSelection(item),
+      itemBuilder: (context) => [
+        PopupMenuItem(value: 1, child: ListTile(leading: Icon(Icons.support_agent), title: Text("خدمة العملاء"))),
+        PopupMenuItem(value: 2, child: ListTile(leading: Icon(Icons.groups), title: Text("دردشة جماعية"))),
+        PopupMenuItem(value: 3, child: ListTile(leading: Icon(Icons.security), title: Text("الوسيط المباشر"))),
+      ],
+    );
+  }
+
+  void _handleChatSelection(int item) {
+    if (item == 2) Navigator.push(context, MaterialPageRoute(builder: (context) => ChatServiceScreen(isPublic: true)));
+    // أضف بقية المسارات هنا
   }
 }
 
 class HomeScreen extends StatelessWidget {
+  final VoidCallback onThemeToggle;
+  HomeScreen({required this.onThemeToggle});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("سوق اليمن الشامل", style: TextStyle(color: Colors.amber, fontSize: 20, fontWeight: FontWeight.bold)),
-            Text("مرحباً، أيها المستخدم", style: TextStyle(color: Colors.grey, fontSize: 12)),
-          ],
-        ),
+        title: Text("FLEX YEMEN", style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.black)),
         actions: [
-          IconButton(icon: Icon(Icons.notifications_none, color: Colors.white), onPressed: () {}),
-          // زر تغيير الثيم المطلوب
-          IconButton(
-            icon: Icon(Icons.brightness_6, color: Colors.amber),
-            onPressed: () {
-              // هنا سيتم استدعاء تغيير الثيم في النسخة القادمة
-            },
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.person, color: Colors.black)),
-          ),
+          IconButton(icon: Icon(Icons.brightness_6, color: Colors.amber), onPressed: onThemeToggle),
+          IconButton(icon: Icon(Icons.search), onPressed: () {}),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.all(15),
-              child: InkWell(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen())),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                  decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(12)),
-                  child: Row(children: [Icon(Icons.search, color: Colors.grey), SizedBox(width: 10), Text("ابحث عن ما تريد...", style: TextStyle(color: Colors.grey))]),
-                ),
-              ),
-            ),
-            _buildPromotionCard(),
-            _buildSectionHeader("الخدمات والأقسام"),
+            _buildTickerTape(), // شريط متحرك للعروض
+            _buildDoubleAuctionBanner(context), // بنر المزادات المزدوج
             _buildCategoryGrid(context),
-            _buildSectionHeader("المقتنيات التراثية المميزة"),
-            _buildHeritageList(),
+            _buildTrendingSection(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPromotionCard() {
+  Widget _buildTickerTape() {
     return Container(
-      margin: EdgeInsets.all(15),
-      height: 160,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [Colors.red[900]!, Colors.orange[700]!], begin: Alignment.topLeft, end: Alignment.bottomRight),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Stack(
+      height: 30,
+      color: Colors.redAccent,
+      child: Center(child: Text("🔥 عروض الأسبوع: خصم 10% على عمولة الوساطة للعقارات - لا تفوت الفرصة!", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+    );
+  }
+
+  Widget _buildDoubleAuctionBanner(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Row(
         children: [
-          Positioned(right: 20, top: 40, child: Text("مزاد الجنابي\nالأسبوعي", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white))),
-          Opacity(opacity: 0.2, child: Icon(Icons.gavel, size: 150, color: Colors.white)),
+          _auctionCard("مزاد الجنابي", "نوادر الصيفاني", Colors.brown, Icons.workspace_premium),
+          SizedBox(width: 10),
+          _auctionCard("مزاد السيارات", "وارد أمريكي/خليجي", Colors.blueGrey, Icons.directions_car),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          Text("عرض الكل", style: TextStyle(color: Colors.amber, fontSize: 12)),
-        ],
+  Widget _auctionCard(String title, String sub, Color color, IconData icon) {
+    return Expanded(
+      child: Container(
+        height: 120,
+        decoration: BoxDecoration(color: color.withOpacity(0.8), borderRadius: BorderRadius.circular(15)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 40, color: Colors.white),
+            Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(sub, style: TextStyle(fontSize: 10)),
+          ],
+        ),
       ),
     );
   }
@@ -157,65 +167,32 @@ class HomeScreen extends StatelessWidget {
     return GridView.count(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      crossAxisCount: 3,
-      padding: EdgeInsets.all(10),
+      crossAxisCount: 4,
       children: [
-        _categoryItem(context, "سيارات", Icons.directions_car, Colors.red, () {}),
-        _categoryItem(context, "عقارات", Icons.home, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (context) => RealEstateScreen()))),
-        _categoryItem(context, "إلكترونيات", Icons.laptop, Colors.purple, () {}),
-        _categoryItem(context, "خدمات صيانة", Icons.build, Colors.green, () {}),
-        _categoryItem(context, "مزادات", Icons.timer, Colors.amber, () => Navigator.push(context, MaterialPageRoute(builder: (context) => AuctionsScreen()))),
-        _categoryItem(context, "وظائف", Icons.work, Colors.orange, () {}),
+        _catIcon("وظائف", Icons.work, Colors.orange),
+        _catIcon("سيارات", Icons.directions_car, Colors.blue),
+        _catIcon("عقارات", Icons.home, Colors.green),
+        _catIcon("إلكترونيات", Icons.phone_android, Colors.purple),
       ],
     );
   }
 
-  Widget _categoryItem(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(color: Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(15)),
-            child: Icon(icon, color: color, size: 30),
-          ),
-          SizedBox(height: 5),
-          Text(title, style: TextStyle(fontSize: 12)),
-        ],
-      ),
+  Widget _catIcon(String label, IconData icon, Color col) {
+    return Column(
+      children: [
+        CircleAvatar(backgroundColor: col.withOpacity(0.1), child: Icon(icon, color: col)),
+        SizedBox(height: 5),
+        Text(label, style: TextStyle(fontSize: 10)),
+      ],
     );
   }
 
-  Widget _buildHeritageList() {
-    return Container(
-      height: 220,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        children: [
-          _heritageCard("جنبية صيفاني", "١٢٠ ألف", Icons.workspace_premium),
-          _heritageCard("عسل سدر طبيعي", "٤٥ ألف", Icons.medical_services),
-          _heritageCard("خاتم عقيق", "١٥ ألف", Icons.diamond),
-        ],
-      ),
-    );
-  }
-
-  Widget _heritageCard(String name, String price, IconData icon) {
-    return Container(
-      width: 150,
-      margin: EdgeInsets.all(5),
-      decoration: BoxDecoration(color: Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(20)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.amber, size: 50),
-          SizedBox(height: 10),
-          Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-          Text(price, style: TextStyle(color: Colors.amber)),
-        ],
-      ),
+  Widget _buildTrendingSection() {
+    return Column(
+      children: [
+        ListTile(title: Text("الأكثر رواجاً اليوم"), trailing: Text("عرض المزيد", style: TextStyle(color: Colors.amber))),
+        Container(height: 150, child: ListView(scrollDirection: Axis.horizontal, children: [/* بطاقات المنتجات */])),
+      ],
     );
   }
 }
