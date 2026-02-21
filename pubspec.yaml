@@ -7,11 +7,13 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  url_launcher: ^6.1.0
   flutter:
     sdk: flutter
   image_picker: ^1.0.7
 
 dev_dependencies:
+  url_launcher: ^6.1.0
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: "^0.13.1"
