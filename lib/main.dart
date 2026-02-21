@@ -1,3 +1,4 @@
+import 'screens/add_post_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
 import 'screens/auctions_screen.dart';
@@ -62,6 +63,7 @@ class _MainLayoutState extends State<MainLayout> {
 
   Widget _buildPage(int index) {
     if (index == 0) return HomeScreen();
+    if (index == 2) return AddPostScreen();
     if (index == 4) return SettingsScreen();
     return Center(child: Text("قيد التطوير"));
   }
