@@ -1,3 +1,4 @@
+import 'screens/search_screen.dart';
 import 'screens/add_post_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
@@ -99,6 +100,17 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            Padding(
+              padding: EdgeInsets.all(15),
+              child: InkWell(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen())),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                  decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(12)),
+                  child: Row(children: [Icon(Icons.search, color: Colors.grey), SizedBox(width: 10), Text("ابحث عن ما تريد...", style: TextStyle(color: Colors.grey))]),
+                ),
+              ),
+            ),
             _buildPromotionCard(),
             _buildSectionHeader("الخدمات والأقسام"),
             _buildCategoryGrid(context),
