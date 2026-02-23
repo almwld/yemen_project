@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart' as slider;
+import 'package:carousel_slider/carousel_slider.dart' as slider_pkg;
 
 class HomeScreen extends StatefulWidget {
   final bool isGuest;
@@ -10,7 +10,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // لا نحتاج لتعريف كنترولر حالياً لتجنب التعقيد
   final List<Map<String, dynamic>> categories = [
     {'name': 'سيارات', 'icon': Icons.directions_car, 'color': Colors.amber},
     {'name': 'عقارات', 'icon': Icons.home, 'color': Colors.amber},
@@ -35,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. الأقسام الدائرية
             Container(
               height: 120,
               padding: EdgeInsets.symmetric(vertical: 10),
@@ -61,9 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            // 2. البنر المتحرك باستخدام الاسم المستعار slider
-            slider.CarouselSlider(
-              options: slider.CarouselOptions(height: 180.0, autoPlay: true, enlargeCenterPage: true),
+            // استخدام slider_pkg لمنع التضارب
+            slider_pkg.CarouselSlider(
+              options: slider_pkg.CarouselOptions(height: 180.0, autoPlay: true, enlargeCenterPage: true),
               items: [1,2,3].map((i) {
                 return Builder(
                   builder: (BuildContext context) {
@@ -94,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: Colors.amber,
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
           BottomNavigationBarItem(icon: Icon(Icons.store), label: 'المتجر'),
           BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'المفضلة'),
@@ -106,12 +104,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: EdgeInsets.all(15),
+      padding: const EdgeInsets.all(15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-          Text("عرض الكل", style: TextStyle(color: Colors.amber, fontSize: 14)),
+          Text(title, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text("عرض الكل", style: TextStyle(color: Colors.amber, fontSize: 14)),
         ],
       ),
     );
@@ -120,9 +118,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildProductGrid() {
     return GridView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.all(10),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(10),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2, childAspectRatio: 0.8, crossAxisSpacing: 10, mainAxisSpacing: 10,
       ),
       itemCount: 4,
@@ -131,9 +129,9 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(10)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: const [
               Icon(Icons.image, color: Colors.grey, size: 50),
-              Text("اسم المنتج", style: TextStyle(color: Colors.white)),
+              Text("منتج تجريبي", style: TextStyle(color: Colors.white)),
               Text("١٥,٠٠٠ ر.ي", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
             ],
           ),
