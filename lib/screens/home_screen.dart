@@ -1,139 +1,148 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final bool isGuest;
   HomeScreen({this.isGuest = false});
 
-  final List<Map<String, dynamic>> sections = [
-    {'name': 'سيارات', 'icon': Icons.directions_car, 'color': Colors.blue},
-    {'name': 'عقارات', 'icon': Icons.home, 'color': Colors.green},
-    {'name': 'إلكترونيات', 'icon': Icons.devices, 'color': Colors.orange},
-    {'name': 'مواشي', 'icon': Icons.pets, 'color': Colors.brown},
-    {'name': 'خدمات', 'icon': Icons.handyman, 'color': Colors.red},
-    {'name': 'وظائف', 'icon': Icons.work, 'color': Colors.teal},
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
+  final List<Map<String, dynamic>> categories = [
+    {'name': 'سيارات', 'icon': Icons.directions_car, 'color': Colors.amber},
+    {'name': 'عقارات', 'icon': Icons.home, 'color': Colors.amber},
+    {'name': 'جوالات', 'icon': Icons.phone_android, 'color': Colors.amber},
+    {'name': 'فضيات', 'icon': Icons.diamond, 'color': Colors.amber},
+    {'name': 'مواشي', 'icon': Icons.pets, 'color': Colors.amber},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("فلكس يمن 🇾🇪"),
-        backgroundColor: Colors.black87,
+        backgroundColor: Colors.black,
+        elevation: 0,
+        title: Image.network('https://via.placeholder.com/100x40?text=FLEX', height: 30), // لوجو التطبيق
         actions: [
-          IconButton(icon: Icon(Icons.search), onPressed: () {}),
-          if (!isGuest) IconButton(icon: Icon(Icons.person), onPressed: () {}),
+          IconButton(icon: Icon(Icons.shopping_cart_outlined, color: Colors.white), onPressed: () {}),
+          IconButton(icon: Icon(Icons.search, color: Colors.white), onPressed: () {}),
         ],
-      ),
-      drawer: Drawer(
-        child: Column(
-          children: [
-            UserAccountsDrawerHeader(
-              accountName: Text(isGuest ? "زائر" : "مستخدم فلكس"),
-              accountEmail: Text(isGuest ? "تصفح محدود" : "حساب موثق"),
-              currentAccountPicture: CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.person)),
-              decoration: BoxDecoration(color: Colors.black87),
-            ),
-            ListTile(leading: Icon(Icons.shopping_bag), title: Text("مشترياتي"), onTap: () {}),
-            ListTile(leading: Icon(Icons.favorite), title: Text("المفضلة"), onTap: () {}),
-            if (isGuest) ListTile(leading: Icon(Icons.login), title: Text("تسجيل الدخول"), onTap: () => Navigator.pop(context)),
-          ],
-        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // بنر ترحيبي ذكي
-            _buildWelcomeBanner(),
-            
-            // شبكة الأقسام (Grid View) لسهولة الوصول
-            Padding(
-              padding: EdgeInsets.all(15),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10,
-                ),
-                itemCount: sections.length,
+            // 1. الأقسام الدائرية (مثل المارد)
+            Container(
+              height: 120,
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: categories.length,
                 itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () => _handleSectionTap(context, sections[index]['name']),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: sections[index]['color'].withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: sections[index]['color'].withOpacity(0.3)),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(sections[index]['icon'], color: sections[index]['color'], size: 30),
-                          SizedBox(height: 8),
-                          Text(sections[index]['name'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                        ],
-                      ),
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.grey[900],
+                          child: Icon(categories[index]['icon'], color: Colors.amber, size: 28),
+                        ),
+                        SizedBox(height: 8),
+                        Text(categories[index]['name'], style: TextStyle(color: Colors.white, fontSize: 12)),
+                      ],
                     ),
                   );
                 },
               ),
             ),
-            
-            // قسم "أحدث الإعلانات"
-            _buildProductSection("أحدث العروض 🔥"),
+
+            // 2. البنر المتحرك (Slider)
+            CarouselSlider(
+              options: CarouselOptions(height: 180.0, autoPlay: true, enlargeCenterPage: true),
+              items: [1,2,3].map((i) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.symmetric(horizontal: 5.0),
+                      decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(15),
+                        image: DecorationImage(
+                          image: NetworkImage('https://via.placeholder.com/400x200?text=Flex+Yemen+Offer'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+            ),
+
+            // 3. قسم "العروض المميزة" بتصميم البطاقات
+            _buildSectionHeader("أحدث العروض"),
+            _buildProductGrid(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _handleAction(context, "إضافة إعلان"),
-        label: Text("أضف إعلانك"),
-        icon: Icon(Icons.add),
-        backgroundColor: Colors.amber,
-      ),
-    );
-  }
-
-  void _handleSectionTap(BuildContext context, String name) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("جاري فتح قسم $name...")));
-  }
-
-  void _handleAction(BuildContext context, String action) {
-    if (isGuest) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("يرجى تسجيل الدخول أولاً للقيام بـ $action"), backgroundColor: Colors.red),
-      );
-    } else {
-      // تنفيذ الإجراء للمسجلين
-    }
-  }
-
-  Widget _buildWelcomeBanner() {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.all(15),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [Colors.amber, Colors.orange]),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("أهلاً بك في فلكس يمن", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          Text("سوقك الآمن للبيع والشراء بالضمان"),
+      
+      // 4. القائمة السفلية (Modern Bottom Nav)
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
+        selectedItemColor: Colors.amber,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+          BottomNavigationBarItem(icon: Icon(Icons.store), label: 'المتجر'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'المفضلة'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'الحساب'),
         ],
       ),
     );
   }
 
-  Widget _buildProductSection(String title) {
-     return Column(
-       crossAxisAlignment: CrossAxisAlignment.start,
-       children: [
-         Padding(padding: EdgeInsets.all(15), child: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-         // محاكاة لقائمة المنتجات
-         Container(height: 200, child: Center(child: Text("سيتم تحميل المنتجات من سوبابيس..."))),
-       ],
-     );
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: EdgeInsets.all(15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+          Text("عرض الكل", style: TextStyle(color: Colors.amber, fontSize: 14)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.all(10),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, childAspectRatio: 0.8, crossAxisSpacing: 10, mainAxisSpacing: 10,
+      ),
+      itemCount: 4,
+      itemBuilder: (context, index) {
+        return Container(
+          decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(10)),
+          child: Column(
+            children: [
+              Expanded(child: Icon(Icons.image, color: Colors.grey, size: 50)),
+              Text("اسم المنتج الاحترافي", style: TextStyle(color: Colors.white)),
+              Text("١٥,٠٠٠ ر.ي", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
