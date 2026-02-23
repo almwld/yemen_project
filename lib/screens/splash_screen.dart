@@ -1,94 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:async';
-import '../main.dart'; // سنقوم بتعديل main.dart لاحقاً لتبدأ من هنا
+import 'login_screen.dart'; // سيوجه المستخدم للوجن بعد الثواني
 
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: true);
-    
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-
-    // الانتقال للشاشة الرئيسية بعد 3 ثوانٍ
     Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
     });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Color(0xFF121212),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ScaleTransition(
-              scale: _animation,
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [Colors.amber, Colors.orangeAccent, Colors.black],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.amber.withOpacity(0.5),
-                      blurRadius: 30,
-                      spreadRadius: 5,
-                    )
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    "FLEX",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 30),
+            // شعار التطبيق (تخيل اللوجو هنا)
+            Icon(Icons.flash_on, size: 80, color: Colors.amber),
+            SizedBox(height: 20),
             Text(
               "فلكس يمن",
-              style: TextStyle(
-                color: Colors.amber,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 4,
-              ),
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 2),
             ),
-            SizedBox(height: 10),
-            Text(
-              "سوقك في جيبك",
-              style: TextStyle(color: Colors.grey, fontSize: 14),
-            ),
+            Text("الضمان والثقة في كل صفقة", style: TextStyle(color: Colors.amber)),
             SizedBox(height: 50),
-            CircularProgressIndicator(color: Colors.amber, strokeWidth: 2),
+            SpinKitThreeBounce(color: Colors.amber, size: 30.0),
           ],
         ),
       ),
