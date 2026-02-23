@@ -18,10 +18,13 @@ class YemenProjectApp extends StatelessWidget {
       title: 'فلكس يمن',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        useMaterial3: true,
         brightness: Brightness.dark,
-        primaryColor: Colors.amber,
+        colorScheme: ColorScheme.dark(
+          primary: Colors.amber,
+          secondary: Colors.amberAccent,
+        ),
         scaffoldBackgroundColor: Colors.black,
-        accentColor: Colors.amberAccent,
       ),
       initialRoute: '/',
       routes: {
@@ -40,13 +43,12 @@ class MainNavigationHub extends StatefulWidget {
 class _MainNavigationHubState extends State<MainNavigationHub> {
   int _currentIndex = 0;
 
-  // استدعاء كافة الشاشات التي برمجناها الأسبوع الماضي
   final List<Widget> _pages = [
-    RealHomeScreen(),      // نظام السوق (الصور التي طلبتها)
-    MallMapScreen(),       // نظام الخرائط والمواقع
-    FlexWalletScreen(),    // المحفظة المالية التنافسية
-    MerchantDashboard(),   // لوحة تحكم التاجر
-    SettingsScreen(),      // الإعدادات والبروفايل
+    RealHomeScreen(),
+    MallMapScreen(),
+    FlexWalletScreen(),
+    MerchantDashboard(),
+    SettingsScreen(),
   ];
 
   @override
@@ -56,11 +58,10 @@ class _MainNavigationHubState extends State<MainNavigationHub> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.grey[600],
-        backgroundColor: Color(0xFF0D0D0D),
+        unselectedItemColor: Colors.grey,
+        backgroundColor: const Color(0xFF0D0D0D),
         type: BottomNavigationBarType.fixed,
         onTap: (index) {
-          // حماية المحفظة ولوحة التاجر بالرمز السري
           if (index == 2 || index == 3) {
             Navigator.push(context, MaterialPageRoute(
               builder: (context) => SecurityPinScreen(nextScreen: _pages[index])
@@ -69,7 +70,7 @@ class _MainNavigationHubState extends State<MainNavigationHub> {
             setState(() => _currentIndex = index);
           }
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'السوق'),
           BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: 'الخرائط'),
           BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'المحفظة'),
@@ -81,17 +82,16 @@ class _MainNavigationHubState extends State<MainNavigationHub> {
   }
 }
 
-// واجهة السوق (التي تشبه طلبك)
 class RealHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("فلكس يمن | FLEX", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.black)),
+        title: const Text("فلكس يمن | FLEX", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.black,
         actions: [
-          IconButton(icon: Icon(Icons.notifications_none), onPressed: () {
+          IconButton(icon: const Icon(Icons.notifications_none), onPressed: () {
              Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationsScreen()));
           }),
         ],
@@ -111,21 +111,21 @@ class RealHomeScreen extends StatelessWidget {
   Widget _buildPromoSlider() {
     return Container(
       height: 150,
-      margin: EdgeInsets.all(15),
+      margin: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(colors: [Colors.orange[900]!, Colors.amber[700]!]),
       ),
-      child: Center(child: Text("إعلانات مميزة (عقارات/سيارات)", style: TextStyle(fontWeight: FontWeight.bold))),
+      child: const Center(child: Text("مزادات حصرية وجنابي ثمينة", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
     );
   }
 
   Widget _buildCategoryGrid() {
     return GridView.count(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 4,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       children: [
         _catIcon(Icons.directions_car, "سيارات"),
         _catIcon(Icons.smartphone, "جوالات"),
@@ -136,18 +136,22 @@ class RealHomeScreen extends StatelessWidget {
   }
 
   Widget _catIcon(IconData icon, String label) {
-    return Column(children: [Icon(icon, color: Colors.amber), Text(label, style: TextStyle(fontSize: 10))]);
+    return Column(children: [Icon(icon, color: Colors.amber), Text(label, style: const TextStyle(fontSize: 10, color: Colors.white))]);
   }
 
   Widget _buildFeaturedItems() {
     return Container(
-      padding: EdgeInsets.all(15),
+      padding: const EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("أحدث المضاف", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          Container(height: 200, color: Color(0xFF1A1A1A), child: Center(child: Text("قائمة المنتجات الحقيقية"))),
+          const Text("أحدث المضاف في سوق اليمن", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+          const SizedBox(height: 10),
+          Container(
+            height: 200, 
+            decoration: BoxDecoration(color: const Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(15)),
+            child: const Center(child: Text("سيتم تحميل المنتجات من السيرفر...", style: TextStyle(color: Colors.grey)))
+          ),
         ],
       ),
     );
