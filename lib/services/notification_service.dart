@@ -1,23 +1,39 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/material.dart';
 
-class PushNotificationService {
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+class StatusObserver {
+  final supabase = Supabase.instance.client;
 
-  Future initialize() async {
-    // طلب إذن من المستخدم لإرسال الإشعارات
-    NotificationSettings settings = await _fcm.requestPermission();
-    
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('تم تفعيل الإشعارات بنجاح');
-      
-      // الحصول على "Token" الجهاز لإرسال إشعارات مخصصة إذا أردت
-      String? token = await _fcm.getToken();
-      print("Token الجهاز: $token");
-    }
+  void listenToVerificationChanges(BuildContext context) {
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) return;
 
-    // التعامل مع الإشعارات أثناء فتح التطبيق
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("وصل إشعار جديد: ${message.notification?.title}");
+    supabase
+        .from('profiles')
+        .stream(primaryKey: ['id'])
+        .eq('id', userId)
+        .listen((data) {
+      if (data.isNotEmpty) {
+        final status = data.first['verification_state'];
+        if (status == 'approved') {
+          _showDialog(context, "تهانينا!", "تم توثيق حسابك بنجاح ✅ يمكنك الآن التداول بثقة أكبر.");
+        } else if (status == 'rejected') {
+          _showDialog(context, "تنبيه", "عذراً، تم رفض طلب التوثيق. يرجى مراجعة الإدارة أو إعادة رفع الهوية.");
+        }
+      }
     });
+  }
+
+  void _showDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title, style: TextStyle(color: Colors.amber)),
+        content: Text(message),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text("موافق"))
+        ],
+      ),
+    );
   }
 }
