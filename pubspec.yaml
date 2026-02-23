@@ -6,6 +6,7 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  local_auth: ^2.1.6
   fl_chart: ^0.66.0
   geolocator: ^12.0.0
   flutter_local_notifications: ^16.3.2
@@ -22,6 +23,7 @@ dependencies:
   url_launcher: ^6.2.1
 
 dev_dependencies:
+  local_auth: ^2.1.6
   fl_chart: ^0.66.0
   geolocator: ^12.0.0
   flutter_local_notifications: ^16.3.2
