@@ -1,71 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ReferralScreen extends StatelessWidget {
-  final String referralCode = "FLEX-2026"; // هذا الكود يتولد تلقائياً لكل مستخدم
+  final supabase = Supabase.instance.client;
 
   @override
   Widget build(BuildContext context) {
+    final user = supabase.auth.currentUser;
+    
     return Scaffold(
-      backgroundColor: Color(0xFF0A0A0A),
-      appBar: AppBar(title: Text("برنامج الإحالة")),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(25),
-        child: Column(
-          children: [
-            Icon(Icons.card_giftcard, size: 100, color: Colors.amber),
-            SizedBox(height: 20),
-            Text("ادعُ أصدقاءك واربح رصيداً!", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Text(
-              "شارك كود الإحالة الخاص بك مع أصدقائك، وعند تسجيلهم ستحصل على 100 ريال يمني في محفظتك فوراً.",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
-            ),
-            SizedBox(height: 40),
-            Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Color(0xFF1E1E1E),
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.amber.withOpacity(0.5)),
-              ),
-              child: Column(
-                children: [
-                  Text("كود الإحالة الخاص بك", style: TextStyle(color: Colors.grey, fontSize: 12)),
-                  SizedBox(height: 10),
-                  Text(referralCode, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.amber)),
-                  SizedBox(height: 15),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      final String msg = "سجل الآن في فلكس يمن ماركت للمزادات والوساطة المضمونة باستخدام الكود الخاص بي ($referralCode) واحصل على ميزات خاصة! https://flexyemen.com";
-                      Share.share(msg);
-                    },
-                    icon: Icon(Icons.share, color: Colors.black),
-                    label: Text("مشاركة الرابط والكود", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, minimumSize: Size(double.infinity, 50)),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 30),
-            _buildStatRow("عدد الأصدقاء الذين سجلوا", "0"),
-            _buildStatRow("إجمالي الأرباح من الإحالات", "0 ريال"),
-          ],
-        ),
-      ),
-    );
-  }
+      appBar: AppBar(title: Text("شارك واربح 💰"), backgroundColor: Colors.indigo),
+      body: FutureBuilder(
+        future: supabase.from('profiles').select('referral_code').eq('id', user!.id).single(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+          final code = snapshot.data!['referral_code'];
 
-  Widget _buildStatRow(String label, String value) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: TextStyle(color: Colors.grey)),
-          Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber)),
-        ],
+          return Padding(
+            padding: EdgeInsets.all(30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.card_giftcard, size: 100, color: Colors.indigo),
+                SizedBox(height: 20),
+                Text("ادعُ أصدقاءك للحصول على رصيد مجاني!", 
+                  textAlign: TextAlign.center, 
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
+                Text("عندما يشحن صديقك رصيده لأول مرة، ستحصل أنت على مكافأة 500 ر.ي", 
+                  textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                SizedBox(height: 40),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[900],
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.indigo)
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(code, style: TextStyle(fontSize: 24, letterSpacing: 5, fontWeight: FontWeight.bold, color: Colors.amber)),
+                      IconButton(
+                        icon: Icon(Icons.copy, color: Colors.white),
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(text: code));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تم نسخ الكود")));
+                        },
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Share.share("حمل تطبيق فلكس يمن واستخدم كود الإحالة الخاص بي ($code) لتحصل على مميزات خاصة! 🇾🇪");
+                  },
+                  icon: Icon(Icons.share),
+                  label: Text("ارسل الرابط الآن"),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo, minimumSize: Size(double.infinity, 50)),
+                )
+              ],
+            ),
+          );
+        },
       ),
     );
   }
