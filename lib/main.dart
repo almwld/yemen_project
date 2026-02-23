@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
-import 'screens/category_products_screen.dart';
 import 'screens/mall_map_screen.dart';
-import 'screens/settings_screen.dart';
 import 'screens/flex_wallet_screen.dart';
+import 'screens/merchant_dashboard.dart';
+import 'screens/settings_screen.dart';
+import 'screens/notifications_screen.dart';
+import 'screens/security_pin_screen.dart';
 
 void main() {
-  // تشغيل التطبيق مع معالجة الأخطاء لمنع الخروج المفاجئ
   runApp(YemenProjectApp());
 }
 
@@ -20,6 +21,7 @@ class YemenProjectApp extends StatelessWidget {
         brightness: Brightness.dark,
         primaryColor: Colors.amber,
         scaffoldBackgroundColor: Colors.black,
+        accentColor: Colors.amberAccent,
       ),
       initialRoute: '/',
       routes: {
@@ -37,12 +39,14 @@ class MainNavigationHub extends StatefulWidget {
 
 class _MainNavigationHubState extends State<MainNavigationHub> {
   int _currentIndex = 0;
-  
+
+  // استدعاء كافة الشاشات التي برمجناها الأسبوع الماضي
   final List<Widget> _pages = [
-    RealHomeScreen(), // الواجهة التي تشبه الصورة الثانية
-    MallMapScreen(),
-    FlexWalletScreen(),
-    SettingsScreen(),
+    RealHomeScreen(),      // نظام السوق (الصور التي طلبتها)
+    MallMapScreen(),       // نظام الخرائط والمواقع
+    FlexWalletScreen(),    // المحفظة المالية التنافسية
+    MerchantDashboard(),   // لوحة تحكم التاجر
+    SettingsScreen(),      // الإعدادات والبروفايل
   ];
 
   @override
@@ -52,136 +56,98 @@ class _MainNavigationHubState extends State<MainNavigationHub> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Color(0xFF121212),
+        unselectedItemColor: Colors.grey[600],
+        backgroundColor: Color(0xFF0D0D0D),
         type: BottomNavigationBarType.fixed,
-        onTap: (index) => setState(() => _currentIndex = index),
+        onTap: (index) {
+          // حماية المحفظة ولوحة التاجر بالرمز السري
+          if (index == 2 || index == 3) {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => SecurityPinScreen(nextScreen: _pages[index])
+            ));
+          } else {
+            setState(() => _currentIndex = index);
+          }
+        },
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.explore_outlined), label: 'استكشف'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), label: 'المحفظة'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'حسابي'),
+          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'السوق'),
+          BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: 'الخرائط'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'المحفظة'),
+          BottomNavigationBarItem(icon: Icon(Icons.storefront), label: 'متجري'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'الإعدادات'),
         ],
       ),
     );
   }
 }
 
-// واجهة "سوق اليمن الشامل" الاحترافية
+// واجهة السوق (التي تشبه طلبك)
 class RealHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text("فلكس يمن | FLEX", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.black)),
+        centerTitle: true,
         backgroundColor: Colors.black,
-        title: Text("سوق اليمن الشامل", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
         actions: [
-          IconButton(icon: Icon(Icons.notifications_none, color: Colors.white), onPressed: () {}),
-          CircleAvatar(backgroundColor: Colors.amber, radius: 15, child: Icon(Icons.person, size: 18, color: Colors.black)),
-          SizedBox(width: 10),
+          IconButton(icon: Icon(Icons.notifications_none), onPressed: () {
+             Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationsScreen()));
+          }),
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(15),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // السلايدر العلوي (مثل الصورة الثانية)
-            Container(
-              height: 160,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [Colors.redAccent, Colors.orangeAccent, Colors.amber]),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Stack(
-                children: [
-                  Positioned(right: 20, top: 40, child: Text("مزاد الجنابي\nالأسبوعي", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold))),
-                  Positioned(left: 20, bottom: 20, child: Icon(Icons.gavel, size: 80, color: Colors.white.withOpacity(0.3))),
-                ],
-              ),
-            ),
-            SizedBox(height: 25),
-            
-            _buildSectionHeader("الخدمات والأقسام"),
-            SizedBox(height: 15),
-            
-            // شبكة الأقسام (سيارات، عقارات، إلخ)
-            GridView.count(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              crossAxisCount: 3,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              children: [
-                _buildCategoryCard(Icons.directions_car, "سيارات"),
-                _buildCategoryCard(Icons.home, "عقارات"),
-                _buildCategoryCard(Icons.laptop, "إلكترونيات"),
-                _buildCategoryCard(Icons.work, "وظائف"),
-                _buildCategoryCard(Icons.timer, "مزادات"),
-                _buildCategoryCard(Icons.build, "خدمات صيانة"),
-              ],
-            ),
-            
-            SizedBox(height: 25),
-            _buildSectionHeader("المقتنيات التراثية المميزة"),
-            // هنا تظهر الجنابي والعسل كما في الصورة
-            _buildHorizontalList(),
+             _buildPromoSlider(),
+             _buildCategoryGrid(),
+             _buildFeaturedItems(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildPromoSlider() {
+    return Container(
+      height: 150,
+      margin: EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(colors: [Colors.orange[900]!, Colors.amber[700]!]),
+      ),
+      child: Center(child: Text("إعلانات مميزة (عقارات/سيارات)", style: TextStyle(fontWeight: FontWeight.bold))),
+    );
+  }
+
+  Widget _buildCategoryGrid() {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      crossAxisCount: 4,
+      padding: EdgeInsets.all(10),
       children: [
-        Text(title, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-        Text("عرض الكل", style: TextStyle(color: Colors.amber, fontSize: 14)),
+        _catIcon(Icons.directions_car, "سيارات"),
+        _catIcon(Icons.smartphone, "جوالات"),
+        _catIcon(Icons.home_work, "عقارات"),
+        _catIcon(Icons.watch, "ساعات"),
       ],
     );
   }
 
-  Widget _buildCategoryCard(IconData icon, String title) {
-    return Container(
-      decoration: BoxDecoration(color: Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(15)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: title == "سيارات" ? Colors.redAccent : Colors.blueAccent, size: 30),
-          SizedBox(height: 8),
-          Text(title, style: TextStyle(color: Colors.white, fontSize: 12)),
-        ],
-      ),
-    );
+  Widget _catIcon(IconData icon, String label) {
+    return Column(children: [Icon(icon, color: Colors.amber), Text(label, style: TextStyle(fontSize: 10))]);
   }
 
-  Widget _buildHorizontalList() {
+  Widget _buildFeaturedItems() {
     return Container(
-      height: 200,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildHeritageItem("جنبية صيفاني", "١٢٠ ألف", Icons.military_tech, Colors.amber),
-          _buildHeritageItem("عسل سدر طبيعي", "٣٠ ألف", Icons.medication, Colors.orange),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeritageItem(String name, String price, IconData icon, Color color) {
-    return Container(
-      width: 140,
-      margin: EdgeInsets.only(right: 15, top: 10),
-      decoration: BoxDecoration(color: Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(20)),
+      padding: EdgeInsets.all(15),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 50),
+          Text("أحدث المضاف", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
-          Text(name, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          Text(price, style: TextStyle(color: Colors.amber)),
+          Container(height: 200, color: Color(0xFF1A1A1A), child: Center(child: Text("قائمة المنتجات الحقيقية"))),
         ],
       ),
     );
