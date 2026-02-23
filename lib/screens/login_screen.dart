@@ -1,54 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final supabase = Supabase.instance.client;
+
+  Future<void> _signIn() async {
+    try {
+      await supabase.auth.signInWithPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("خطأ في الدخول: $e")));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF121212),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Flex Yemen Market",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 35,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.amber,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                "فلكس يمن ماركت",
-                style: TextStyle(color: Colors.white70, fontSize: 18, fontFamily: 'Cairo'),
-              ),
-              SizedBox(height: 80),
-              ElevatedButton(
-                onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
-                child: Text(
-                  "تسجيل الدخول",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black, fontFamily: 'Cairo'),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
-                  minimumSize: Size(double.infinity, 55),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-              ),
-              SizedBox(height: 20),
-              TextButton(
-                onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
-                child: Text(
-                  "الدخول كضيف",
-                  style: TextStyle(color: Colors.amber, fontSize: 16, fontFamily: 'Cairo'),
-                ),
-              ),
-            ],
-          ),
+      body: Padding(
+        padding: EdgeInsets.all(25),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.lock_person, size: 80, color: Colors.amber),
+            SizedBox(height: 20),
+            Text("مرحباً بك في فلكس يمن", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            SizedBox(height: 30),
+            TextField(controller: _emailController, decoration: InputDecoration(labelText: "البريد الإلكتروني / أو المعرف")),
+            TextField(controller: _passwordController, obscureText: true, decoration: InputDecoration(labelText: "كلمة المرور")),
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: _signIn,
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, minimumSize: Size(double.infinity, 50)),
+              child: Text("دخول الآمن", style: TextStyle(color: Colors.black)),
+            ),
+          ],
         ),
       ),
     );
