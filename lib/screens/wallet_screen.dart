@@ -1,54 +1,107 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class WalletScreen extends StatelessWidget {
+  final supabase = Supabase.instance.client;
+
   @override
   Widget build(BuildContext context) {
+    // جلب بيانات المستخدم الحالي (الرصيد والاسم)
+    final user = supabase.auth.currentUser;
+
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: Text("محفظة فلكس 💰", style: TextStyle(color: Colors.amber)), backgroundColor: Colors.transparent),
-      body: Column(
-        children: [
-          _buildBalanceCard(),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Text("وسائل الدفع المدعومة", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-          ),
-          _paymentOption("بنك الكريمي", Icons.account_balance),
-          _paymentOption("النجم للصرافة", Icons.star),
-          _paymentOption("محفظة جوالي / إم فلوس", Icons.phone_android),
-          Spacer(),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("طلب سحب الرصيد", style: TextStyle(color: Colors.black)),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, minimumSize: Size(double.infinity, 50)),
-          ),
-          SizedBox(height: 20),
-        ],
+      appBar: AppBar(
+        title: Text("محفظة فلكس يمن", style: TextStyle(color: Colors.amber)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: StreamBuilder<Map<String, dynamic>>(
+        // الربط المباشر مع جدول البروفايل للحصول على الرصيد
+        stream: supabase
+            .from('profiles')
+            .stream(primaryKey: ['id'])
+            .eq('id', user?.id ?? '')
+            .map((list) => list.first),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return Center(child: CircularProgressIndicator(color: Colors.amber));
+
+          final data = snapshot.data!;
+          final balance = data['wallet_balance'] ?? 0;
+
+          return Column(
+            children: [
+              // كارت الرصيد الفخم
+              Container(
+                margin: EdgeInsets.all(20),
+                padding: EdgeInsets.all(30),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.amber[700]!, Colors.amber[400]!],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(color: Colors.amber.withOpacity(0.3), blurRadius: 20, offset: Offset(0, 10))
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Text("إجمالي الرصيد المتاح", style: TextStyle(color: Colors.black87, fontSize: 16)),
+                    SizedBox(height: 10),
+                    Text(
+                      "$balance ريال يمني",
+                      style: TextStyle(color: Colors.black, fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // أزرار العمليات السريعة
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _walletAction(Icons.add_card, "إيداع"),
+                  _walletAction(Icons.outbound, "سحب"),
+                  _walletAction(Icons.history, "السجل"),
+                ],
+              ),
+              
+              SizedBox(height: 30),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text("آخر العمليات", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                ),
+              ),
+              
+              // قائمة العمليات (سنربطها بجدول transactions لاحقاً)
+              Expanded(
+                child: Center(
+                  child: Text("لا توجد عمليات مالية حالياً", style: TextStyle(color: Colors.grey)),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildBalanceCard() {
-    return Container(
-      margin: EdgeInsets.all(20),
-      padding: EdgeInsets.all(30),
-      decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.amber, Colors.orange[800]!]), borderRadius: BorderRadius.circular(20)),
-      child: Center(
-        child: Column(
-          children: [
-            Text("رصيدك الحالي", style: TextStyle(color: Colors.black, fontSize: 16)),
-            Text("150,000 YR", style: TextStyle(color: Colors.black, fontSize: 32, fontWeight: FontWeight.bold)),
-          ],
+  Widget _walletAction(IconData icon, String label) {
+    return Column(
+      children: [
+        CircleAvatar(
+          backgroundColor: Color(0xFF1A1A1A),
+          radius: 30,
+          child: Icon(icon, color: Colors.amber),
         ),
-      ),
-    );
-  }
-
-  Widget _paymentOption(String name, IconData icon) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.amber),
-      title: Text(name, style: TextStyle(color: Colors.white)),
-      trailing: ElevatedButton(onPressed: () {}, child: Text("شحن")),
+        SizedBox(height: 8),
+        Text(label, style: TextStyle(color: Colors.white, fontSize: 12)),
+      ],
     );
   }
 }
