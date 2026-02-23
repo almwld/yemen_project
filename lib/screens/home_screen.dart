@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as slider;
 
 class HomeScreen extends StatefulWidget {
   final bool isGuest;
@@ -10,8 +10,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-
+  // لا نحتاج لتعريف كنترولر حالياً لتجنب التعقيد
   final List<Map<String, dynamic>> categories = [
     {'name': 'سيارات', 'icon': Icons.directions_car, 'color': Colors.amber},
     {'name': 'عقارات', 'icon': Icons.home, 'color': Colors.amber},
@@ -27,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
-        title: Image.network('https://via.placeholder.com/100x40?text=FLEX', height: 30), // لوجو التطبيق
+        title: Text("فلكس يمن", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
         actions: [
           IconButton(icon: Icon(Icons.shopping_cart_outlined, color: Colors.white), onPressed: () {}),
           IconButton(icon: Icon(Icons.search, color: Colors.white), onPressed: () {}),
@@ -36,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. الأقسام الدائرية (مثل المارد)
+            // 1. الأقسام الدائرية
             Container(
               height: 120,
               padding: EdgeInsets.symmetric(vertical: 10),
@@ -62,9 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            // 2. البنر المتحرك (Slider)
-            CarouselSlider(
-              options: CarouselOptions(height: 180.0, autoPlay: true, enlargeCenterPage: true),
+            // 2. البنر المتحرك باستخدام الاسم المستعار slider
+            slider.CarouselSlider(
+              options: slider.CarouselOptions(height: 180.0, autoPlay: true, enlargeCenterPage: true),
               items: [1,2,3].map((i) {
                 return Builder(
                   builder: (BuildContext context) {
@@ -85,14 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
               }).toList(),
             ),
 
-            // 3. قسم "العروض المميزة" بتصميم البطاقات
             _buildSectionHeader("أحدث العروض"),
             _buildProductGrid(),
           ],
         ),
       ),
-      
-      // 4. القائمة السفلية (Modern Bottom Nav)
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
         selectedItemColor: Colors.amber,
@@ -134,11 +130,11 @@ class _HomeScreenState extends State<HomeScreen> {
         return Container(
           decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(10)),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(child: Icon(Icons.image, color: Colors.grey, size: 50)),
-              Text("اسم المنتج الاحترافي", style: TextStyle(color: Colors.white)),
+              Icon(Icons.image, color: Colors.grey, size: 50),
+              Text("اسم المنتج", style: TextStyle(color: Colors.white)),
               Text("١٥,٠٠٠ ر.ي", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
             ],
           ),
         );
