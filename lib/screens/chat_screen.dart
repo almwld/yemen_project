@@ -1,100 +1,86 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String peerName;
-  ChatScreen({required this.peerName});
+  final String orderId;
+  final String receiverName;
+
+  ChatScreen({required this.orderId, required this.receiverName});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final TextEditingController _controller = TextEditingController();
-  final List<Map<String, dynamic>> _messages = [
-    {"text": "السلام عليكم، هل هذا المنتج لا يزال متوفراً؟", "isMe": false},
-    {"text": "وعليكم السلام، نعم متوفر في فرعنا بصنعاء.", "isMe": true},
-  ];
+  final _messageController = TextEditingController();
+  final supabase = Supabase.instance.client;
 
-  void _sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      setState(() {
-        _messages.add({"text": _controller.text, "isMe": true});
-        _controller.clear();
-      });
-    }
+  Future<void> _sendMessage() async {
+    if (_messageController.text.isEmpty) return;
+    final content = _messageController.text;
+    _messageController.clear();
+
+    await supabase.from('messages').insert({
+      'order_id': widget.orderId,
+      'sender_id': supabase.auth.currentUser!.id,
+      'content': content,
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final myId = supabase.auth.currentUser!.id;
+
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Color(0xFF1A1A1A),
-        title: Row(
-          children: [
-            CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.person, color: Colors.black)),
-            SizedBox(width: 10),
-            Text(widget.peerName, style: TextStyle(color: Colors.white, fontSize: 16)),
-          ],
-        ),
-      ),
+      appBar: AppBar(title: Text(widget.receiverName), backgroundColor: Color(0xFF121212)),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(15),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                bool isMe = _messages[index]['isMe'];
-                return Align(
-                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5),
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: isMe ? Colors.amber : Color(0xFF222222),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15),
-                        bottomLeft: isMe ? Radius.circular(15) : Radius.circular(0),
-                        bottomRight: isMe ? Radius.circular(0) : Radius.circular(15),
+            child: StreamBuilder<List<Map<String, dynamic>>>(
+              stream: supabase
+                  .from('messages')
+                  .stream(primaryKey: ['id'])
+                  .eq('order_id', widget.orderId)
+                  .order('created_at', ascending: false),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+                final messages = snapshot.data!;
+                return ListView.builder(
+                  reverse: true,
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final msg = messages[index];
+                    final isMe = msg['sender_id'] == myId;
+                    return Align(
+                      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        margin: EdgeInsets.all(8),
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: isMe ? Colors.amber[700] : Colors.grey[800],
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Text(msg['content'], style: TextStyle(color: Colors.white)),
                       ),
-                    ),
-                    child: Text(
-                      _messages[index]['text'],
-                      style: TextStyle(color: isMe ? Colors.black : Colors.white),
-                    ),
-                  ),
+                    );
+                  },
                 );
               },
             ),
           ),
-          _buildMessageInput(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMessageInput() {
-    return Container(
-      padding: EdgeInsets.all(10),
-      color: Color(0xFF1A1A1A),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: "اكتب رسالتك هنا...",
-                hintStyle: TextStyle(color: Colors.grey),
-                border: InputBorder.none,
-              ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(hintText: "اكتب رسالتك...", border: OutlineInputBorder(borderRadius: BorderRadius.circular(30))),
+                  ),
+                ),
+                IconButton(icon: Icon(Icons.send, color: Colors.amber), onPressed: _sendMessage),
+              ],
             ),
-          ),
-          IconButton(
-            icon: Icon(Icons.send, color: Colors.amber),
-            onPressed: _sendMessage,
           ),
         ],
       ),
