@@ -1,44 +1,48 @@
-import 'referral_screen.dart';
-import 'admin_dashboard.dart';
 import 'package:flutter/material.dart';
-import 'wallet_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0A0A0A),
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("إعدادات الحساب", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text("الملف الشخصي", style: TextStyle(color: Colors.amber)),
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 20),
+            // قسم صورة المستخدم والمعلومات الأساسية
             _buildProfileHeader(),
-            _buildSectionTitle("إدارة الأموال"),
-            _buildSettingItem(context, Icons.account_balance_wallet, "المحفظة المالية", "رصيدك، شحن، سحب أرباح", () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => WalletScreen()));
-            }),
-            _buildSettingItem(context, Icons.history, "سجل العمليات", "تفاصيل المبيعات والمشتريات", () {}),
+            SizedBox(height: 30),
             
-            _buildSectionTitle("التوثيق والأمان"),
-            _buildSettingItem(context, Icons.verified_user, "توثيق الهوية (KYC)", "ارفع بطاقتك للحصول على العلامة الزرقاء", () => _showKYCDialog(context)),
-            _buildSettingItem(context, Icons.lock_outline, "تغيير كلمة المرور", "تحديث بيانات الدخول", () {}),
+            // قائمة الإعدادات
+            _buildSettingsItem(Icons.person_outline, "تعديل البيانات الشخصية", "الاسم، الرقم، المدينة"),
+            _buildSettingsItem(Icons.lock_reset, "تغيير رمز PIN", "تحديث حماية المحفظة"),
+            _buildSettingsItem(Icons.notifications_none, "إعدادات التنبيهات", "التحكم في وصول الرسائل"),
+            _buildSettingsItem(Icons.palette_outlined, "المظهر (Theme)", "الوضع الذهبي / الليلي"),
             
-            _buildSectionTitle("إعدادات التطبيق"),
-            _buildSettingItem(context, Icons.language, "لغة التطبيق", "العربية (اليمن)", () {}),
-            _buildSettingItem(context, Icons.notifications_none, "إعدادات التنبيهات", "التحكم في وصول الإشعارات", () {}),
+            Divider(color: Colors.grey[900], height: 40, indent: 20, endIndent: 20),
             
-            _buildSectionTitle("الدعم الفني"),
-            _buildSettingItem(context, Icons.headset_mic_outlined, "اتصل بنا", "واتساب، إيميل، اتصال مباشر", () {}),
-            _buildSettingItem(context, Icons.info_outline, "عن فلكس يمن", "الشروط والأحكام وسياسة الخصوصية", () {}),
+            _buildSettingsItem(Icons.help_outline, "مركز المساعدة", "الأسئلة الشائعة والدعم"),
+            _buildSettingsItem(Icons.info_outline, "عن فلكس يمن", "الإصدار v1.0.0"),
             
             SizedBox(height: 20),
-            ListTile(
-              leading: Icon(Icons.exit_to_app, color: Colors.redAccent),
-              title: Text("تسجيل الخروج", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-              onTap: () {},
+            // زر تسجيل الخروج
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent.withOpacity(0.1),
+                  foregroundColor: Colors.redAccent,
+                  minimumSize: Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                ),
+                child: Text("تسجيل الخروج", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
             ),
             SizedBox(height: 40),
           ],
@@ -48,82 +52,41 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildProfileHeader() {
-    return Container(
-      padding: EdgeInsets.all(20),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 35,
-            backgroundColor: Colors.amber,
-            child: Icon(Icons.person, size: 40, color: Colors.black),
-          ),
-          SizedBox(width: 15),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("اسم المستخدم", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              SizedBox(height: 5),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(5)),
-                child: Text("ID: 2026889", style: TextStyle(fontSize: 12, color: Colors.amber)),
-              ),
-            ],
-          ),
-          Spacer(),
-          IconButton(icon: Icon(Icons.edit_note, color: Colors.amber), onPressed: () {}),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      color: Colors.white.withOpacity(0.05),
-      child: Text(title, style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-    );
-  }
-
-  Widget _buildSettingItem(BuildContext context, IconData icon, String title, String sub, VoidCallback onTap) {
-    return ListTile(
-      onTap: onTap,
-      leading: Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-        child: Icon(icon, color: Colors.amber, size: 22),
-      ),
-      title: Text(title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-      subtitle: Text(sub, style: TextStyle(fontSize: 11, color: Colors.grey)),
-      trailing: Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
-    );
-  }
-
-  void _showKYCDialog(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Color(0xFF1E1E1E),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => Container(
-        padding: EdgeInsets.all(25),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+    return Column(
+      children: [
+        Stack(
+          alignment: Alignment.bottomRight,
           children: [
-            Icon(Icons.camera_alt, size: 50, color: Colors.amber),
-            SizedBox(height: 15),
-            Text("توثيق الهوية (KYC)", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Text("يرجى رفع صورة واضحة للبطاقة الشخصية لضمان أمان عمليات البيع والشراء.", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text("ابدأ التوثيق الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, minimumSize: Size(double.infinity, 50)),
+            CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.amber,
+              child: Icon(Icons.person, size: 60, color: Colors.black),
+            ),
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: Colors.blue,
+              child: Icon(Icons.edit, size: 18, color: Colors.white),
             ),
           ],
         ),
+        SizedBox(height: 15),
+        Text("المستخدم اليمني", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        Text("77xxxxxxx", style: TextStyle(color: Colors.grey, fontSize: 14)),
+      ],
+    );
+  }
+
+  Widget _buildSettingsItem(IconData icon, String title, String subtitle) {
+    return ListTile(
+      leading: Container(
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(color: Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(10)),
+        child: Icon(icon, color: Colors.amber, size: 22),
       ),
+      title: Text(title, style: TextStyle(color: Colors.white, fontSize: 16)),
+      subtitle: Text(subtitle, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[800], size: 14),
+      onTap: () {},
     );
   }
 }
