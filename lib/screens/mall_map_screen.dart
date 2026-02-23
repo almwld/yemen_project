@@ -22,7 +22,7 @@ class _MallMapScreenState extends State<MallMapScreen> {
     // إضافة المولات التي وجدناها كعلامات على الخريطة
     setState(() {
       _markers.add(Marker(markerId: MarkerId('1'), position: LatLng(15.3349, 44.1976), infoWindow: InfoWindow(title: 'يمن مول')));
-      _markers.add(Marker(markerId: MarkerId('2'), position: LatLng(15.2859, 44.2366), infoWindow: InfoWindow(title: 'مجمع الشلال التجاري')));
+      _markers.add(Marker(markerId: MarkerId('2'), position: LatLng(15.2859, 44.2366), infoWindow: InfoWindow(title: 'مجمع الشلال التجاري', snippet: 'اضغط للملاحة', onTap: () => _launchNavigation(15.2859, 44.2366))));
       _markers.add(Marker(markerId: MarkerId('3'), position: LatLng(15.3351, 44.1989), infoWindow: InfoWindow(title: 'مول العرب')));
       _markers.add(Marker(markerId: MarkerId('4'), position: LatLng(15.2836, 44.2092), infoWindow: InfoWindow(title: 'عالم التسوق')));
       _markers.add(Marker(markerId: MarkerId('5'), position: LatLng(15.2905, 44.1989), infoWindow: InfoWindow(title: 'سما مول')));
@@ -44,5 +44,14 @@ class _MallMapScreenState extends State<MallMapScreen> {
         myLocationButtonEnabled: true,
       ),
     );
+  }
+}
+
+Future<void> _launchNavigation(double lat, double lng) async {
+  final url = 'google.navigation:q=$lat,$lng';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch navigation';
   }
 }
