@@ -1,42 +1,42 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(YemenProjectApp());
+void main() => runApp(FlexYemenApp());
 
-class YemenProjectApp extends StatelessWidget {
+class FlexYemenApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'فلكس يمن - المنصة المتكاملة',
       theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
         primaryColor: Colors.amber,
+        scaffoldBackgroundColor: Colors.black,
       ),
-      home: MainPlatformHub(),
+      home: UnifiedPlatform(),
     );
   }
 }
 
-class MainPlatformHub extends StatefulWidget {
+class UnifiedPlatform extends StatefulWidget {
   @override
-  _MainPlatformHubState createState() => _MainPlatformHubState();
+  _UnifiedPlatformState createState() => _UnifiedPlatformState();
 }
 
-class _MainPlatformHubState extends State<MainPlatformHub> {
+class _UnifiedPlatformState extends State<UnifiedPlatform> {
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
         title: Text("سوق اليمن الشامل", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.black,
+        elevation: 0,
         actions: [
-          IconButton(icon: Icon(Icons.notifications_none), onPressed: () {}),
-          CircleAvatar(backgroundColor: Colors.amber, radius: 15, child: Icon(Icons.person, size: 18, color: Colors.black)),
-          SizedBox(width: 10),
+          IconButton(icon: Icon(Icons.notifications_active, color: Colors.amber), onPressed: () {}),
         ],
       ),
-      body: _buildBody(),
+      body: _buildPage(_currentIndex),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: Colors.amber,
@@ -45,85 +45,97 @@ class _MainPlatformHubState extends State<MainPlatformHub> {
         backgroundColor: Color(0xFF121212),
         onTap: (index) => setState(() => _currentIndex = index),
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.local_shipping), label: 'التوصيل'),
-          BottomNavigationBarItem(icon: Icon(Icons.support_agent, size: 30), label: 'الإدارة'),
+          BottomNavigationBarItem(icon: Icon(Icons.store), label: 'السوق'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'التوصيل'),
+          BottomNavigationBarItem(icon: Icon(Icons.admin_panel_settings, size: 35), label: 'الإدارة'),
           BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'المحفظة'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
+          BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'المزيد'),
         ],
       ),
     );
   }
 
-  Widget _buildBody() {
-    if (_currentIndex == 2) return _buildAdminSupport(); // شاشة التواصل مع الإدارة
+  Widget _buildPage(int index) {
+    switch (index) {
+      case 0: return _buildMarketplace();
+      case 2: return _buildAdminSupport();
+      case 3: return _buildWallet();
+      default: return Center(child: Text("قريباً.. نجهز لك الأفضل"));
+    }
+  }
+
+  Widget _buildMarketplace() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(15),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // السلايدر (مزاد الجنابي) كما في الصورة
+          // سلايدر المزاد كما في صورتك
           Container(
-            height: 160,
-            width: double.infinity,
+            height: 180,
+            margin: EdgeInsets.all(15),
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [Colors.orange[900]!, Colors.amber]),
               borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(colors: [Colors.orange[900]!, Colors.amber[700]!]),
             ),
-            child: Center(child: Text("مزاد الجنابي الأسبوعي", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))),
+            child: Center(child: Text("🔥 مزاد الجنابي الكبرى 🔥", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))),
           ),
-          SizedBox(height: 20),
-          Text("الخدمات والأقسام", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          _buildCategoryGrid(),
+          // شبكة الأقسام
+          _buildCategories(),
         ],
       ),
     );
   }
 
-  Widget _buildCategoryGrid() {
+  Widget _buildCategories() {
     return GridView.count(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
       crossAxisCount: 3,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
+      padding: EdgeInsets.all(15),
       children: [
-        _categoryItem(Icons.directions_car, "سيارات", Colors.red),
-        _categoryItem(Icons.home, "عقارات", Colors.blue),
-        _categoryItem(Icons.laptop, "إلكترونيات", Colors.purple),
+        _categoryBox(Icons.directions_car, "سيارات"),
+        _categoryBox(Icons.home, "عقارات"),
+        _categoryBox(Icons.watch, "إلكترونيات"),
       ],
     );
   }
 
-  Widget _categoryItem(IconData icon, String label, Color color) {
-    return Container(
-      decoration: BoxDecoration(color: Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(15)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 30),
-          Text(label, style: TextStyle(fontSize: 12)),
-        ],
-      ),
-    );
+  Widget _categoryBox(IconData icon, String label) {
+    return Card(color: Color(0xFF1E1E1E), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(icon, color: Colors.amber), Text(label)]));
   }
 
   Widget _buildAdminSupport() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.support_agent, size: 80, color: Colors.amber),
-        Padding(
-          padding: EdgeInsets.all(20),
-          child: Text("أهلاً بك.. يمكنك التواصل مع الإدارة مباشرة لإتمام طلباتك أو حل أي مشكلة.", textAlign: TextAlign.center),
-        ),
-        ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
-          child: Text("بدء الدردشة مع الإدارة", style: TextStyle(color: Colors.black)),
-        )
-      ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.support_agent, size: 100, color: Colors.amber),
+          Text("تواصل مباشر مع الإدارة", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          SizedBox(height: 20),
+          ElevatedButton.icon(
+            onPressed: () {}, // سيتم ربط واتساب الإدارة هنا
+            icon: Icon(Icons.chat),
+            label: Text("ابدأ الطلب الآن"),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWallet() {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Card(
+            color: Colors.amber,
+            child: ListTile(
+              title: Text("رصيدك الحالي", style: TextStyle(color: Colors.black)),
+              subtitle: Text("50,000 ريال يمني", style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold)),
+              trailing: Icon(Icons.account_balance_wallet, color: Colors.black),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
