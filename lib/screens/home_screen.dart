@@ -1,3 +1,4 @@
+import "../widgets/floating_chat_button.dart";
 import "../widgets/ads_slider.dart";
 import 'package:flutter/material.dart';
 import '../data/categories_data.dart';
@@ -17,6 +18,7 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         iconTheme: IconThemeData(color: Colors.amber), // تلوين الثلاث خطوط بالذهبي
       ),
+      floatingActionButton: FloatingChatButton(),
       body: SingleChildScrollView(
         child: Column(
           children: [
