@@ -6,18 +6,22 @@ workflows:
     environment:
       flutter: 3.24.0
     scripts:
-      - name: 1. Deep Fix Android Environment
+      - name: 1. Setup and Patch Android
         script: |
-          # حذف وإعادة إنشاء مجلد الأندرويد
+          # إعادة إنشاء مجلد الأندرويد
           rm -rf android
           flutter create . --platforms android --org com.almwld
           
-          # حقن إعدادات الـ SDK داخل ملف build.gradle لتوافق المكتبات
+          # حقن إصدارات الـ SDK يدوياً في الملفات لتجنب خطأ "unknown property flutter"
           sed -i '' 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/g' android/app/build.gradle
           sed -i '' 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle
           sed -i '' 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/g' android/app/build.gradle
           
-          # إضافة تعريف flutter.sdk في ملف local.properties (حل جذري لخطأ app_links)
+          # إصلاح ملف gradle.properties لضمان عمل الـ AndroidX
+          echo "android.useAndroidX=true" >> android/gradle.properties
+          echo "android.enableJetifier=true" >> android/gradle.properties
+          
+          # ربط الـ SDK في ملف local.properties
           echo "flutter.sdk=" > android/local.properties
       - name: 2. Build Android APK
         script: |
