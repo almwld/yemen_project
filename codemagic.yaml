@@ -12,21 +12,21 @@ workflows:
     scripts:
       - name: Fix MainActivity and Build
         script: |
-          # 1. إنشاء المجلد إذا لم يكن موجوداً
+          # 1. إنشاء المجلد المطلوب
           mkdir -p android/app/src/main/kotlin/com/almwld/yemen_project
           
-          # 2. كتابة ملف MainActivity الصحيح سحابياً
-          echo 'package com.almwld.yemen_project
+          # 2. كتابة الملف بصيغة هير-دوك لضمان عدم حدوث أخطاء في الرموز
+          cat <<EOT > android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
+          package com.almwld.yemen_project
           
           import io.flutter.embedding.android.FlutterActivity
           
           class MainActivity: FlutterActivity() {
-          }' > android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
+          }
+          EOT
           
-          # 3. تنظيف وجلب المكتبات
+          # 3. التحميل والبناء
           flutter pub get
-          
-          # 4. بناء التطبيق
           flutter build apk --release --obfuscate --split-debug-info=symbols
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
