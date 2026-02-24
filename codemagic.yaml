@@ -1,6 +1,6 @@
 workflows:
   flex-yemen-release:
-    name: Flex Yemen M2 Ultimate
+    name: Flex Yemen M2 Final Version
     instance_type: mac_mini_m2
     max_build_duration: 30
     environment:
@@ -8,21 +8,22 @@ workflows:
     scripts:
       - name: Setup and Build APK
         script: |
-          # 1. تنظيف شامل وإعادة بناء القالب
+          # 1. إعادة بناء البيئة وحقن المكتبة
           rm -rf android
           flutter create . --platforms android --org com.almwld
-          
-          # 2. ترقية المكتبة المسببة للمشكلة تلقائياً
           flutter pub add app_links
           
-          # 3. حقن الإعدادات في مكانين (local.properties و build.gradle)
+          # 2. حقن الخصائص الأساسية
           echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
           echo "flutter.compileSdkVersion=34" >> android/local.properties
           echo "flutter.targetSdkVersion=34" >> android/local.properties
           echo "flutter.minSdkVersion=21" >> android/local.properties
           
-          # 4. إصلاح ملف settings.gradle لضمان قراءة ملف الـ SDK
-          sed -i '' '1i          def localProperties = new Properties()          def localPropertiesFile = new File(settingsDir, "local.properties")          if (localPropertiesFile.exists()) {              localPropertiesFile.withReader("UTF-8") { reader -> localProperties.load(reader) }          }          def flutterSdkPath = localProperties.getProperty("flutter.sdk")          if (flutterSdkPath == null) throw new GradleException("flutter.sdk not set")          includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")          ' android/settings.gradle
+          # 3. تفعيل Desugaring (حل مشكلة التنبيهات)
+          sed -i '' 's/multiDexEnabled true/multiDexEnabled true\n        coreLibraryDesugaringEnabled true/g' android/app/build.gradle
+          
+          # 4. إضافة مكتبة التوافق في التبعيات
+          sed -i '' '/dependencies {/a               coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.3"           ' android/app/build.gradle
 
           # 5. البناء النهائي
           flutter pub get
