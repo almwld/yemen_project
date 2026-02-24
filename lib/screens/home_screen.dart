@@ -1,3 +1,4 @@
+import "map_stores_screen.dart";
 import "../widgets/floating_chat_button.dart";
 import "../widgets/ads_slider.dart";
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ class HomeScreen extends StatelessWidget {
               accountEmail: Text("Binobaeid@gmail.com", style: TextStyle(color: Colors.grey)),
               currentAccountPicture: CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.person, color: Colors.black)),
             ),
+            _menuTile(context, "المتاجر القريبة مني", Icons.map_outlined, MapStoresScreen()),
             _menuTile(context, "المحفظة المالية", Icons.account_balance_wallet, WalletScreen()),
             _menuTile(context, "الإعدادات", Icons.settings, SettingsScreen()),
             _menuTile(context, "الملف الشخصي", Icons.person_outline, ProfileScreen()),
