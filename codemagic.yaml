@@ -1,17 +1,14 @@
 workflows:
   flex-yemen-release:
-    name: Flex Yemen Final Build
+    name: Flex Yemen Manual Build
     max_build_duration: 30
     instance_type: mac_mini_m1
     environment:
       flutter: 3.24.0
-    triggering:
-      events:
-        - push
+    # تم حذف الـ triggering نهائياً لمنع البناء التلقائي المتكرر
     scripts:
       - name: Environment Setup and Fixes
         script: |
-          # إصلاح ملف MainActivity سحابياً لتجاوز أخطاء Kotlin
           mkdir -p android/app/src/main/kotlin/com/almwld/yemen_project
           cat <<EOT > android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
           package com.almwld.yemen_project
@@ -19,8 +16,6 @@ workflows:
           class MainActivity: FlutterActivity() {
           }
           EOT
-          
-          # جلب المكتبات وبناء التطبيق
           flutter pub get
           flutter build apk --release --obfuscate --split-debug-info=symbols
     artifacts:
