@@ -26,7 +26,7 @@ class FloatingChatButton extends StatelessWidget {
           children: [
             Text("كيف يمكننا مساعدتك؟", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 20),
-            _chatTile(Icons.whatsapp, "تواصل عبر واتساب", Colors.green, () {
+            _chatTile(Icons.chat, "تواصل عبر واتساب", Colors.green, () {
               // رابط الواتساب المباشر
             }),
             _chatTile(Icons.support_agent, "دردشة مباشرة مع فلكس", Colors.amber, () {
