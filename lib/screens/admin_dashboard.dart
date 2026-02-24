@@ -18,7 +18,7 @@ class AdminDashboard extends StatelessWidget {
           children: [
             _adminCard("طلبات التوثيق", Icons.verified_user, Colors.blue),
             _adminCard("المزادات النشطة", Icons.gavel, Colors.red),
-            _adminCard("إحصائيات الأرباح", Icons.payments, Colors.green),
+            _adminCard("أرباحي: ١,٢٥٠,٠٠٠ ر.ي", Icons.payments, Colors.green),
             _adminCard("إدارة المستخدمين", Icons.people, Colors.amber),
             _adminCard("بلاغات الاحتيال", Icons.report, Colors.orange),
             _adminCard("إعدادات الدولة", Icons.settings, Colors.grey),
