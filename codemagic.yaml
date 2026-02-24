@@ -1,6 +1,6 @@
 workflows:
   flex-yemen-release:
-    name: Flex Yemen Final Fix
+    name: Flex Yemen Final Build
     max_build_duration: 30
     instance_type: mac_mini_m1
     environment:
@@ -8,14 +8,16 @@ workflows:
     triggering:
       events:
         - push
-       cancel_previous_builds_on_new_commit: true
     scripts:
-      - name: Fix MainActivity and Build
+      - name: Environment Setup and Fixes
         script: |
-          # 1. إنشاء المجلد المطلوب
           mkdir -p android/app/src/main/kotlin/com/almwld/yemen_project
-          
-          # 2. التحميل والبناء
+          cat <<EOT > android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
+          package com.almwld.yemen_project
+          import io.flutter.embedding.android.FlutterActivity
+          class MainActivity: FlutterActivity() {
+          }
+          EOT
           flutter pub get
           flutter build apk --release --obfuscate --split-debug-info=symbols
     artifacts:
