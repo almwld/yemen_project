@@ -1,19 +1,26 @@
 workflows:
   flex-yemen-release:
-    name: Flex Yemen Final Build
+    name: Flex Yemen Final Fix
     max_build_duration: 30
     instance_type: mac_mini_m1
     environment:
-      flutter: stable
+      flutter: 3.24.0
     scripts:
-      - name: 1. Fix MainActivity
+      - name: 1. Deep Fix Android Environment
         script: |
-          # تنظيف وإعادة بناء مدخل الأندرويد لضمان عدم وجود أخطاء
+          # حذف وإعادة إنشاء مجلد الأندرويد
           rm -rf android
           flutter create . --platforms android --org com.almwld
+          
+          # حقن إعدادات الـ SDK داخل ملف build.gradle لتوافق المكتبات
+          sed -i '' 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/g' android/app/build.gradle
+          sed -i '' 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle
+          sed -i '' 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/g' android/app/build.gradle
+          
+          # إضافة تعريف flutter.sdk في ملف local.properties (حل جذري لخطأ app_links)
+          echo "flutter.sdk=" > android/local.properties
       - name: 2. Build Android APK
         script: |
-          # هذه الخطوة هي التي ستظهر الآن بوضوح في القائمة
           flutter pub get
           flutter build apk --release --obfuscate --split-debug-info=symbols
     artifacts:
