@@ -13,7 +13,7 @@ class RealEstateScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("عقارات فلكس 🏠"),
         backgroundColor: Colors.black,
-        actions: [IconButton(icon: Icon(Icons.map_outlined, color: Colors.amber), onPressed: () {})],
+        actions: [IconButton(icon: Icon(Icons.map_outlined, color: Colors.amber), onPressed: () { showDialog(context: context, builder: (c) => AgreementDoc(propertyName: "فيلا حدة الملكية", price: "350,000$")); })],
       ),
       body: SingleChildScrollView(
         child: Column(
