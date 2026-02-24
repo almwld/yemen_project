@@ -1,31 +1,27 @@
 workflows:
   flex-yemen-release:
-    name: Flex Yemen Final Java Fix
+    name: Flex Yemen Ultimate Success
     max_build_duration: 30
     instance_type: mac_mini_m1
     environment:
       flutter: 3.24.0
     scripts:
-      - name: Force Fix Android Entry Point
+      - name: Full Android Reconstruct
         script: |
-          # 1. حذف كل ملفات Kotlin القديمة تماماً لإنهاء الصراع
-          find android/app/src/main/kotlin -name "*.kt" -delete
+          # 1. تنظيف عميق وحذف المجلدات المعطوبة
+          rm -rf android
+          rm -rf .dart_tool
+          rm pubspec.lock
           
-          # 2. إنشاء مسار الجافا الجديد
-          mkdir -p android/app/src/main/java/com/almwld/yemen_project
+          # 2. إعادة إنشاء بيئة الأندرويد لـ "فلكس يمن" من الصفر
+          # هذا سيقوم بإنشاء الملفات المتوافقة مع الإضافات تلقائياً
+          flutter create . --platforms android --org com.almwld
           
-          # 3. كتابة ملف MainActivity بلغة Java (أكثر استقراراً في الربط)
-          cat <<EOT > android/app/src/main/java/com/almwld/yemen_project/MainActivity.java
-          package com.almwld.yemen_project;
-          
-          import io.flutter.embedding.android.FlutterActivity;
-          
-          public class MainActivity extends FlutterActivity {
-          }
-          EOT
-      - name: Build Android APK
-        script: |
+          # 3. جلب المكتبات وتحديث الروابط
           flutter pub get
+          
+          # 4. بناء الـ APK مع تنظيف الـ Gradle
+          cd android && ./gradlew clean && cd ..
           flutter build apk --release --obfuscate --split-debug-info=symbols
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
