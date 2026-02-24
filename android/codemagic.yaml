@@ -5,13 +5,14 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       flutter: stable
-    triggering:
-      events:
-        - push
     scripts:
+      - name: Fix Android Environment
+        script: |
+          rm -rf android
+          flutter create . --platforms android --org com.almwld
       - name: Build Android APK
         script: |
-          flutter packages pub get
+          flutter pub get
           flutter build apk --release --obfuscate --split-debug-info=symbols
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
