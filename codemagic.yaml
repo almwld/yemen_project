@@ -8,24 +8,14 @@ workflows:
     triggering:
       events:
         - push
-      cancel_previous_builds_on_new_commit: true
+       cancel_previous_builds_on_new_commit: true
     scripts:
       - name: Fix MainActivity and Build
         script: |
           # 1. إنشاء المجلد المطلوب
           mkdir -p android/app/src/main/kotlin/com/almwld/yemen_project
           
-          # 2. كتابة الملف بصيغة هير-دوك لضمان عدم حدوث أخطاء في الرموز
-          cat <<EOT > android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
-          package com.almwld.yemen_project
-          
-          import io.flutter.embedding.android.FlutterActivity
-          
-          class MainActivity: FlutterActivity() {
-          }
-          EOT
-          
-          # 3. التحميل والبناء
+          # 2. التحميل والبناء
           flutter pub get
           flutter build apk --release --obfuscate --split-debug-info=symbols
     artifacts:
