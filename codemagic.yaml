@@ -8,6 +8,7 @@ workflows:
     triggering:
       events:
         - push
+      cancel_previous_builds_on_new_commit: true # سيقوم بإلغاء البناء القديم وتشغيل الجديد فقط
     scripts:
       - name: Build Android APK
         script: |
