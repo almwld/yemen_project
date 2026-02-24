@@ -1,6 +1,6 @@
 workflows:
   flex-yemen-release:
-    name: Flex Yemen M2 Final 36
+    name: Flex Yemen Stable Final
     instance_type: mac_mini_m2
     max_build_duration: 30
     environment:
@@ -8,17 +8,15 @@ workflows:
     scripts:
       - name: Setup and Build APK
         script: |
-          # 1. تنظيف شامل
           rm -rf android
           flutter create . --platforms android --org com.almwld
           
-          # 2. حقن الخصائص الجديدة (SDK 36)
+          # حقن الإعدادات مع الرجوع لـ SDK 35 (الأكثر استقراراً حالياً)
           echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
-          echo "flutter.compileSdkVersion=36" >> android/local.properties
-          echo "flutter.targetSdkVersion=36" >> android/local.properties
+          echo "flutter.compileSdkVersion=35" >> android/local.properties
+          echo "flutter.targetSdkVersion=34" >> android/local.properties
           echo "flutter.minSdkVersion=21" >> android/local.properties
 
-          # 3. استبدال build.gradle بنسخة تدعم SDK 36 و Desugaring
           cat <<EOT > android/app/build.gradle
           plugins {
               id "com.android.application"
@@ -27,11 +25,11 @@ workflows:
           }
           android {
               namespace "com.almwld"
-              compileSdk 36
+              compileSdk 35
               defaultConfig {
                   applicationId "com.almwld"
                   minSdk 21
-                  targetSdk 36
+                  targetSdk 34
                   versionCode 1
                   versionName "1.0.0"
                   multiDexEnabled true
@@ -45,9 +43,8 @@ workflows:
               buildTypes {
                   release {
                       signingConfig signingConfigs.debug
-                      minifyEnabled true
-                      shrinkResources true
-                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                      minifyEnabled false
+                      shrinkResources false
                   }
               }
           }
@@ -56,9 +53,8 @@ workflows:
           }
           EOT
 
-          # 4. البناء النهائي
           flutter pub get
-          flutter build apk --release
+          flutter build apk --release --no-tree-shake-icons
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
     publishing:
