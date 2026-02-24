@@ -1,17 +1,28 @@
 workflows:
   flex-yemen-release:
-    name: Flex Yemen Final Build
+    name: Flex Yemen Final Java Fix
     max_build_duration: 30
     instance_type: mac_mini_m1
     environment:
       flutter: 3.24.0
     scripts:
-      - name: Fix MainActivity
+      - name: Force Fix Android Entry Point
         script: |
-          mkdir -p android/app/src/main/kotlin/com/almwld/yemen_project
-          echo "package com.almwld.yemen_project" > android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
-          echo "import io.flutter.embedding.android.FlutterActivity" >> android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
-          echo "class MainActivity: FlutterActivity() {}" >> android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
+          # 1. حذف كل ملفات Kotlin القديمة تماماً لإنهاء الصراع
+          find android/app/src/main/kotlin -name "*.kt" -delete
+          
+          # 2. إنشاء مسار الجافا الجديد
+          mkdir -p android/app/src/main/java/com/almwld/yemen_project
+          
+          # 3. كتابة ملف MainActivity بلغة Java (أكثر استقراراً في الربط)
+          cat <<EOT > android/app/src/main/java/com/almwld/yemen_project/MainActivity.java
+          package com.almwld.yemen_project;
+          
+          import io.flutter.embedding.android.FlutterActivity;
+          
+          public class MainActivity extends FlutterActivity {
+          }
+          EOT
       - name: Build Android APK
         script: |
           flutter pub get
