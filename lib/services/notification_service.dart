@@ -1,39 +1,20 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-class StatusObserver {
-  final supabase = Supabase.instance.client;
+class NotificationService {
+  static final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  void listenToVerificationChanges(BuildContext context) {
-    final userId = supabase.auth.currentUser?.id;
-    if (userId == null) return;
-
-    supabase
-        .from('profiles')
-        .stream(primaryKey: ['id'])
-        .eq('id', userId)
-        .listen((data) {
-      if (data.isNotEmpty) {
-        final status = data.first['verification_state'];
-        if (status == 'approved') {
-          _showDialog(context, "تهانينا!", "تم توثيق حسابك بنجاح ✅ يمكنك الآن التداول بثقة أكبر.");
-        } else if (status == 'rejected') {
-          _showDialog(context, "تنبيه", "عذراً، تم رفض طلب التوثيق. يرجى مراجعة الإدارة أو إعادة رفع الهوية.");
-        }
-      }
-    });
+  static Future<void> init() async {
+    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+    await _notificationsPlugin.initialize(initializationSettings);
   }
 
-  void _showDialog(BuildContext context, String title, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title, style: TextStyle(color: Colors.amber)),
-        content: Text(message),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text("موافق"))
-        ],
-      ),
+  static Future<void> showInstantNotification(String title, String body) async {
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'flex_channel', 'Flex Notifications',
+      importance: Importance.max, priority: Priority.high,
     );
+    const NotificationDetails platformDetails = NotificationDetails(android: androidDetails);
+    await _notificationsPlugin.show(0, title, body, platformDetails);
   }
 }

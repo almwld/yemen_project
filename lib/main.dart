@@ -4,6 +4,7 @@ import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 
 void main() async {
+  await NotificationService.init();
   WidgetsFlutterBinding.ensureInitialized();
   
   // إعدادات سوبابيس (تأكد من وضع بياناتك الصحيحة هنا)

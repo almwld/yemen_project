@@ -7,6 +7,7 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  flutter_local_notifications: ^17.0.0
   carousel_slider: ^5.0.0
   tutorial_coach_mark: ^1.2.9
   flutter:
@@ -24,6 +25,7 @@ dependencies:
   google_maps_flutter: ^2.5.3
 
 dev_dependencies:
+  flutter_local_notifications: ^17.0.0
   carousel_slider: ^5.0.0
   tutorial_coach_mark: ^1.2.9
   flutter_test:

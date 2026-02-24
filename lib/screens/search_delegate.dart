@@ -36,6 +36,7 @@ class ProductSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
+    NotificationService.showInstantNotification("فلكس يمن 🔎", "تم العثور على أفضل العروض لـ $query في منطقتك!");
     // هنا يتم استدعاء البيانات من سوبابيس بناءً على الـ query
     return Center(
       child: Text("جاري البحث عن '$query' في سوق فلكس...", style: TextStyle(color: Colors.white)),
