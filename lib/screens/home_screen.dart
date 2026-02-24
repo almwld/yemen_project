@@ -1,3 +1,4 @@
+import "../widgets/ads_slider.dart";
 import 'package:flutter/material.dart';
 import '../data/categories_data.dart';
 import 'wallet_screen.dart';
@@ -19,7 +20,7 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildSearchBar(),
+            _buildSearchBar(), AdsSlider(),
             _buildGrid(context),
           ],
         ),
