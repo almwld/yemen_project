@@ -8,19 +8,19 @@ workflows:
     triggering:
       events:
         - push
-      cancel_previous_builds_on_new_commit: true
     scripts:
       - name: Environment Setup and Fixes
         script: |
-          # إنشاء المجلد وكتابة الملف لإصلاح خطأ MainActivity
+          # إصلاح ملف MainActivity سحابياً لتجاوز أخطاء Kotlin
           mkdir -p android/app/src/main/kotlin/com/almwld/yemen_project
-          
-          # استخدام echo بدلاً من cat لتجنب أخطاء الإزاحة في YAML
-          echo "package com.almwld.yemen_project
+          cat <<EOT > android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
+          package com.almwld.yemen_project
           import io.flutter.embedding.android.FlutterActivity
           class MainActivity: FlutterActivity() {
-          }" > android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
+          }
+          EOT
           
+          # جلب المكتبات وبناء التطبيق
           flutter pub get
           flutter build apk --release --obfuscate --split-debug-info=symbols
     artifacts:
