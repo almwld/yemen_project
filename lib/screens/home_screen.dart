@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("فلكس يمن", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
         actions: [
           IconButton(icon: Icon(Icons.shopping_cart_outlined, color: Colors.white), onPressed: () {}),
-          IconButton(icon: Icon(Icons.search, color: Colors.white), onPressed: () {}),
+          IconButton(icon: Icon(Icons.search, color: Colors.white), onPressed: () { showSearch(context: context, delegate: ProductSearchDelegate()); }),
         ],
       ),
       body: SingleChildScrollView(
