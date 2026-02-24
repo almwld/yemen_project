@@ -8,24 +8,55 @@ workflows:
     scripts:
       - name: Setup and Build APK
         script: |
-          # 1. إعادة بناء البيئة وحقن المكتبة
+          # 1. تصفير البيئة
           rm -rf android
           flutter create . --platforms android --org com.almwld
-          flutter pub add app_links
           
           # 2. حقن الخصائص الأساسية
           echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
           echo "flutter.compileSdkVersion=34" >> android/local.properties
           echo "flutter.targetSdkVersion=34" >> android/local.properties
           echo "flutter.minSdkVersion=21" >> android/local.properties
-          
-          # 3. تفعيل Desugaring (حل مشكلة التنبيهات)
-          sed -i '' 's/multiDexEnabled true/multiDexEnabled true\n        coreLibraryDesugaringEnabled true/g' android/app/build.gradle
-          
-          # 4. إضافة مكتبة التوافق في التبعيات
-          sed -i '' '/dependencies {/a               coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.3"           ' android/app/build.gradle
 
-          # 5. البناء النهائي
+          # 3. استبدال محتوى ملف build.gradle يدويا لضمان تفعيل Desugaring
+          cat <<EOT > android/app/build.gradle
+          plugins {
+              id "com.android.application"
+              id "kotlin-android"
+              id "dev.flutter.flutter-gradle-plugin"
+          }
+          android {
+              namespace "com.almwld"
+              compileSdk 34
+              defaultConfig {
+                  applicationId "com.almwld"
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 1
+                  versionName "1.0.0"
+                  multiDexEnabled true
+              }
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_1_8
+                  targetCompatibility JavaVersion.VERSION_1_8
+                  coreLibraryDesugaringEnabled true
+              }
+              kotlinOptions { jvmTarget = '1.8' }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.debug
+                      minifyEnabled true
+                      shrinkResources true
+                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                  }
+              }
+          }
+          dependencies {
+              coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+          }
+          EOT
+
+          # 4. البناء النهائي
           flutter pub get
           flutter build apk --release
     artifacts:
