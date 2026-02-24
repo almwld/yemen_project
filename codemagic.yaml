@@ -1,30 +1,28 @@
 workflows:
   flex-yemen-release:
-    name: Flex Yemen Ultimate Success
+    name: Flex Yemen M2 Ultimate
+    instance_type: mac_mini_m2
     max_build_duration: 30
-    instance_type: mac_mini_m1
     environment:
       flutter: 3.24.0
     scripts:
-      - name: Full Android Reconstruct
+      - name: Setup and Build APK
         script: |
-          # 1. تنظيف عميق وحذف المجلدات المعطوبة
+          # 1. إعادة بناء البيئة
           rm -rf android
-          rm -rf .dart_tool
-          rm pubspec.lock
-          
-          # 2. إعادة إنشاء بيئة الأندرويد لـ "فلكس يمن" من الصفر
-          # هذا سيقوم بإنشاء الملفات المتوافقة مع الإضافات تلقائياً
           flutter create . --platforms android --org com.almwld
           
-          # 3. جلب المكتبات وتحديث الروابط
-          flutter pub get
+          # 2. حقن الخصائص يدوياً (لحل مشكلة app_links الصعبة)
+          echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
+          echo "flutter.compileSdkVersion=34" >> android/local.properties
+          echo "flutter.targetSdkVersion=34" >> android/local.properties
+          echo "flutter.minSdkVersion=21" >> android/local.properties
           
-          # 4. بناء الـ APK مع تنظيف الـ Gradle
-          cd android && ./gradlew clean && cd ..
+          # 3. البناء النهائي
+          flutter pub get
           flutter build apk --release --obfuscate --split-debug-info=symbols
     artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
+      - build/app/outputs/flutter-apk/*.apk
     publishing:
       email:
         recipients:
