@@ -1,6 +1,6 @@
 workflows:
   flex-yemen-release:
-    name: Flex Yemen Stable Build
+    name: Flex Yemen Final Fix
     max_build_duration: 30
     instance_type: mac_mini_m1
     environment:
@@ -8,12 +8,25 @@ workflows:
     triggering:
       events:
         - push
-      cancel_previous_builds_on_new_commit: true # سيقوم بإلغاء البناء القديم وتشغيل الجديد فقط
+      cancel_previous_builds_on_new_commit: true
     scripts:
-      - name: Build Android APK
+      - name: Fix MainActivity and Build
         script: |
-          flutter config --no-analytics
+          # 1. إنشاء المجلد إذا لم يكن موجوداً
+          mkdir -p android/app/src/main/kotlin/com/almwld/yemen_project
+          
+          # 2. كتابة ملف MainActivity الصحيح سحابياً
+          echo 'package com.almwld.yemen_project
+          
+          import io.flutter.embedding.android.FlutterActivity
+          
+          class MainActivity: FlutterActivity() {
+          }' > android/app/src/main/kotlin/com/almwld/yemen_project/MainActivity.kt
+          
+          # 3. تنظيف وجلب المكتبات
           flutter pub get
+          
+          # 4. بناء التطبيق
           flutter build apk --release --obfuscate --split-debug-info=symbols
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
