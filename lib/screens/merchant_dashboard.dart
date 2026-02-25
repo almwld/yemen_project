@@ -1,110 +1,87 @@
 import 'package:flutter/material.dart';
+import 'add_product_screen.dart';
+import 'seller_dashboard_screen.dart';
 
 class MerchantDashboard extends StatelessWidget {
+  final Color goldColor = Color(0xFFD4AF37);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0F0F0F),
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("لوحة تحكم التاجر", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+        title: Text("لوحة تحكم التاجر", style: TextStyle(color: goldColor)),
         backgroundColor: Colors.black,
-        actions: [
-          IconButton(icon: Icon(Icons.notifications_active, color: Colors.amber), onPressed: () {}),
-        ],
+        elevation: 0,
+        iconTheme: IconThemeData(color: goldColor),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: Padding(
+        padding: EdgeInsets.all(20),
+        child: GridView.count(
+          crossAxisCount: 2,
+          mainAxisSpacing: 20,
+          crossAxisSpacing: 20,
           children: [
-            // ملخص المبيعات (Analytics)
-            _buildSalesSummary(),
-            SizedBox(height: 25),
-            
-            Text("إدارة المتجر", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 15),
-            
-            // شبكة الأدوات (Tools Grid)
-            GridView.count(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 15,
-              mainAxisSpacing: 15,
-              childAspectRatio: 1.3,
-              children: [
-                _buildToolCard(Icons.add_shopping_cart, "إضافة منتج", Colors.blueAccent),
-                _buildToolCard(Icons.inventory, "المخزون", Colors.purpleAccent),
-                _buildToolCard(Icons.local_shipping, "طلبات التوصيل", Colors.orangeAccent),
-                _buildToolCard(Icons.assessment, "التقارير", Colors.greenAccent),
-              ],
+            _buildDashboardCard(
+              context, 
+              "إضافة منتج جديد", 
+              Icons.add_photo_alternate_outlined, 
+              AddProductScreen()
             ),
-            
-            SizedBox(height: 25),
-            Text("الطلبات الواردة (نشطة)", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            _buildLiveOrders(),
+            _buildDashboardCard(
+              context, 
+              "إدارة منتجاتي", 
+              Icons.inventory_2_outlined, 
+              SellerDashboardScreen()
+            ),
+            _buildDashboardCard(
+              context, 
+              "طلبات الزبائن", 
+              Icons.shopping_cart_checkout, 
+              null // يمكن ربطه بصفحة الطلبات لاحقاً
+            ),
+            _buildDashboardCard(
+              context, 
+              "إحصائيات المبيعات", 
+              Icons.bar_chart_outlined, 
+              null
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSalesSummary() {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.amber.withOpacity(0.2)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("مبيعات اليوم", style: TextStyle(color: Colors.grey, fontSize: 14)),
-            SizedBox(height: 5),
-            Text("1,240,000 ريال", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-          ]),
-          Icon(Icons.trending_up, color: Colors.greenAccent, size: 40),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToolCard(IconData icon, String title, Color color) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 30),
-          SizedBox(height: 10),
-          Text(title, style: TextStyle(color: Colors.white, fontSize: 14)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLiveOrders() {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: 2,
-      itemBuilder: (context, index) {
-        return Card(
-          color: Color(0xFF161616),
-          margin: EdgeInsets.only(top: 10),
-          child: ListTile(
-            leading: CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.person, color: Colors.black)),
-            title: Text("طلب جديد #5421", style: TextStyle(color: Colors.white)),
-            subtitle: Text("الموقع: صنعاء - الأصبحي", style: TextStyle(color: Colors.grey)),
-            trailing: Text("قيد التجهيز", style: TextStyle(color: Colors.amber, fontSize: 12)),
-          ),
-        );
+  Widget _buildDashboardCard(BuildContext context, String title, IconData icon, Widget? nextScreen) {
+    return InkWell(
+      onTap: () {
+        if (nextScreen != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (c) => nextScreen));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("هذه الميزة قيد التفعيل التقني"), backgroundColor: goldColor),
+          );
+        }
       },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: goldColor.withOpacity(0.3)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: goldColor, size: 50),
+            SizedBox(height: 15),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
