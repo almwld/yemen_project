@@ -8,47 +8,106 @@ import 'settings_screen.dart';
 import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+  final Color goldColor = Color(0xFFD4AF37); // الذهب الملكي
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      // إضافة الثلاث خطوط (Menu Icon)
       drawer: _buildSideMenu(context),
       appBar: AppBar(
-        title: Text("فلكس يمن الكبرى 🛡️", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+        title: Image.asset('assets/logo.png', height: 40), // وضع شعارك الذهبي بدل النص
+        centerTitle: true,
         backgroundColor: Colors.black,
-        iconTheme: IconThemeData(color: Colors.amber), // تلوين الثلاث خطوط بالذهبي
+        elevation: 0,
+        iconTheme: IconThemeData(color: goldColor),
       ),
       floatingActionButton: FloatingChatButton(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildSearchBar(), AdsSlider(),
-            _buildGrid(context),
+            _buildSearchBar(),
+            AdsSlider(),
+            _buildCategoriesGrid(context), // عرض الـ 20 قسم
           ],
         ),
       ),
     );
   }
 
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: EdgeInsets.all(15),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: "ابحث في فلكس يمن...",
+          hintStyle: TextStyle(color: Colors.grey),
+          prefixIcon: Icon(Icons.search, color: goldColor),
+          filled: true,
+          fillColor: Color(0xFF1E1E1E),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoriesGrid(BuildContext context) {
+    // هنا نقوم بجلب الـ 20 قسم من categories_data.dart
+    return GridView.builder(
+      padding: EdgeInsets.all(15),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4, // 4 أعمدة ليظهر الـ 20 قسم بشكل مريح
+        mainAxisSpacing: 15,
+        crossAxisSpacing: 15,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: categories.length, // الـ 20 قسم
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Color(0xFF1A1A1A),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: goldColor.withOpacity(0.2)),
+              ),
+              child: Icon(categories[index].icon, color: goldColor, size: 28),
+            ),
+            SizedBox(height: 5),
+            Text(
+              categories[index].name,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white, fontSize: 10),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildSideMenu(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Colors.grey[900],
+        color: Color(0xFF0F0F0F),
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: Colors.black),
-              accountName: Text("Bin Obaeid", style: TextStyle(color: Colors.amber)),
+              accountName: Text("Bin Obaeid", style: TextStyle(color: goldColor, fontWeight: FontWeight.bold)),
               accountEmail: Text("Binobaeid@gmail.com", style: TextStyle(color: Colors.grey)),
-              currentAccountPicture: CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.person, color: Colors.black)),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: goldColor,
+                child: Icon(Icons.person, color: Colors.black, size: 40),
+              ),
             ),
             _menuTile(context, "المتاجر القريبة مني", Icons.map_outlined, MapStoresScreen()),
             _menuTile(context, "المحفظة المالية", Icons.account_balance_wallet, WalletScreen()),
             _menuTile(context, "الإعدادات", Icons.settings, SettingsScreen()),
             _menuTile(context, "الملف الشخصي", Icons.person_outline, ProfileScreen()),
-            _menuTile(context, "طلباتي", Icons.shopping_bag_outlined, null),
-            Divider(color: Colors.grey),
+            Divider(color: goldColor.withOpacity(0.3)),
             _menuTile(context, "عن فلكس يمن", Icons.info_outline, null),
           ],
         ),
@@ -58,15 +117,9 @@ class HomeScreen extends StatelessWidget {
 
   Widget _menuTile(BuildContext context, String title, IconData icon, Widget? screen) {
     return ListTile(
-      leading: Icon(icon, color: Colors.amber),
+      leading: Icon(icon, color: goldColor),
       title: Text(title, style: TextStyle(color: Colors.white)),
-      onTap: () {
-        if (screen != null) Navigator.push(context, MaterialPageRoute(builder: (c) => screen));
-      },
+      onTap: () { if (screen != null) Navigator.push(context, MaterialPageRoute(builder: (c) => screen)); },
     );
   }
-  
-  // (باقي كود الـ Search والـ Grid يظل كما هو لضمان استمرار الـ 20 قسم)
-  Widget _buildSearchBar() { return Container(); } // تم اختصاره هنا
-  Widget _buildGrid(BuildContext context) { return Container(); } // تم اختصاره هنا
 }

@@ -4,29 +4,29 @@ class CategoryItem {
   final String name;
   final IconData icon;
   final Color color;
-  CategoryItem(this.name, this.icon, this.color);
+  CategoryItem(this.name, this.icon, {this.color = const Color(0xFFD4AF37)});
 }
 
-final List<CategoryItem> allCategories = [
-  CategoryItem("سيارات", Icons.directions_car, Colors.amber),
-  CategoryItem("عقارات", Icons.home, Colors.blue),
-  CategoryItem("المزادات", Icons.gavel, Colors.red),
-  CategoryItem("مواد غذائية", Icons.shopping_basket, Colors.green),
-  CategoryItem("ملبوسات", Icons.checkroom, Colors.pink),
-  CategoryItem("إلكترونيات", Icons.devices, Colors.cyan),
-  CategoryItem("مستشفيات", Icons.local_hospital, Colors.redAccent),
-  CategoryItem("صيدليات", Icons.medical_services, Colors.teal),
-  CategoryItem("مدارس", Icons.school, Colors.indigo),
-  CategoryItem("جامعات", Icons.account_balance, Colors.blueGrey),
-  CategoryItem("وظائف", Icons.work, Colors.brown),
-  CategoryItem("شحن ألعاب", Icons.sports_esports, Colors.purple),
-  CategoryItem("كروت نت", Icons.wifi, Colors.lightBlue),
-  CategoryItem("رصيد هاتف", Icons.phone_android, Colors.orange),
-  CategoryItem("فنادق", Icons.hotel, Colors.deepOrange),
-  CategoryItem("استراحات", Icons.pool, Colors.lightGreen),
-  CategoryItem("مقاهي", Icons.coffee, Colors.brown),
-  CategoryItem("متعهد حفلات", Icons.celebration, Colors.purpleAccent),
-  CategoryItem("مواد بناء", Icons.construction, Colors.blueGrey),
-  CategoryItem("مواشي", Icons.agriculture, Colors.green),
-  CategoryItem("أثاث", Icons.chair, Colors.orangeAccent),
+final List<CategoryItem> categories = [
+  CategoryItem("سيارات", Icons.directions_car),
+  CategoryItem("عقارات", Icons.home),
+  CategoryItem("المزادات", Icons.gavel),
+  CategoryItem("مواد غذائية", Icons.shopping_basket),
+  CategoryItem("ملبوسات", Icons.checkroom),
+  CategoryItem("إلكترونيات", Icons.devices),
+  CategoryItem("مستشفيات", Icons.local_hospital),
+  CategoryItem("صيدليات", Icons.medical_services),
+  CategoryItem("مدارس", Icons.school),
+  CategoryItem("جامعات", Icons.account_balance),
+  CategoryItem("وظائف", Icons.work),
+  CategoryItem("شحن ألعاب", Icons.sports_esports),
+  CategoryItem("كروت نت", Icons.wifi),
+  CategoryItem("رصيد هاتف", Icons.phone_android),
+  CategoryItem("فنادق", Icons.hotel),
+  CategoryItem("استراحات", Icons.pool),
+  CategoryItem("مقاهي", Icons.coffee),
+  CategoryItem("متعهد حفلات", Icons.celebration),
+  CategoryItem("مواد بناء", Icons.construction),
+  CategoryItem("مواشي", Icons.agriculture),
+  CategoryItem("أثاث", Icons.chair),
 ];
