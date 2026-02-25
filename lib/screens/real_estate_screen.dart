@@ -1,11 +1,12 @@
 import '../widgets/agreement_document.dart';
 import '../widgets/agreement_document.dart';
+import '../widgets/agreement_document.dart';
 import 'package:flutter/material.dart';
 
 class RealEstateScreen extends StatelessWidget {
   final List<Map<String, dynamic>> premiumProperties = [
-    {'name': 'فيلا ملكية - حدة', 'price': '350,000\$', 'type': 'بيع', 'space': '12 لبنة'},
-    {'name': 'عمارة استثمارية - 6 أدوار', 'price': '900,000$', 'type': 'مزاد', 'space': '8 لبن'},
+    {'name': 'فيلا ملكية - حدة', 'price': '350,000\\$', 'type': 'بيع', 'space': '12 لبنة'},
+    {'name': 'عمارة استثمارية - 6 أدوار', 'price': '900,000\$', 'type': 'مزاد', 'space': '8 لبن'},
   ];
 
   @override
@@ -15,7 +16,7 @@ class RealEstateScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("عقارات فلكس 🏠"),
         backgroundColor: Colors.black,
-        actions: [IconButton(icon: Icon(Icons.map_outlined, color: Colors.amber), onPressed: () { showDialog(context: context, builder: (c) => AgreementDoc(propertyName: "فيلا حدة الملكية", price: "350,000\$")); })],
+        actions: [IconButton(icon: Icon(Icons.map_outlined, color: Colors.amber), onPressed: () { showDialog(context: context, builder: (c) => AgreementDoc(propertyName: "فيلا حدة الملكية", price: "350,000\\$")); })],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -111,7 +112,7 @@ class RealEstateScreen extends StatelessWidget {
           SizedBox(height: 10),
           ListTile(
             title: Text(property['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: Text("المساحة: ${property['space']}", style: TextStyle(color: Colors.grey)),
+            subtitle: Text("المساحة: \${property['space']}", style: TextStyle(color: Colors.grey)),
             trailing: Text(property['price'], style: TextStyle(color: Colors.amber, fontSize: 18, fontWeight: FontWeight.bold)),
           ),
         ],
@@ -134,7 +135,7 @@ class RealEstateScreen extends StatelessWidget {
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("65,000\$", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+              Text("65,000\\$", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
               Text("ضمان فلكس 🛡️", style: TextStyle(color: Colors.blue, fontSize: 10)),
             ],
           ),

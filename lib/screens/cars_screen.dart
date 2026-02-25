@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class CarsScreen extends StatelessWidget {
   final List<Map<String, dynamic>> auctionCars = [
-    {'name': 'تويوتا لاندكروزر 2023', 'price': '45,000$', 'time': '02:45:10', 'bids': 12},
-    {'name': 'مرسيدس G-Class', 'price': '80,000$', 'time': '00:15:45', 'bids': 25},
+    {'name': 'تويوتا لاندكروزر 2023', 'price': '45,000\$', 'time': '02:45:10', 'bids': 12},
+    {'name': 'مرسيدس G-Class', 'price': '80,000\$', 'time': '00:15:45', 'bids': 25},
   ];
 
   @override
@@ -70,7 +70,7 @@ class CarsScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("ينتهي خلال: ${car['time']}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                Text("ينتهي خلال: \${car['time']}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
                 Icon(Icons.timer, color: Colors.white, size: 16),
               ],
             ),
@@ -80,7 +80,7 @@ class CarsScreen extends StatelessWidget {
             child: Column(
               children: [
                 Text(car['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                Text("آخر مزايدة: ${car['price']}", style: TextStyle(color: Colors.amber)),
+                Text("آخر مزايدة: \${car['price']}", style: TextStyle(color: Colors.amber)),
               ],
             ),
           )
@@ -113,7 +113,7 @@ class CarsScreen extends StatelessWidget {
         leading: Container(width: 80, color: Colors.grey[800], child: Icon(Icons.image, color: Colors.grey)),
         title: Text("تويوتا هايلوكس 2022", style: TextStyle(color: Colors.white)),
         subtitle: Text("صنعاء - ضمان فلكس", style: TextStyle(color: Colors.grey)),
-        trailing: Text("18,000$", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+        trailing: Text("18,000\$", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
       ),
     );
   }
