@@ -91,7 +91,9 @@ class HomeScreen extends StatelessWidget {
     );
     
     // مثال للانتقال الفعلي (إذا كانت الواجهة موجودة):
-    // if (categoryName == "سيارات") Navigator.push(context, MaterialPageRoute(builder: (c) => CarsScreen()));
+    if (categoryName == "سيارات") Navigator.push(context, MaterialPageRoute(builder: (c) => CarsScreen()));
+    if (categoryName == "عقارات") Navigator.push(context, MaterialPageRoute(builder: (c) => RealEstateScreen()));
+    if (categoryName == "إلكترونيات") Navigator.push(context, MaterialPageRoute(builder: (c) => ElectronicsScreen()));
   }
 
   // ... (باقي كود الـ Search والـ SideMenu يظل كما هو لضمان الاستقرار)
