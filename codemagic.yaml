@@ -8,23 +8,24 @@ workflows:
     scripts:
       - name: Full Setup and Fix
         script: |
-          # 1. تهيئة الأندرويد (هذا سيعيد إنشاء مجلد android بالإعدادات الأساسية)
           rm -rf android
           flutter create . --platforms android --org com.almwld
           
-          # 2. حقن صلاحيات الإنترنت والموقع في الـ Manifest
+          # حقن الاسم الصحيح Flex Yemen Market
+          sed -i '' 's/android:label="flex_yemen"/android:label="Flex Yemen Market"/' android/app/src/main/AndroidManifest.xml
+
+          # حقن الصلاحيات
           sed -i '' '/<application/i \
           <uses-permission android:name="android.permission.INTERNET" /> \
           <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> \
           <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' android/app/src/main/AndroidManifest.xml
 
-          # 3. إعدادات الـ SDK 36 في local.properties
+          # إعدادات الـ SDK 36
           echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
           echo "flutter.compileSdkVersion=36" >> android/local.properties
           echo "flutter.targetSdkVersion=36" >> android/local.properties
           echo "flutter.minSdkVersion=21" >> android/local.properties
 
-          # 4. كتابة ملف build.gradle بالإعدادات الصحيحة
           cat <<EOT > android/app/build.gradle
           plugins {
               id "com.android.application"
@@ -68,4 +69,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - your-email@example.com # غير هذا البريد إلى بريدك الإلكتروني
+          - Binobaeid@gmail.com
