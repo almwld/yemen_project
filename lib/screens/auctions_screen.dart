@@ -10,19 +10,27 @@ class AuctionsScreen extends StatefulWidget {
 }
 
 class _AuctionsScreenState extends State<AuctionsScreen> {
+  final Color goldColor = Color(0xFFD4AF37);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF121212),
-      appBar: AppBar(title: Text("مزادات فلكس يمن"), centerTitle: true),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text("مزادات فلكس يمن", style: TextStyle(color: goldColor, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.black,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: goldColor),
+      ),
       body: ListView.builder(
         padding: EdgeInsets.all(10),
         itemCount: 3,
         itemBuilder: (context, index) {
           return _buildAuctionCard(
-            "سيارة تويوتا بازرعة 2024", 
-            "25,000 \$", 
-            "02:45:10", 
+            "سيارة تويوتا بازرعة 2024",
+            "25,000\$", // تم إصلاح علامة الدولار هنا
+            "02:45:10",
             "https://picsum.photos/id/${index + 80}/400/250"
           );
         },
@@ -33,7 +41,11 @@ class _AuctionsScreenState extends State<AuctionsScreen> {
   Widget _buildAuctionCard(String title, String currentBid, String timeLeft, String img) {
     return Container(
       margin: EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15)),
+      decoration: BoxDecoration(
+        color: Color(0xFF1A1A1A), 
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: goldColor.withOpacity(0.2))
+      ),
       child: Column(
         children: [
           Stack(
@@ -45,13 +57,13 @@ class _AuctionsScreenState extends State<AuctionsScreen> {
               Positioned(
                 top: 10, right: 10,
                 child: Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10)),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(color: Colors.redAccent, borderRadius: BorderRadius.circular(20)),
                   child: Row(
                     children: [
                       Icon(Icons.timer, size: 14, color: Colors.white),
                       SizedBox(width: 5),
-                      Text(timeLeft, style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(timeLeft, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
                     ],
                   ),
                 ),
@@ -63,17 +75,27 @@ class _AuctionsScreenState extends State<AuctionsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    Text("أعلى سومة: $currentBid", style: TextStyle(color: Colors.amber, fontSize: 18, fontWeight: FontWeight.bold)),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 5),
+                      Text("أعلى سومة: $currentBid", style: TextStyle(color: goldColor, fontSize: 18, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
-                  child: Text("زايد الآن", style: TextStyle(color: Colors.black)),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("جاري فتح غرفة المزايدة..."), backgroundColor: goldColor)
+                    );
+                  },
+                  child: Text("زايد الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: goldColor,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                  ),
                 )
               ],
             ),
