@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/home_screen.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // تأكد من وضع بيانات Supabase الخاصة بك هنا
-  await Supabase.initialize(
-    url: 'https://your-project.supabase.co',
-    anonKey: 'your-anon-key',
-  );
-
+void main() {
   runApp(FlexYemenApp());
 }
 
@@ -23,9 +14,8 @@ class FlexYemenApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Color(0xFFD4AF37),
         scaffoldBackgroundColor: Colors.black,
-        // تطبيق خط "Cairo" الفريد على كامل التطبيق لدعم العربية بامتياز
+        // هذا السطر هو السر في جمال الخط العربي ودعم الـ UTF-8
         textTheme: GoogleFonts.cairoTextTheme(Theme.of(context).textTheme).apply(
           bodyColor: Colors.white,
           displayColor: Colors.white,
