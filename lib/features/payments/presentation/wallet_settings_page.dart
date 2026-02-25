@@ -32,7 +32,7 @@ class _WalletSettingsPageState extends State<WalletSettingsPage> {
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('تم حفظ بيانات المحفظة ✅')),
+      const SnackBar(content: Text('تم حفظ بيانات المحفظة ')),
     );
   }
 

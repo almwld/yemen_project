@@ -11,7 +11,7 @@ class ReferralScreen extends StatelessWidget {
     final user = supabase.auth.currentUser;
     
     return Scaffold(
-      appBar: AppBar(title: Text("شارك واربح 💰"), backgroundColor: Colors.indigo),
+      appBar: AppBar(title: Text("شارك واربح "), backgroundColor: Colors.indigo),
       body: FutureBuilder(
         future: supabase.from('profiles').select('referral_code').eq('id', user!.id).single(),
         builder: (context, snapshot) {

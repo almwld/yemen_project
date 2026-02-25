@@ -4,8 +4,8 @@ class RechargeWalletScreen extends StatelessWidget {
   final List<Map<String, String>> agents = [
     {"name": "الكريمي للصرافة", "account": "1234567", "logo": "🏦"},
     {"name": "النجم للحوالات", "account": "987654", "logo": "⭐"},
-    {"name": "امتياز للصرافة", "account": "456123", "logo": "💎"},
-    {"name": "موبايل ماني", "account": "77xxxxxxx", "logo": "📱"},
+    {"name": "امتياز للصرافة", "account": "456123", "logo": ""},
+    {"name": "موبايل ماني", "account": "77xxxxxxx", "logo": ""},
   ];
 
   @override

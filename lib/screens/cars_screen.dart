@@ -11,7 +11,7 @@ class CarsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("عالم السيارات 🚗"),
+        title: Text("عالم السيارات "),
         backgroundColor: Colors.black,
         actions: [IconButton(icon: Icon(Icons.filter_alt_outlined), onPressed: () {})],
       ),

@@ -9,7 +9,7 @@ class DiscountService {
       expiry: DateTime(2099),
     ),
     Discount(
-      title: '💎 VIP Special',
+      title: ' VIP Special',
       code: 'VIP25',
       percent: 25,
       vipOnly: true,

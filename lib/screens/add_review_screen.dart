@@ -26,7 +26,7 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
         'rating': _rating,
         'comment': _commentController.text,
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("شكرًا لتقييمك! ثقتك تهمنا ✅")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("شكرًا لتقييمك! ثقتك تهمنا ")));
       Navigator.pop(context);
     } catch (e) {
       print("خطأ في التقييم: $e");

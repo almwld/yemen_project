@@ -4,9 +4,9 @@ class ShareService {
   static void shareAd({required String title, required String price, required String category}) {
     final String message = '''
 🔥 عرض جديد في فلكس يمن! 🔥
-🏠 القسم: $category
+ القسم: $category
 📦 السلعة: $title
-💰 السعر/المزايدة: $price
+ السعر/المزايدة: $price
 
 تصفح المزيد من التفاصيل عبر تطبيق فلكس يمن ماركت:
 https://flexyemen.com/ad/view

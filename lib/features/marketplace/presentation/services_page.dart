@@ -18,7 +18,7 @@ class _ServicesPageState extends State<ServicesPage>
     {'title': '✈️ حجز طيران', 'offer': 'أفضل سعر اليوم'},
     {'title': '💳 دفع إلكتروني', 'offer': 'عمولة 0%'},
     {'title': '🎮 شحن ألعاب', 'offer': 'Bonus VIP'},
-    {'title': '📱 شحن رصيد', 'offer': 'عرض مغري'},
+    {'title': ' شحن رصيد', 'offer': 'عرض مغري'},
     {'title': '🌐 كروت إنترنت', 'offer': 'سرعة مضاعفة'},
     {'title': '₿ بيع وشراء كربيتو', 'offer': 'سعر خاص'},
     {'title': '🛒 مشتريات إلكترونية', 'offer': 'عروض جديدة'},

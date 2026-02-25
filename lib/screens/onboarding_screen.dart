@@ -19,12 +19,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       "title": "نظام الوساطة المالي",
       "desc": "أموالك في أمان! نحن نضمن حق البائع والمشتري عبر محفظة فلكس.",
-      "icon": "💰"
+      "icon": ""
     },
     {
       "title": "مزادات حقيقية",
       "desc": "شارك في مزادات الجنابي والسيارات والعقارات بكل شفافية.",
-      "icon": "🔨"
+      "icon": ""
     }
   ];
 

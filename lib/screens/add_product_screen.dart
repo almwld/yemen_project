@@ -51,7 +51,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         'image_url': imageUrl,
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تم نشر سلعتك بنجاح في السوق ✅"), backgroundColor: goldColor));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تم نشر سلعتك بنجاح في السوق "), backgroundColor: goldColor));
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("فشل النشر: $e"), backgroundColor: Colors.red));

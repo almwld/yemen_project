@@ -12,7 +12,7 @@ class AiOfferService {
     }
 
     if (isVip) {
-      return '💎 عرض VIP خاص لك';
+      return ' عرض VIP خاص لك';
     }
 
     return '✨ عرض مميز اليوم';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class DepositScreen extends StatelessWidget {
   final List<Map<String, String>> paymentMethods = [
     {'name': 'بنك الكريمي', 'account': '1234567', 'logo': '🏦'},
-    {'name': 'أم فلوس (M-Flous)', 'account': '770000000', 'logo': '📱'},
+    {'name': 'أم فلوس (M-Flous)', 'account': '770000000', 'logo': ''},
     {'name': 'جوالي (Jawaly)', 'account': '771111111', 'logo': '💳'},
     {'name': 'النجم للحوالات', 'account': 'بإسم: إدارة فلكس يمن', 'logo': '✨'},
   ];

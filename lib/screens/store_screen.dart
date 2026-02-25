@@ -77,7 +77,7 @@ class StoreScreen extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(color: Colors.green.withOpacity(0.2), borderRadius: BorderRadius.circular(5)),
-                      child: Text("ضمان مفعل ✅", style: TextStyle(color: Colors.green, fontSize: 10)),
+                      child: Text("ضمان مفعل ", style: TextStyle(color: Colors.green, fontSize: 10)),
                     ),
                   ],
                 ),

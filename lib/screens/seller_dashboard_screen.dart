@@ -48,7 +48,7 @@ class SellerDashboardScreen extends StatelessWidget {
                       child: ListTile(
                         leading: Icon(Icons.shopping_bag, color: Colors.amber),
                         title: Text("منتج: ${order['product_name']}"),
-                        subtitle: Text("الحالة: ${order['status'] == 'paid_escrow' ? 'في الضمان 🛡️' : 'مكتمل ✅'}"),
+                        subtitle: Text("الحالة: ${order['status'] == 'paid_escrow' ? 'في الضمان 🛡️' : 'مكتمل '}"),
                         trailing: Text("${order['price']} ر.ي", style: TextStyle(color: Colors.green)),
                       ),
                     );

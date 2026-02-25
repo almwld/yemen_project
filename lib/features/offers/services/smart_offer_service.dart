@@ -11,7 +11,7 @@ class SmartOfferService {
         route: '/internet',
       ),
       SmartOffer(
-        title: '💎 عرض VIP كريبتو',
+        title: ' عرض VIP كريبتو',
         description: 'أسعار خاصة لأعضاء VIP',
         route: '/crypto',
         vipOnly: true,

@@ -59,7 +59,7 @@ class ProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: goldColor.withOpacity(0.5))
                   ),
-                  child: Text(isMerchant ? "حساب تاجر موثق ✅" : "حساب عميل", style: TextStyle(color: goldColor, fontSize: 12)),
+                  child: Text(isMerchant ? "حساب تاجر موثق " : "حساب عميل", style: TextStyle(color: goldColor, fontSize: 12)),
                 ),
               ],
             ),
@@ -118,7 +118,7 @@ class ProfileScreen extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Text("أدوات التاجر 💼", style: TextStyle(color: goldColor, fontSize: 18, fontWeight: FontWeight.bold)),
+          child: Text("أدوات التاجر ", style: TextStyle(color: goldColor, fontSize: 18, fontWeight: FontWeight.bold)),
         ),
         _profileTile(Icons.add_business, "إضافة إعلان جديد (سيارة، عقار...)", AddProductScreen()),
         _profileTile(Icons.analytics_outlined, "إحصائيات المبيعات", null),

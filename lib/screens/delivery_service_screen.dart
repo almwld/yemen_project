@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DeliveryServiceScreen extends StatelessWidget {
   final List<Map<String, String>> deliveryCompanies = [
-    {'name': 'أوامر (Awamer)', 'logo': '🚀', 'desc': 'الأسرع في صنعاء وعدن'},
+    {'name': 'أوامر (Awamer)', 'logo': '', 'desc': 'الأسرع في صنعاء وعدن'},
     {'name': 'تو كابتن (To Captain)', 'logo': '🏎️', 'desc': 'توصيل طلبات المولات والمطاعم'},
     {'name': 'ماشي (Mashi)', 'desc': 'تغطية واسعة لجميع المحافظات', 'logo': '📦'},
   ];
@@ -46,7 +46,7 @@ class DeliveryServiceScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: Color(0xFF222222),
-        title: Text("تم الدفع بنجاح ✅", style: TextStyle(color: Colors.greenAccent)),
+        title: Text("تم الدفع بنجاح ", style: TextStyle(color: Colors.greenAccent)),
         content: Text("جاري إرسال بيانات الموقع والطلب إلى $company لترتيب التوصيل..."),
         actions: [
           TextButton(

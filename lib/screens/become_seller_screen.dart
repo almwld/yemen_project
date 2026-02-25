@@ -19,7 +19,7 @@ class _BecomeSellerScreenState extends State<BecomeSellerScreen> {
       // ملاحظة: في النسخة الاحترافية، يفضل أن يكون هذا 'pending_seller' حتى يوافق الآدمين
       await supabase.from('profiles').update({'role': 'seller'}).eq('id', userId);
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تهانينا! أصبحت الآن تاجراً في فلكس يمن ✅")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تهانينا! أصبحت الآن تاجراً في فلكس يمن ")));
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("خطأ: $e")));

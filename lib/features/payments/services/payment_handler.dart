@@ -12,7 +12,7 @@ class PaymentHandler {
 
     // إشعار الإدارة
     NotificationService.notify(
-      title: '💰 عملية دفع جديدة',
+      title: ' عملية دفع جديدة',
       message: 'تم استلام دفعة بقيمة $price ريال',
     );
   }

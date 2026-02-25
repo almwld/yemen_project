@@ -35,7 +35,7 @@ class ServiceDetailsPage extends StatelessWidget {
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('سيتم تفعيل الخدمة قريبًا 🚀'),
+                    content: Text('سيتم تفعيل الخدمة قريبًا '),
                   ),
                 );
               },

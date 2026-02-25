@@ -68,7 +68,7 @@ class _WalletImagePageState extends State<WalletImagePage> {
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('✅ تم حفظ صورة المحفظة'),
+                    content: Text(' تم حفظ صورة المحفظة'),
                   ),
                 );
               },

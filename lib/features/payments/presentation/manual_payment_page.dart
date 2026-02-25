@@ -59,7 +59,7 @@ class _ManualPaymentPageState extends State<ManualPaymentPage> {
             const SizedBox(height: 20),
             if (_saved)
               const Text(
-                '✅ تم حفظ الدفع اليدوي بنجاح',
+                ' تم حفظ الدفع اليدوي بنجاح',
                 style: TextStyle(color: Colors.green),
               ),
           ],

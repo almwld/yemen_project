@@ -5,7 +5,7 @@ class WalletScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: Text("محفظة فلكس 💰"), backgroundColor: Colors.black),
+      appBar: AppBar(title: Text("محفظة فلكس "), backgroundColor: Colors.black),
       body: Column(
         children: [
           Container(

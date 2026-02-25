@@ -9,7 +9,7 @@ class AiConciergeService {
     if (budget >= 10000) {
       suggestions.add(
         AiSuggestion(
-          title: '📱 شحن رصيد',
+          title: ' شحن رصيد',
           description: 'أفضل خيار سريع اليوم',
           price: 5000,
           route: '/payment-info',
