@@ -8,20 +8,23 @@ workflows:
     scripts:
       - name: Full Setup and Fix
         script: |
-          # 1. تهيئة الأندرويد
+          # 1. تهيئة الأندرويد (هذا سيعيد إنشاء مجلد android بالإعدادات الأساسية)
           rm -rf android
           flutter create . --platforms android --org com.almwld
           
-          # 2. حقن صلاحيات الإنترنت والموقع في الـ Manifest (هذا ما كان ينقصنا)
-          sed -i '' '/<application/i           <uses-permission android:name="android.permission.INTERNET" />           <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />           <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' android/app/src/main/AndroidManifest.xml
+          # 2. حقن صلاحيات الإنترنت والموقع في الـ Manifest
+          sed -i '' '/<application/i \
+          <uses-permission android:name="android.permission.INTERNET" /> \
+          <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> \
+          <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' android/app/src/main/AndroidManifest.xml
 
-          # 3. إعدادات الـ SDK 36
+          # 3. إعدادات الـ SDK 36 في local.properties
           echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
           echo "flutter.compileSdkVersion=36" >> android/local.properties
           echo "flutter.targetSdkVersion=36" >> android/local.properties
           echo "flutter.minSdkVersion=21" >> android/local.properties
 
-          # 4. بناء الـ Gradle
+          # 4. كتابة ملف build.gradle بالإعدادات الصحيحة
           cat <<EOT > android/app/build.gradle
           plugins {
               id "com.android.application"
@@ -65,4 +68,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - Binobaeid@gmail.com
+          - your-email@example.com # غير هذا البريد إلى بريدك الإلكتروني
