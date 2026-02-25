@@ -8,17 +8,17 @@ workflows:
     scripts:
       - name: Setup and Build APK
         script: |
-          # 1. تصفير شامل للمجلد
+          # 1. تنظيف وإعادة بناء القالب لضمان عدم وجود ملفات قديمة
           rm -rf android
           flutter create . --platforms android --org com.almwld
           
-          # 2. حقن إعدادات SDK 36 (متطلبات مكتبات 2026)
+          # 2. حقن إعدادات الـ SDK 36 الإجبارية
           echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
           echo "flutter.compileSdkVersion=36" >> android/local.properties
           echo "flutter.targetSdkVersion=36" >> android/local.properties
           echo "flutter.minSdkVersion=21" >> android/local.properties
 
-          # 3. بناء ملف gradle متوافق تماماً مع Supabase والتنبيهات
+          # 3. استبدال build.gradle بنسخة تدعم SDK 36 وتوافق Supabase
           cat <<EOT > android/app/build.gradle
           plugins {
               id "com.android.application"
@@ -55,7 +55,7 @@ workflows:
           }
           EOT
 
-          # 4. البناء النهائي مع تجاهل أيقونات الشجر (Tree-shaking)
+          # 4. البناء النهائي
           flutter pub get
           flutter build apk --release --no-tree-shake-icons
     artifacts:
