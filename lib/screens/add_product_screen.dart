@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../data/categories_data.dart'; // لاستيراد الـ 21 قسم
 
 class AddProductScreen extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   String _selectedCategory = 'سيارات';
   File? _productImage;
   bool _isPublishing = false;
+  final Color goldColor = Color(0xFFD4AF37);
   final supabase = Supabase.instance.client;
 
   Future<void> _pickImage() async {
@@ -24,22 +26,24 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   Future<void> _publishProduct() async {
     if (_productImage == null || _nameController.text.isEmpty || _priceController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("يرجى إكمال جميع البيانات وصورة المنتج")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("يرجى إكمال جميع البيانات وصورة المنتج"), backgroundColor: Colors.red));
       return;
     }
 
     setState(() => _isPublishing = true);
     try {
-      final userId = supabase.auth.currentUser!.id;
-      final fileName = 'prod_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final user = supabase.auth.currentUser;
+      if (user == null) throw "يجب تسجيل الدخول أولاً";
       
-      // 1. رفع الصورة إلى التخزين السحابي
+      final fileName = 'prod_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      // 1. رفع الصورة
       await supabase.storage.from('products').upload('public/$fileName', _productImage!);
       final imageUrl = supabase.storage.from('products').getPublicUrl('public/$fileName');
 
-      // 2. إدراج السلعة في جدول المنتجات
+      // 2. إدراج البيانات
       await supabase.from('products').insert({
-        'seller_id': userId,
+        'seller_id': user.id,
         'name': _nameController.text,
         'description': _descController.text,
         'price': double.parse(_priceController.text),
@@ -47,10 +51,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
         'image_url': imageUrl,
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تم نشر سلعتك بنجاح في السوق ✅")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تم نشر سلعتك بنجاح في السوق ✅"), backgroundColor: goldColor));
       Navigator.pop(context);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("فشل النشر: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("فشل النشر: $e"), backgroundColor: Colors.red));
     } finally {
       setState(() => _isPublishing = false);
     }
@@ -59,41 +63,91 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("إضافة سلعة جديدة"), backgroundColor: Colors.amber),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text("إضافة سلعة جديدة", style: TextStyle(color: goldColor)),
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: goldColor),
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
         child: Column(
           children: [
             GestureDetector(
               onTap: _pickImage,
-              child: _productImage != null 
-                ? Image.file(_productImage!, height: 180, width: double.infinity, fit: BoxFit.cover)
-                : Container(height: 180, color: Colors.grey[900], child: Icon(Icons.add_a_photo, size: 50, color: Colors.amber)),
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Color(0xFF1A1A1A),
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: goldColor.withOpacity(0.5), style: BorderStyle.solid),
+                ),
+                child: _productImage != null
+                  ? ClipRRect(borderRadius: BorderRadius.circular(15), child: Image.file(_productImage!, fit: BoxFit.cover))
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.add_a_photo_outlined, size: 50, color: goldColor),
+                        SizedBox(height: 10),
+                        Text("إضافة صورة المنتج", style: TextStyle(color: goldColor)),
+                      ],
+                    ),
+              ),
             ),
-            SizedBox(height: 20),
-            TextField(controller: _nameController, decoration: InputDecoration(labelText: "اسم السلعة (مثلاً: تويوتا هايلوكس 2024)")),
-            SizedBox(height: 10),
-            TextField(controller: _descController, maxLines: 3, decoration: InputDecoration(labelText: "وصف السلعة ومواصفاتها")),
-            SizedBox(height: 10),
-            TextField(controller: _priceController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: "السعر (ريال يمني)", prefixIcon: Icon(Icons.payments))),
-            SizedBox(height: 10),
+            SizedBox(height: 25),
+            _buildInput(_nameController, "اسم السلعة", Icons.edit),
+            SizedBox(height: 15),
+            _buildInput(_descController, "الوصف بالتفصيل", Icons.description, maxLines: 3),
+            SizedBox(height: 15),
+            _buildInput(_priceController, "السعر (ريال يمني)", Icons.payments, isNumber: true),
+            SizedBox(height: 15),
             DropdownButtonFormField<String>(
+              dropdownColor: Color(0xFF1A1A1A),
               value: _selectedCategory,
-              items: ['سيارات', 'عقارات', 'إلكترونيات', 'أخرى'].map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+              style: TextStyle(color: Colors.white),
+              items: categories.map((c) => DropdownMenuItem(value: c.name, child: Text(c.name))).toList(),
               onChanged: (val) => setState(() => _selectedCategory = val!),
-              decoration: InputDecoration(labelText: "الفئة"),
+              decoration: _inputDecoration("الفئة", Icons.category),
             ),
-            SizedBox(height: 30),
-            _isPublishing 
-              ? CircularProgressIndicator() 
+            SizedBox(height: 35),
+            _isPublishing
+              ? CircularProgressIndicator(color: goldColor)
               : ElevatedButton(
                   onPressed: _publishProduct,
-                  child: Center(child: Text("نشر السلعة في السوق")),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black, minimumSize: Size(double.infinity, 50)),
+                  child: Text("نشر السلعة الآن", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: goldColor,
+                    foregroundColor: Colors.black,
+                    minimumSize: Size(double.infinity, 55),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  ),
                 ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildInput(TextEditingController controller, String label, IconData icon, {bool isNumber = false, int maxLines = 1}) {
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+      style: TextStyle(color: Colors.white),
+      decoration: _inputDecoration(label, icon),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: goldColor.withOpacity(0.7)),
+      prefixIcon: Icon(icon, color: goldColor),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey[800]!)),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: goldColor)),
+      filled: true,
+      fillColor: Color(0xFF0D0D0D),
     );
   }
 }
