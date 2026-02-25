@@ -1,24 +1,27 @@
 workflows:
-  flex-yemen-release:
-    name: Flex Yemen Supabase Final 36
+  flex-yemen-final:
+    name: Flex Yemen Final Build
     instance_type: mac_mini_m2
     max_build_duration: 30
     environment:
       flutter: stable
     scripts:
-      - name: Setup and Build APK
+      - name: Full Setup and Fix
         script: |
-          # 1. تنظيف وإعادة بناء القالب لضمان عدم وجود ملفات قديمة
+          # 1. تهيئة الأندرويد
           rm -rf android
           flutter create . --platforms android --org com.almwld
           
-          # 2. حقن إعدادات الـ SDK 36 الإجبارية
+          # 2. حقن صلاحيات الإنترنت والموقع في الـ Manifest (هذا ما كان ينقصنا)
+          sed -i '' '/<application/i           <uses-permission android:name="android.permission.INTERNET" />           <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />           <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' android/app/src/main/AndroidManifest.xml
+
+          # 3. إعدادات الـ SDK 36
           echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
           echo "flutter.compileSdkVersion=36" >> android/local.properties
           echo "flutter.targetSdkVersion=36" >> android/local.properties
           echo "flutter.minSdkVersion=21" >> android/local.properties
 
-          # 3. استبدال build.gradle بنسخة تدعم SDK 36 وتوافق Supabase
+          # 4. بناء الـ Gradle
           cat <<EOT > android/app/build.gradle
           plugins {
               id "com.android.application"
@@ -55,7 +58,6 @@ workflows:
           }
           EOT
 
-          # 4. البناء النهائي
           flutter pub get
           flutter build apk --release --no-tree-shake-icons
     artifacts:
