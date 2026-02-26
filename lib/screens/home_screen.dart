@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../data/categories_data.dart';
 import 'products_list_screen.dart';
 import 'add_post_screen.dart';
-import 'profile_screen.dart'; // استيراد الصفحة الجديدة
+import 'profile_screen.dart';
+import 'inbox_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -19,16 +20,18 @@ class HomeScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.person_outline, color: gold),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
-          },
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen())),
         ),
-        actions: [Icon(Icons.search, color: gold), const SizedBox(width: 15)],
+        actions: [
+          IconButton(
+            icon: Icon(Icons.chat_bubble_outline, color: gold),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const InboxScreen())),
+          ),
+          const SizedBox(width: 5),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const AddPostScreen()));
-        },
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddPostScreen())),
         backgroundColor: gold,
         icon: const Icon(Icons.add, color: Colors.black),
         label: const Text("أضف إعلانك", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
@@ -62,9 +65,7 @@ class HomeScreen extends StatelessWidget {
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 return InkWell(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsListScreen(categoryName: categories[index].name)));
-                  },
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsListScreen(categoryName: categories[index].name))),
                   child: Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFF1A1A1A),
