@@ -1,57 +1,55 @@
 import 'package:flutter/material.dart';
 
 class NotificationsScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> notifications = [
-    {
-      'title': 'تم استلام حوالة',
-      'body': 'وصلك مبلغ 50,000 ريال إلى محفظتك من كريمي.',
-      'time': 'منذ دقيقتين',
-      'icon': Icons.account_balance_wallet,
-      'color': Colors.greenAccent
-    },
-    {
-      'title': 'طلب توصيل جديد',
-      'body': 'قام العميل محمد بطلب توصيل من مجمع الشلال.',
-      'time': 'منذ ساعة',
-      'icon': Icons.local_shipping,
-      'color': Colors.orangeAccent
-    },
-    {
-      'title': 'تحديث الأمان',
-      'body': 'تم تسجيل الدخول إلى حسابك من جهاز جديد في صنعاء.',
-      'time': 'أمس',
-      'icon': Icons.security,
-      'color': Colors.blueAccent
-    },
-  ];
+  const NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final Color gold = const Color(0xFFD4AF37);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("التنبيهات", style: TextStyle(color: Colors.amber)),
-        backgroundColor: Colors.transparent,
+        title: Text("التنبيهات", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.black,
         elevation: 0,
+        iconTheme: IconThemeData(color: gold),
       ),
       body: ListView.builder(
-        itemCount: notifications.length,
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        itemCount: 5,
         itemBuilder: (context, index) {
-          final note = notifications[index];
+          List titles = [
+            "رسالة جديدة",
+            "عرض مميز",
+            "تحديث الإعلان",
+            "أمن الحساب",
+            "فلكس يمن"
+          ];
+          List bodies = [
+            "قام أحد المستخدمين بالرد على إعلانك (سيارة تيوتا).",
+            "هناك خصم جديد في قسم الإلكترونيات، تفقده الآن!",
+            "تمت الموافقة على نشر إعلانك في قسم العقارات.",
+            "تم تسجيل الدخول من جهاز جديد، هل هذا أنت؟",
+            "مرحباً بك في النسخة المطورة من المنصة الكبرى."
+          ];
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             decoration: BoxDecoration(
-              color: Color(0xFF161616),
+              color: index == 0 ? gold.withOpacity(0.1) : const Color(0xFF1A1A1A),
               borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: index == 0 ? gold : Colors.transparent, width: 0.5),
             ),
             child: ListTile(
               leading: CircleAvatar(
-                backgroundColor: note['color'].withOpacity(0.1),
-                child: Icon(note['icon'], color: note['color']),
+                backgroundColor: index == 0 ? gold : Colors.black,
+                child: Icon(
+                  index == 0 ? Icons.notifications_active : Icons.notifications_none,
+                  color: index == 0 ? Colors.black : gold,
+                ),
               ),
-              title: Text(note['title'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text(note['body'], style: TextStyle(color: Colors.grey, fontSize: 13)),
-              trailing: Text(note['time'], style: TextStyle(color: Colors.grey[600], fontSize: 10)),
+              title: Text(titles[index], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              subtitle: Text(bodies[index], style: const TextStyle(color: Colors.white70, fontSize: 13)),
+              trailing: const Text("منذ قليل", style: TextStyle(color: Colors.white24, fontSize: 10)),
             ),
           );
         },

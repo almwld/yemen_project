@@ -4,6 +4,7 @@ import 'products_list_screen.dart';
 import 'add_post_screen.dart';
 import 'profile_screen.dart';
 import 'inbox_screen.dart';
+import 'notifications_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,10 +25,13 @@ class HomeScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
+            icon: Icon(Icons.notifications_none, color: gold),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsScreen())),
+          ),
+          IconButton(
             icon: Icon(Icons.chat_bubble_outline, color: gold),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const InboxScreen())),
           ),
-          const SizedBox(width: 5),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
