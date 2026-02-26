@@ -90,7 +90,7 @@ class HomeScreen extends StatelessWidget {
                   child: InkWell(
                     onTap: () {
                       if (categories[index].name == "متاجر قريبة") {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const MapStoresScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => MapStoresScreen()));
                       } else {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsListScreen(categoryName: categories[index].name)));
                       }
