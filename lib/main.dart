@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/home_screen.dart';
 
 void main() {
@@ -14,17 +13,18 @@ class FlexYemenApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flex Yemen',
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [Locale('ar', 'AE')],
-      locale: Locale('ar', 'AE'),
+      // نستخدم اتجاه اليمين لليسار يدوياً لضمان استقرار البناء
+      builder: (context, child) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: child!,
+        );
+      },
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: const Color(0xFFD4AF37),
         scaffoldBackgroundColor: Colors.black,
+        fontFamily: 'Roboto', 
       ),
       home: const HomeScreen(),
     );
