@@ -11,7 +11,7 @@ class ProductDetailsScreen extends StatelessWidget {
       backgroundColor: Colors.black,
       appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, iconTheme: IconThemeData(color: gold)),
       extendBodyBehindAppBar: true,
-      body: SingleChildScrollView( // جعل الشاشة قابلة للتمرير لرؤية التعليقات
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -28,41 +28,20 @@ class ProductDetailsScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(color: gold.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-                        child: Row(children: [Icon(Icons.star, color: gold, size: 18), const SizedBox(width: 4), const Text("4.5", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))]),
+                        child: Row(children: [Icon(Icons.star, color: gold, size: 18), const SizedBox(width: 4), const Text("4.8", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))]),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Text("السعر حسب المواصفات", style: TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text("السعر: 4,500 ريال", style: TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
                   const Text("التفاصيل:", style: TextStyle(color: Colors.white, fontSize: 18)),
-                  const Text("هذا المنتج يخضع لتقييم المستخدمين العالي لضمان الجودة. الموقع: صنعاء، اليمن.", style: TextStyle(color: Colors.white70, fontSize: 16)),
-                  
+                  const Text("هذا الطلب متاح للتوصيل السريع داخل صنعاء. الجودة مضمونة من فلكس يمن.", style: TextStyle(color: Colors.white70, fontSize: 16)),
                   const SizedBox(height: 30),
-                  const Divider(color: Colors.white10),
+                  const Text("التعليقات", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  const Text("التعليقات (3)", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 15),
-                  
-                  // قائمة التعليقات
-                  _buildComment("أحمد اليافعي", "الخدمة ممتازة والطعم رائع جداً، أنصح به!", gold),
-                  _buildComment("سارة محمد", "تأخر التوصيل قليلاً ولكن الجودة تعوض ذلك.", gold),
-                  _buildComment("محمد علي", "سعر مناسب جداً مقارنة بالمنافسين.", gold),
-                  
-                  const SizedBox(height: 20),
-                  // حقل إضافة تعليق
-                  TextField(
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: "أضف تعليقك هنا...",
-                      hintStyle: const TextStyle(color: Colors.white24, fontSize: 14),
-                      suffixIcon: Icon(Icons.send, color: gold),
-                      filled: true,
-                      fillColor: const Color(0xFF1A1A1A),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-                    ),
-                  ),
-                  const SizedBox(height: 100), // مساحة للأزرار السفلية
+                  _buildSimpleComment("يحيى", "أفضل وجبة جربتها!", gold),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -71,39 +50,84 @@ class ProductDetailsScreen extends StatelessWidget {
       ),
       bottomSheet: Container(
         padding: const EdgeInsets.all(20),
-        color: Colors.black,
+        color: const Color(0xFF0A0A0A),
         child: Row(
           children: [
-            Expanded(child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.phone, color: Colors.black), label: const Text("اتصال", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)), style: ElevatedButton.styleFrom(backgroundColor: gold, height: 50))),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => _showCheckoutSheet(context, gold),
+                style: ElevatedButton.styleFrom(backgroundColor: gold, height: 50, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+                child: const Text("اطلب الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
+              ),
+            ),
             const SizedBox(width: 10),
-            Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: Icon(Icons.chat, color: gold), label: Text("دردشة", style: TextStyle(color: gold)), style: OutlinedButton.styleFrom(side: BorderSide(color: gold), height: 50))),
+            Container(
+              decoration: BoxDecoration(color: const Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(15)),
+              child: IconButton(onPressed: () {}, icon: Icon(Icons.chat_bubble_outline, color: gold)),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildComment(String user, String text, Color gold) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+  void _showCheckoutSheet(BuildContext context, Color gold) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A1A),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(25),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              CircleAvatar(radius: 12, backgroundColor: gold.withOpacity(0.2), child: Icon(Icons.person, size: 15, color: gold)),
-              const SizedBox(width: 10),
-              Text(user, style: TextStyle(color: gold, fontSize: 13, fontWeight: FontWeight.bold)),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(10))),
+              const SizedBox(height: 20),
+              Text("ملخص الفاتورة", style: TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 25),
+              _buildInvoiceRow("سعر الوجبة", "4,500 ريال"),
+              _buildInvoiceRow("رسوم التوصيل", "500 ريال"),
+              const Divider(color: Colors.white10, height: 30),
+              _buildInvoiceRow("الإجمالي", "5,000 ريال", isTotal: true),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text("تم إرسال طلبك بنجاح!"), backgroundColor: gold));
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: gold),
+                  child: const Text("تأكيد الطلب النهائي", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 5),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: const Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(15)),
-            child: Text(text, style: const TextStyle(color: Colors.white70, fontSize: 13)),
-          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInvoiceRow(String label, String value, {bool isTotal = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(color: isTotal ? Colors.white : Colors.white70, fontSize: isTotal ? 18 : 15, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
+          Text(value, style: TextStyle(color: isTotal ? const Color(0xFFD4AF37) : Colors.white, fontSize: isTotal ? 18 : 15, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
         ],
       ),
+    );
+  }
+
+  Widget _buildSimpleComment(String user, String text, Color gold) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: const Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(12)),
+      child: Row(children: [Icon(Icons.person, color: gold, size: 16), const SizedBox(width: 10), Text("$user: $text", style: const TextStyle(color: Colors.white70, fontSize: 12))]),
     );
   }
 }
