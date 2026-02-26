@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../data/special_sections.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final VoidCallback onThemeToggle;
+  const HomeScreen({super.key, required this.onThemeToggle});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +16,7 @@ class HomeScreen extends StatelessWidget {
         title: Text("FLEX YEMEN", style: TextStyle(color: gold, fontWeight: FontWeight.bold, letterSpacing: 2)),
         actions: [
           Stack(children: [IconButton(icon: Icon(Icons.shopping_cart_outlined, color: gold), onPressed: () => _showCartSheet(context, gold)), Positioned(right: 8, top: 8, child: Container(padding: EdgeInsets.all(2), decoration: BoxDecoration(color: Colors.red, shape: BoxShape.circle), child: Text('3', style: TextStyle(fontSize: 10, color: Colors.white))))]),
+          IconButton(icon: Icon(Icons.brightness_6_outlined, color: gold), onPressed: onThemeToggle),
           IconButton(icon: Icon(Icons.notifications_none, color: gold), onPressed: () {}),
           IconButton(icon: Icon(Icons.person_outline, color: gold), onPressed: () {}),
         ],
