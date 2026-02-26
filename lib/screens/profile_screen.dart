@@ -60,6 +60,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             // القائمة السريعة
+            _buildProfileMenu(Icons.store_mall_directory, "لوحة التاجر", onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MerchantDashboard()))),
             _buildProfileMenu(Icons.favorite_border, "المفضلة"),
             _buildProfileMenu(Icons.campaign_outlined, "إعلاناتي النشطة"),
             _buildProfileMenu(Icons.account_balance_wallet_outlined, "عمليات المحفظة"),
