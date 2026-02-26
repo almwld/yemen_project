@@ -1,137 +1,142 @@
-import 'chat_screen.dart';
-import 'map_view_screen.dart';
 import 'package:flutter/material.dart';
 
-class ProductDetailsScreen extends StatelessWidget {
-  final String title;
-  const ProductDetailsScreen({super.key, required this.title});
+class ProductDetailsScreen extends StatefulWidget {
+  final String productName;
+  final String price;
+
+  const ProductDetailsScreen({
+    super.key,
+    required this.productName,
+    required this.price,
+  });
+
+  @override
+  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
+}
+
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  final Color gold = const Color(0xFFD4AF37);
+  int quantity = 1;
 
   @override
   Widget build(BuildContext context) {
-    final Color gold = const Color(0xFFD4AF37);
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, iconTheme: IconThemeData(color: gold)),
-      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: Text("تفاصيل المنتج", style: TextStyle(color: gold)),
+        centerTitle: true,
+        actions: [
+          IconButton(icon: Icon(Icons.favorite_border, color: gold), onPressed: () {}),
+          IconButton(icon: Icon(Icons.share, color: gold), onPressed: () {}),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(height: 300, width: double.infinity, decoration: const BoxDecoration(color: Color(0xFF1A1A1A), borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))), child: Icon(Icons.image, size: 100, color: gold)),
+            // 1. صورة المنتج (مكان مخصص للصورة)
+            Container(
+              height: 300,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white10,
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+              ),
+              child: Icon(Icons.inventory_2_outlined, size: 100, color: gold.withOpacity(0.5)),
+            ),
+            
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 2. اسم المنتج والسعر
+                  Text(widget.productName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  Text(widget.price, style: TextStyle(fontSize: 22, color: gold, fontWeight: FontWeight.bold)),
+                  
+                  SizedBox(height: 20),
+                  Divider(color: Colors.white12),
+                  SizedBox(height: 10),
+
+                  // 3. وصف المنتج
+                  Text("الوصف", style: TextStyle(fontSize: 18, color: gold, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  Text(
+                    "هذا المنتج من أفضل المنتجات المتوفرة في السوق اليمني، يأتي بضمان الوكيل الأصلي وشحن سريع عبر شبكة فلكس اللوجستية لجميع المحافظات.",
+                    style: TextStyle(color: Colors.grey, height: 1.5, fontSize: 14),
+                  ),
+                  
+                  SizedBox(height: 30),
+
+                  // 4. اختيار الكمية
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold))),
+                      Text("الكمية:", style: TextStyle(fontSize: 18)),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(color: gold.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-                        child: Row(children: [Icon(Icons.star, color: gold, size: 18), const SizedBox(width: 4), const Text("4.8", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))]),
-                      ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: gold.withOpacity(0.5)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.remove, color: gold),
+                              onPressed: () { if (quantity > 1) setState(() => quantity--); },
+                            ),
+                            Text("$quantity", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            IconButton(
+                              icon: Icon(Icons.add, color: gold),
+                              onPressed: () { setState(() => quantity++); },
+                            ),
+                          ],
+                        ),
+                      )
                     ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text("السعر: 4,500 ريال", style: TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
-                  InkWell(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MapViewScreen(locationName: "موقع البائع"))), child: Row(children: [Icon(Icons.map, color: gold, size: 18), SizedBox(width: 5), Text("عرض الموقع على الخريطة", style: TextStyle(color: gold, decoration: TextDecoration.underline))])), 
-                  SizedBox(height: 15),
-                  const Text("التفاصيل:", style: TextStyle(color: Colors.white, fontSize: 18)),
-                  const Text("هذا الطلب متاح للتوصيل السريع داخل صنعاء. الجودة مضمونة من فلكس يمن.", style: TextStyle(color: Colors.white70, fontSize: 16)),
-                  const SizedBox(height: 30),
-                  const Text("التعليقات", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
-                  _buildSimpleComment("يحيى", "أفضل وجبة جربتها!", gold),
-                  const SizedBox(height: 100),
+                  )
                 ],
               ),
-            ),
+            )
           ],
         ),
       ),
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(20),
-        color: const Color(0xFF0A0A0A),
+      
+      // 5. شريط الأزرار السفلي (إضافة للسلة وشراء)
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          border: Border(top: BorderSide(color: Colors.white12)),
+        ),
         child: Row(
           children: [
             Expanded(
-              child: ElevatedButton(
-                onPressed: () => _showCheckoutSheet(context, gold),
-                style: ElevatedButton.styleFrom(backgroundColor: gold, fixedSize: Size(150, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                child: const Text("اطلب الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
+              child: OutlinedButton(
+                onPressed: () {},
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: gold),
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                child: Text("إضافة للسلة", style: TextStyle(color: gold, fontSize: 16)),
               ),
             ),
-            const SizedBox(width: 10),
-            Container(
-              decoration: BoxDecoration(color: const Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(15)),
-              child: IconButton(onPressed: () {}, icon: Icon(Icons.chat_bubble_outline, color: gold)),
+            SizedBox(width: 15),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: gold,
+                  foregroundColor: Colors.black,
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                child: Text("شراء الآن", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  void _showCheckoutSheet(BuildContext context, Color gold) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1A1A1A),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(25),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(10))),
-              const SizedBox(height: 20),
-              Text("ملخص الفاتورة", style: TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 25),
-              _buildInvoiceRow("سعر الوجبة", "4,500 ريال"),
-              _buildInvoiceRow("رسوم التوصيل", "500 ريال"),
-              const Divider(color: Colors.white10, height: 30),
-              _buildInvoiceRow("الإجمالي", "5,000 ريال", isTotal: true),
-              const SizedBox(height: 30),
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text("تم إرسال طلبك بنجاح!"), backgroundColor: gold));
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: gold),
-                  child: const Text("تأكيد الطلب النهائي", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildInvoiceRow(String label, String value, {bool isTotal = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: TextStyle(color: isTotal ? Colors.white : Colors.white70, fontSize: isTotal ? 18 : 15, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
-          Text(value, style: TextStyle(color: isTotal ? const Color(0xFFD4AF37) : Colors.white, fontSize: isTotal ? 18 : 15, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSimpleComment(String user, String text, Color gold) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: const Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(12)),
-      child: Row(children: [Icon(Icons.person, color: gold, size: 16), const SizedBox(width: 10), Text("$user: $text", style: const TextStyle(color: Colors.white70, fontSize: 12))]),
     );
   }
 }
