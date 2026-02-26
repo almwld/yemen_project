@@ -1,10 +1,17 @@
-import 'favorites_screen.dart';
 import 'package:flutter/material.dart';
 import 'merchant_dashboard.dart';
 import 'wallet_screen.dart';
+import 'favorites_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool isArabic = true;
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("الحساب الشخصي", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+        title: Text(isArabic ? "الحساب الشخصي" : "Profile", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.black,
         elevation: 0,
         iconTheme: IconThemeData(color: gold),
@@ -22,69 +29,47 @@ class ProfileScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: gold,
-                    child: CircleAvatar(
-                      radius: 57,
-                      backgroundColor: Colors.black,
-                      child: Icon(Icons.person, size: 60, color: gold),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
-                      child: const Icon(Icons.check, color: Colors.white, size: 20),
-                    ),
-                  ),
-                ],
+              child: CircleAvatar(
+                radius: 60,
+                backgroundColor: gold,
+                child: const CircleAvatar(
+                  radius: 57,
+                  backgroundColor: Colors.black,
+                  child: Icon(Icons.person, size: 60, color: Color(0xFFD4AF37)),
+                ),
               ),
             ),
             const SizedBox(height: 15),
             const Text("Bin Obaeid", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-            Text("حساب موثق - صنعاء", style: TextStyle(color: gold, fontSize: 14)),
-            const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildStatItem("إعلاناتي", "12"),
-                _buildStatItem("المحفظة", "450k"),
-                _buildStatItem("التقييم", "4.9"),
-              ],
-            ),
+            Text(isArabic ? "حساب موثق - صنعاء" : "Verified Account - Sanaa", style: TextStyle(color: gold, fontSize: 14)),
             const SizedBox(height: 30),
             
-            // إصلاح الروابط هنا
-            _buildProfileMenu(context, Icons.store_mall_directory, "لوحة التاجر", () {
+            // خيار تبديل اللغة
+            _buildProfileMenu(context, Icons.language, isArabic ? "اللغة (العربية)" : "Language (English)", () {
+              setState(() {
+                isArabic = !isArabic;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(isArabic ? "تم تحويل اللغة للعربية" : "Language switched to English"), backgroundColor: gold),
+              );
+            }),
+
+            _buildProfileMenu(context, Icons.store_mall_directory, isArabic ? "لوحة التاجر" : "Merchant Dashboard", () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const MerchantDashboard()));
             }),
-            _buildProfileMenu(context, Icons.account_balance_wallet_outlined, "المحفظة فلكس", () {
+            _buildProfileMenu(context, Icons.account_balance_wallet_outlined, isArabic ? "المحفظة فلكس" : "Flex Wallet", () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletScreen()));
             }),
-            _buildProfileMenu(context, Icons.favorite_border, "المفضلة", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FavoritesScreen()))),
-            _buildProfileMenu(context, Icons.support_agent, "الدعم الفني", () {}),
-            _buildProfileMenu(context, Icons.logout, "تسجيل الخروج", () {}),
+            _buildProfileMenu(context, Icons.favorite_border, isArabic ? "المفضلة" : "Favorites", () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const FavoritesScreen()));
+            }),
+            _buildProfileMenu(context, Icons.logout, isArabic ? "تسجيل الخروج" : "Logout", () {}),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatItem(String label, String value) {
-    return Column(
-      children: [
-        Text(value, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 14)),
-      ],
-    );
-  }
-
-  // تحديث تعريف الودجت لاستقبال الأكشن بشكل صحيح
   Widget _buildProfileMenu(BuildContext context, IconData icon, String title, VoidCallback onTap) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
