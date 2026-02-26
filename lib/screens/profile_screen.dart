@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'merchant_dashboard.dart';
+import 'wallet_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -18,7 +20,6 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            // صورة البروفايل والمعلومات الأساسية
             Center(
               child: Stack(
                 children: [
@@ -36,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
                     right: 0,
                     child: Container(
                       padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+                      decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
                       child: const Icon(Icons.check, color: Colors.white, size: 20),
                     ),
                   ),
@@ -47,8 +48,6 @@ class ProfileScreen extends StatelessWidget {
             const Text("Bin Obaeid", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
             Text("حساب موثق - صنعاء", style: TextStyle(color: gold, fontSize: 14)),
             const SizedBox(height: 30),
-
-            // قسم الإحصائيات (المحفظة والإعلانات)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -58,14 +57,17 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 30),
-
-            // القائمة السريعة
-            _buildProfileMenu(Icons.store_mall_directory, "لوحة التاجر", onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MerchantDashboard()))),
-            _buildProfileMenu(Icons.favorite_border, "المفضلة"),
-            _buildProfileMenu(Icons.campaign_outlined, "إعلاناتي النشطة"),
-            _buildProfileMenu(Icons.account_balance_wallet_outlined, "عمليات المحفظة"),
-            _buildProfileMenu(Icons.support_agent, "الدعم الفني"),
-            _buildProfileMenu(Icons.logout, "تسجيل الخروج", isLast: true),
+            
+            // إصلاح الروابط هنا
+            _buildProfileMenu(context, Icons.store_mall_directory, "لوحة التاجر", () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MerchantDashboard()));
+            }),
+            _buildProfileMenu(context, Icons.account_balance_wallet_outlined, "المحفظة فلكس", () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletScreen()));
+            }),
+            _buildProfileMenu(context, Icons.favorite_border, "المفضلة", () {}),
+            _buildProfileMenu(context, Icons.support_agent, "الدعم الفني", () {}),
+            _buildProfileMenu(context, Icons.logout, "تسجيل الخروج", () {}),
           ],
         ),
       ),
@@ -81,7 +83,8 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileMenu(IconData icon, String title, {bool isLast = false}) {
+  // تحديث تعريف الودجت لاستقبال الأكشن بشكل صحيح
+  Widget _buildProfileMenu(BuildContext context, IconData icon, String title, VoidCallback onTap) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       decoration: BoxDecoration(
@@ -92,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
         leading: Icon(icon, color: const Color(0xFFD4AF37)),
         title: Text(title, style: const TextStyle(color: Colors.white)),
         trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 16),
-        onTap: () {},
+        onTap: onTap,
       ),
     );
   }
