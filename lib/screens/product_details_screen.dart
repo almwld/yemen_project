@@ -35,6 +35,8 @@ class ProductDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text("السعر: 4,500 ريال", style: TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
+                  InkWell(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MapViewScreen(locationName: "موقع البائع"))), child: Row(children: [Icon(Icons.map, color: gold, size: 18), SizedBox(width: 5), Text("عرض الموقع على الخريطة", style: TextStyle(color: gold, decoration: TextDecoration.underline))])), 
+                  SizedBox(height: 15),
                   const Text("التفاصيل:", style: TextStyle(color: Colors.white, fontSize: 18)),
                   const Text("هذا الطلب متاح للتوصيل السريع داخل صنعاء. الجودة مضمونة من فلكس يمن.", style: TextStyle(color: Colors.white70, fontSize: 16)),
                   const SizedBox(height: 30),
