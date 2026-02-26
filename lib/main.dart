@@ -2,27 +2,26 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  // 1. التأكد من تهيئة بيئة فلاتر
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // 2. تشغيل التطبيق بأبسط صورة ممكنة
-  runApp(const FlexYemenApp());
-}
-
-class FlexYemenApp extends StatelessWidget {
-  const FlexYemenApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'فلكس يمن',
-      // ثيم ثابت لا يعتمد على أي ملفات خارجية مؤقتاً
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
+  // رادار كشف الأخطاء: سيحول الشاشة البيضاء إلى شاشة حمراء تشرح المشكلة
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Material(
+      child: Container(
+        color: Colors.black,
+        padding: const EdgeInsets.all(20),
+        child: SingleChildScrollView(
+          child: Text(
+            "كشفنا التفاحة الفاسدة:\n\n${details.exception}",
+            style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+        ),
       ),
-      // تشغيل الشاشة الرئيسية مباشرة
-      home: HomeScreen(),
     );
-  }
+  };
+
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(brightness: Brightness.dark, scaffoldBackgroundColor: Colors.black),
+    home: HomeScreen(),
+  ));
 }
