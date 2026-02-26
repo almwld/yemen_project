@@ -42,7 +42,7 @@ class ProductsListScreen extends StatelessWidget {
                       color: Colors.grey[900],
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                     ),
-                    child: Icon(Icons.image, color: gold, size: 50),
+                    child: Stack(children: [Center(child: Icon(Icons.image, color: gold, size: 50)), Positioned(top: 10, right: 10, child: Icon(Icons.favorite_border, color: gold))]),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12),

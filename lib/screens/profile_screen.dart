@@ -1,3 +1,4 @@
+import 'favorites_screen.dart';
 import 'package:flutter/material.dart';
 import 'merchant_dashboard.dart';
 import 'wallet_screen.dart';
@@ -65,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
             _buildProfileMenu(context, Icons.account_balance_wallet_outlined, "المحفظة فلكس", () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletScreen()));
             }),
-            _buildProfileMenu(context, Icons.favorite_border, "المفضلة", () {}),
+            _buildProfileMenu(context, Icons.favorite_border, "المفضلة", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FavoritesScreen()))),
             _buildProfileMenu(context, Icons.support_agent, "الدعم الفني", () {}),
             _buildProfileMenu(context, Icons.logout, "تسجيل الخروج", () {}),
           ],
