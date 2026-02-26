@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final Color gold = const Color(0xFFD4AF37);
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(title: Text("الإعدادات ⚙️"), backgroundColor: Colors.black),
+      appBar: AppBar(title: Text("الإعدادات", style: TextStyle(color: gold))),
       body: ListView(
         children: [
-          SwitchListTile(title: Text("الإشعارات الفورية", style: TextStyle(color: Colors.white)), value: true, onChanged: (v) {}, activeColor: Colors.amber),
-          ListTile(title: Text("لغة التطبيق", style: TextStyle(color: Colors.white)), subtitle: Text("العربية", style: TextStyle(color: Colors.grey))),
-          ListTile(title: Text("تغيير كلمة المرور", style: TextStyle(color: Colors.white))),
-          ListTile(title: Text("حذف الحساب", style: TextStyle(color: Colors.red))),
+          ListTile(leading: Icon(Icons.language, color: gold), title: Text("اللغة"), trailing: Text("العربية")),
+          ListTile(leading: Icon(Icons.lock_outline, color: gold), title: Text("الأمان والحماية")),
+          ListTile(leading: Icon(Icons.help_outline, color: gold), title: Text("مركز المساعدة")),
+          ListTile(leading: Icon(Icons.info_outline, color: gold), title: Text("عن فلكس يمن")),
         ],
       ),
     );
