@@ -1,3 +1,4 @@
+import 'chat_screen.dart';
 import 'map_view_screen.dart';
 import 'package:flutter/material.dart';
 
