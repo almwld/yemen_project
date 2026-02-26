@@ -13,20 +13,16 @@ class FlexYemenApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flex Yemen',
       debugShowCheckedModeBanner: false,
-      // نستخدم اتجاه اليمين لليسار يدوياً لضمان استقرار البناء
-      builder: (context, child) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: child!,
-        );
-      },
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: const Color(0xFFD4AF37),
         scaffoldBackgroundColor: Colors.black,
-        fontFamily: 'Roboto', 
       ),
-      home: const HomeScreen(),
+      // إجبار واجهة التطبيق على الاتجاه من اليمين لليسار يدوياً
+      home: const Directionality(
+        textDirection: TextDirection.rtl,
+        child: HomeScreen(),
+      ),
     );
   }
 }
