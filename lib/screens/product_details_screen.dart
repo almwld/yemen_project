@@ -2,120 +2,72 @@ import 'package:flutter/material.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final String title;
-  final String price;
-  final String imageUrl;
-
-  ProductDetailsScreen({required this.title, required this.price, required this.imageUrl});
+  const ProductDetailsScreen({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
+    final Color gold = const Color(0xFFD4AF37);
     return Scaffold(
       backgroundColor: Colors.black,
-      body: CustomScrollView(
-        slivers: [
-          // رأس الصفحة مع صورة المنتج (مثل المارد)
-          SliverAppBar(
-            expandedHeight: 350,
-            backgroundColor: Colors.black,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                color: Colors.grey[900],
-                child: Icon(Icons.image, size: 100, color: Colors.amber), // استبدلها بـ Image.network
-              ),
-            ),
-            leading: CircleAvatar(
-              backgroundColor: Colors.black54,
-              child: IconButton(icon: Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
-            ),
-          ),
-          
-          // محتوى التفاصيل
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(title, style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                        Text(price, style: TextStyle(color: Colors.amber, fontSize: 22, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.amber, size: 18),
-                        Text(" 4.8 (120 تقييم)", style: TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                    SizedBox(height: 25),
-                    Text("الوصف", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 10),
-                    Text(
-                      "هذا المنتج مضمون عبر نظام فلكس يمن. يمكنك المعاينة والفحص قبل تحويل المبلغ للبائع. الجودة هي شعارنا في كل صفقة.",
-                      style: TextStyle(color: Colors.grey[400], height: 1.5),
-                    ),
-                    SizedBox(height: 30),
-                    // معلومات البائع
-                    Container(
-                      padding: EdgeInsets.all(15),
-                      decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(15)),
-                      child: Row(
-                        children: [
-                          CircleAvatar(backgroundColor: Colors.amber, child: Icon(Icons.person)),
-                          SizedBox(width: 15),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("معرض المارد للسيارات", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                              Text("بائع موثوق منذ ٢٠٢٤", style: TextStyle(color: Colors.grey, fontSize: 12)),
-                            ],
-                          ),
-                          Spacer(),
-                          Icon(Icons.verified, color: Colors.blue, size: 20),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 100), // مساحة للأزرار السفلية
-                  ],
-                ),
-              ),
-            ]),
-          ),
-        ],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: IconThemeData(color: gold),
       ),
-      
-      // الأزرار السفلية الثابتة (مثل تطبيقات التجارة العالمية)
-      bottomSheet: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        color: Colors.black,
-        child: Row(
-          children: [
-            // زر الدردشة
-            Container(
-              decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(15)),
-              child: IconButton(icon: Icon(Icons.chat_bubble_outline, color: Colors.amber), onPressed: () {}),
+      extendBodyBehindAppBar: true,
+      body: Column(
+        children: [
+          Container(
+            height: 300,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1A1A1A),
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
             ),
-            SizedBox(width: 15),
-            // زر الشراء بالضمان
-            Expanded(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            child: Icon(Icons.image, size: 100, color: gold),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                Text("1,200,000 ريال يمني", style: TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                const Text("التفاصيل:", style: TextStyle(color: Colors.white, fontSize: 18)),
+                const Text("هذا الإعلان تجريبي لعرض مواصفات المنتج. الحالة: ممتازة. الموقع: صنعاء.", 
+                  style: TextStyle(color: Colors.white70, fontSize: 16)),
+              ],
+            ),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(color: Color(0xFF1A1A1A), borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.phone, color: Colors.black),
+                    label: const Text("اتصال", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(backgroundColor: gold, height: 50),
+                  ),
                 ),
-                onPressed: () {
-                  // هنا يتم تفعيل نظام الضمان (Escrow)
-                },
-                child: Text("شراء عبر الضمان 🛡️", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
-              ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {},
+                    icon: Icon(Icons.chat, color: gold),
+                    label: Text("دردشة", style: TextStyle(color: gold)),
+                    style: OutlinedButton.styleFrom(side: BorderSide(color: gold), height: 50),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'product_details_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProductsListScreen extends StatelessWidget {
@@ -48,7 +49,7 @@ class ProductsListScreen extends StatelessWidget {
                         children: [
                           const Text("صنعاء - حدة", style: TextStyle(color: Colors.grey, fontSize: 12)),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetailsScreen(title: 'إعلان في قسم $categoryName'))),
                             style: ElevatedButton.styleFrom(backgroundColor: gold, foregroundColor: Colors.black),
                             child: const Text("تفاصيل"),
                           ),

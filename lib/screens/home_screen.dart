@@ -5,6 +5,7 @@ import 'add_post_screen.dart';
 import 'profile_screen.dart';
 import 'inbox_screen.dart';
 import 'notifications_screen.dart';
+import 'map_stores_screen.dart'; // تأكد من استيراد الخريطة
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -43,19 +44,24 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              height: 180,
-              width: double.infinity,
-              margin: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(colors: [gold.withOpacity(0.8), Colors.black], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                border: Border.all(color: gold, width: 0.5),
-              ),
-              child: const Center(
-                child: Text("مساحة إعلانية مميزة", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+            // السلايدر الإعلاني (مساحة تفاعلية)
+            GestureDetector(
+              onTap: () => _showAdDetails(context),
+              child: Container(
+                height: 180,
+                width: double.infinity,
+                margin: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(colors: [gold.withOpacity(0.8), Colors.black], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                  border: Border.all(color: gold, width: 0.5),
+                ),
+                child: const Center(
+                  child: Text("أعلن هنا - فلكس يمن", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                ),
               ),
             ),
+            
             GridView.builder(
               padding: const EdgeInsets.all(15),
               shrinkWrap: true,
@@ -69,7 +75,17 @@ class HomeScreen extends StatelessWidget {
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 return InkWell(
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsListScreen(categoryName: categories[index].name))),
+                  onTap: () {
+                    // برمجة التنقل الذكي بناءً على اسم القسم
+                    if (categories[index].name == "متاجر قريبة") {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const MapStoresScreen()));
+                    } else if (categories[index].name == "المحفظة") {
+                      // سنضيف رابط المحفظة هنا أيضاً للوصول السريع
+                      _showComingSoon(context, "المحفظة");
+                    } else {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsListScreen(categoryName: categories[index].name)));
+                    }
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFF1A1A1A),
@@ -91,6 +107,18 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showAdDetails(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("سيتم فتح تفاصيل الإعلان الممول"), backgroundColor: gold),
+    );
+  }
+
+  void _showComingSoon(BuildContext context, String name) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("قسم $name قيد التفعيل"), backgroundColor: gold),
     );
   }
 }
