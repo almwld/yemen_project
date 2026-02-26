@@ -7,7 +7,6 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  mobile_scanner: ^5.2.3
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
@@ -15,16 +14,17 @@ dependencies:
   shared_preferences: ^2.2.2
   sqflite: ^2.3.0
   path: ^1.8.3
+  mobile_scanner: ^5.2.3
 
 dev_dependencies:
-  mobile_scanner: ^5.2.3
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
 
 flutter_launcher_icons:
   android: true
-  ios: true
+  ios: false
+  remove_alpha_ios: true
   image_path: "assets/logo.png"
   adaptive_icon_background: "#000000"
   adaptive_icon_foreground: "assets/logo.png"
