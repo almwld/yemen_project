@@ -8,10 +8,14 @@ environment:
 
 dependencies:
   flutter:
+  assets:
+    - assets/logo.png
     sdk: flutter
   cupertino_icons: ^1.0.6
   animations: ^2.0.11
   google_maps_flutter: ^2.5.3
+  assets:
+    - assets/logo.png
   mobile_scanner: ^3.2.0
   sqflite: ^2.3.0
   path: ^1.8.3
@@ -23,6 +27,8 @@ dev_dependencies:
   flutter_lints: ^3.0.0
 
 flutter:
+  assets:
+    - assets/logo.png
   uses-material-design: true
 
 flutter_launcher_icons:
@@ -30,3 +36,10 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/logo.png"
   min_sdk_android: 21
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/logo.png"
