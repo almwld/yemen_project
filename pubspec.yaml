@@ -12,6 +12,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   animations: ^2.0.11
   google_maps_flutter: ^2.5.3
+  mobile_scanner: ^3.2.0
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,4 @@
+import 'qr_scanner_screen.dart';
 import 'package:flutter/material.dart';
 import '../data/special_sections.dart';
 
@@ -34,7 +35,7 @@ class HomeScreen extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: "البحث في المنتجات أو الموردين...",
                     prefixIcon: Icon(Icons.search, color: Colors.black),
-                    suffixIcon: Icon(Icons.camera_alt_outlined, color: Colors.black),
+                    suffixIcon: IconButton(icon: Icon(Icons.qr_code_scanner, color: Colors.black), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QRScannerScreen()))),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(vertical: 15),
                   ),
