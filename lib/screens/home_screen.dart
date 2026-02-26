@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/categories_data.dart';
 import 'products_list_screen.dart';
+import 'add_post_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -18,11 +19,19 @@ class HomeScreen extends StatelessWidget {
         leading: Icon(Icons.menu, color: gold),
         actions: [Icon(Icons.search, color: gold), const SizedBox(width: 15)],
       ),
+      // --- إضافة الزر الذهبي العائم ---
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const AddPostScreen()));
+        },
+        backgroundColor: gold,
+        icon: const Icon(Icons.add, color: Colors.black),
+        label: const Text("أضف إعلانك", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+      ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // السلايدر الإعلاني
+             // السلايدر الإعلاني
             Container(
               height: 180,
               width: double.infinity,
@@ -37,11 +46,6 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: Text("تصفح الأقسام", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo')),
-            ),
-
             GridView.builder(
               padding: const EdgeInsets.all(15),
               shrinkWrap: true,
@@ -56,12 +60,7 @@ class HomeScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProductsListScreen(categoryName: categories[index].name),
-                      ),
-                    );
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsListScreen(categoryName: categories[index].name)));
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -74,11 +73,7 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         Icon(categories[index].icon, color: gold, size: 32),
                         const SizedBox(height: 8),
-                        Text(
-                          categories[index].name,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white, fontSize: 11),
-                        ),
+                        Text(categories[index].name, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 11)),
                       ],
                     ),
                   ),
