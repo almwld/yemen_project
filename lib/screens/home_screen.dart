@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/categories_data.dart';
 import 'products_list_screen.dart';
 import 'add_post_screen.dart';
+import 'profile_screen.dart'; // استيراد الصفحة الجديدة
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,10 +17,14 @@ class HomeScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.black,
         elevation: 0,
-        leading: Icon(Icons.menu, color: gold),
+        leading: IconButton(
+          icon: Icon(Icons.person_outline, color: gold),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+          },
+        ),
         actions: [Icon(Icons.search, color: gold), const SizedBox(width: 15)],
       ),
-      // --- إضافة الزر الذهبي العائم ---
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const AddPostScreen()));
@@ -31,7 +36,6 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-             // السلايدر الإعلاني
             Container(
               height: 180,
               width: double.infinity,
@@ -45,7 +49,6 @@ class HomeScreen extends StatelessWidget {
                 child: Text("مساحة إعلانية مميزة", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
               ),
             ),
-            
             GridView.builder(
               padding: const EdgeInsets.all(15),
               shrinkWrap: true,

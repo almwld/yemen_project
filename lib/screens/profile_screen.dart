@@ -1,156 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'wallet_screen.dart';
-import 'add_product_screen.dart';
-import 'login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final Color goldColor = Color(0xFFD4AF37);
-  final supabase = Supabase.instance.client;
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final user = supabase.auth.currentUser;
-    // يمكننا لاحقاً جلب حالة التاجر من جدول الـ profiles
-    final bool isMerchant = true; 
-
+    final Color gold = const Color(0xFFD4AF37);
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text("الحساب الشخصي", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.black,
+        elevation: 0,
+        iconTheme: IconThemeData(color: gold),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildHeader(user?.email ?? "مستخدم فلكس", isMerchant),
-            _buildWalletCard(context),
-            _buildActionList(context),
-            if (isMerchant) _buildMerchantTools(context),
-            _buildLogoutButton(context),
+            const SizedBox(height: 20),
+            // صورة البروفايل والمعلومات الأساسية
+            Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: gold,
+                    child: CircleAvatar(
+                      radius: 57,
+                      backgroundColor: Colors.black,
+                      child: Icon(Icons.person, size: 60, color: gold),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+                      child: const Icon(Icons.check, color: Colors.white, size: 20),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 15),
+            const Text("Bin Obaeid", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+            Text("حساب موثق - صنعاء", style: TextStyle(color: gold, fontSize: 14)),
+            const SizedBox(height: 30),
+
+            // قسم الإحصائيات (المحفظة والإعلانات)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildStatItem("إعلاناتي", "12"),
+                _buildStatItem("المحفظة", "450k"),
+                _buildStatItem("التقييم", "4.9"),
+              ],
+            ),
+            const SizedBox(height: 30),
+
+            // القائمة السريعة
+            _buildProfileMenu(Icons.favorite_border, "المفضلة"),
+            _buildProfileMenu(Icons.campaign_outlined, "إعلاناتي النشطة"),
+            _buildProfileMenu(Icons.account_balance_wallet_outlined, "عمليات المحفظة"),
+            _buildProfileMenu(Icons.support_agent, "الدعم الفني"),
+            _buildProfileMenu(Icons.logout, "تسجيل الخروج", isLast: true),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader(String email, bool isMerchant) {
-    return Container(
-      padding: EdgeInsets.only(top: 60, bottom: 30, left: 20, right: 20),
-      decoration: BoxDecoration(
-        color: Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(40)),
-        border: Border(bottom: BorderSide(color: goldColor, width: 0.5)),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 40,
-            backgroundColor: goldColor,
-            child: Icon(Icons.person, size: 50, color: Colors.black),
-          ),
-          SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(email.split('@')[0], style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-                SizedBox(height: 5),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: goldColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: goldColor.withOpacity(0.5))
-                  ),
-                  child: Text(isMerchant ? "حساب تاجر موثق " : "حساب عميل", style: TextStyle(color: goldColor, fontSize: 12)),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWalletCard(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(20),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Color(0xFF111111),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: goldColor.withOpacity(0.3)),
-        boxShadow: [BoxShadow(color: goldColor.withOpacity(0.05), blurRadius: 10)]
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("رصيد محفظة فلكس", style: TextStyle(color: Colors.grey)),
-              Text("150,000 ر.ي", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (c) => WalletScreen())),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: goldColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
-            ),
-            child: Text("شحن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionList(BuildContext context) {
+  Widget _buildStatItem(String label, String value) {
     return Column(
       children: [
-        _profileTile(Icons.history, "سجل العمليات والطلبات", null),
-        _profileTile(Icons.favorite_border, "المفضلة", null),
-        _profileTile(Icons.security, "مركز الأمان والخصوصية", null),
+        Text(value, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 14)),
       ],
     );
   }
 
-  Widget _buildMerchantTools(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Text("أدوات التاجر ", style: TextStyle(color: goldColor, fontSize: 18, fontWeight: FontWeight.bold)),
-        ),
-        _profileTile(Icons.add_business, "إضافة إعلان جديد (سيارة، عقار...)", AddProductScreen()),
-        _profileTile(Icons.analytics_outlined, "إحصائيات المبيعات", null),
-      ],
-    );
-  }
-
-  Widget _profileTile(IconData icon, String title, Widget? page) {
-    return Builder(builder: (context) {
-      return ListTile(
-        leading: Icon(icon, color: goldColor),
-        title: Text(title, style: TextStyle(color: Colors.white)),
-        trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 14),
-        onTap: () {
-          if (page != null) {
-            Navigator.push(context, MaterialPageRoute(builder: (c) => page));
-          }
-        },
-      );
-    });
-  }
-
-  Widget _buildLogoutButton(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 30),
-      child: TextButton.icon(
-        onPressed: () async {
-          await supabase.auth.signOut();
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (c) => LoginScreen()), (route) => false);
-        },
-        icon: Icon(Icons.logout, color: Colors.redAccent),
-        label: Text("تسجيل الخروج", style: TextStyle(color: Colors.redAccent, fontSize: 16)),
+  Widget _buildProfileMenu(IconData icon, String title, {bool isLast = false}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A1A),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: const Color(0xFFD4AF37)),
+        title: Text(title, style: const TextStyle(color: Colors.white)),
+        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 16),
+        onTap: () {},
       ),
     );
   }
