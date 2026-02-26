@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/categories_data.dart';
+import 'products_list_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -15,46 +16,32 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         elevation: 0,
         leading: Icon(Icons.menu, color: gold),
-        actions: [Icon(Icons.search, color: gold), SizedBox(width: 15)],
+        actions: [Icon(Icons.search, color: gold), const SizedBox(width: 15)],
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- سلايدر الإعلانات الممول ---
+            // السلايدر الإعلاني
             Container(
               height: 180,
               width: double.infinity,
-              margin: EdgeInsets.all(15),
+              margin: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 gradient: LinearGradient(colors: [gold.withOpacity(0.8), Colors.black], begin: Alignment.topLeft, end: Alignment.bottomRight),
                 border: Border.all(color: gold, width: 0.5),
               ),
-              child: Stack(
-                children: [
-                  Center(child: Icon(Icons.campaign, color: gold.withOpacity(0.3), size: 100)),
-                  Positioned(
-                    bottom: 20,
-                    right: 20,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text("أعلن هنا", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                        Text("كن شريكاً في فلكس يمن الكبرى", style: TextStyle(color: Colors.white70, fontSize: 14)),
-                      ],
-                    ),
-                  ),
-                ],
+              child: const Center(
+                child: Text("مساحة إعلانية مميزة", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
               ),
             ),
             
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: Text("تصفح الأقسام", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              child: Text("تصفح الأقسام", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo')),
             ),
 
-            // --- شبكة الأقسام الـ 21 ---
             GridView.builder(
               padding: const EdgeInsets.all(15),
               shrinkWrap: true,
@@ -68,7 +55,14 @@ class HomeScreen extends StatelessWidget {
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 return InkWell(
-                  onTap: () {}, // سيتم ربط الصفحات لاحقاً
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductsListScreen(categoryName: categories[index].name),
+                      ),
+                    );
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFF1A1A1A),
@@ -83,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                         Text(
                           categories[index].name,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w500),
+                          style: const TextStyle(color: Colors.white, fontSize: 11),
                         ),
                       ],
                     ),
