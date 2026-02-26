@@ -1,118 +1,121 @@
 import 'package:flutter/material.dart';
-import '../data/categories_data.dart';
-import 'products_list_screen.dart';
-import 'add_post_screen.dart';
-import 'profile_screen.dart';
-import 'inbox_screen.dart';
-import 'notifications_screen.dart';
-import 'map_stores_screen.dart';
-import 'search_delegate.dart';
+import '../data/special_sections.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-  final Color gold = const Color(0xFFD4AF37);
 
   @override
   Widget build(BuildContext context) {
+    final Color gold = const Color(0xFFD4AF37);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("FLEX YEMEN", style: TextStyle(color: gold, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
-        centerTitle: true,
         backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.person_outline, color: gold),
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen())),
-        ),
+        title: Text("FLEX YEMEN", style: TextStyle(color: gold, fontWeight: FontWeight.bold, letterSpacing: 2)),
         actions: [
-          IconButton(
-            icon: Icon(Icons.search, color: gold),
-            onPressed: () => showSearch(context: context, delegate: FlexSearchDelegate()),
-          ),
-          IconButton(
-            icon: Icon(Icons.notifications_none, color: gold),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsScreen())),
-          ),
-          IconButton(
-            icon: Icon(Icons.chat_bubble_outline, color: gold),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const InboxScreen())),
-          ),
+          IconButton(icon: Icon(Icons.notifications_none, color: gold), onPressed: () {}),
+          IconButton(icon: Icon(Icons.person_outline, color: gold), onPressed: () {}),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddPostScreen())),
-        backgroundColor: gold,
-        icon: const Icon(Icons.add, color: Colors.black),
-        label: const Text("أضف إعلانك", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // أنيميشن للسلايدر عند الظهور
-            TweenAnimationBuilder(
-              duration: const Duration(milliseconds: 800),
-              tween: Tween<double>(begin: 0, end: 1),
-              builder: (context, double value, child) {
-                return Opacity(
-                  opacity: value,
-                  child: Transform.translate(
-                    offset: Offset(0, 20 * (1 - value)),
-                    child: child,
-                  ),
-                );
-              },
+            // شريط البحث المطور (Alibaba Style)
+            Padding(
+              padding: const EdgeInsets.all(15),
               child: Container(
-                height: 180, width: double.infinity, margin: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(colors: [gold.withOpacity(0.8), Colors.black]),
-                  border: Border.all(color: gold, width: 0.5),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                child: const Center(child: Text("أعلن هنا - فلكس يمن", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold))),
+                child: TextField(
+                  textAlign: TextAlign.right,
+                  decoration: InputDecoration(
+                    hintText: "البحث في المنتجات أو الموردين...",
+                    prefixIcon: Icon(Icons.search, color: Colors.black),
+                    suffixIcon: Icon(Icons.camera_alt_outlined, color: Colors.black),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                ),
               ),
             ),
-            
-            GridView.builder(
-              padding: const EdgeInsets.all(15),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisSpacing: 12, crossAxisSpacing: 12),
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                // أنيميشن تدريجي لكل أيقونة
-                return TweenAnimationBuilder(
-                  duration: Duration(milliseconds: 400 + (index * 50)),
-                  tween: Tween<double>(begin: 0, end: 1),
-                  builder: (context, double value, child) {
-                    return Transform.scale(scale: value, child: child);
-                  },
-                  child: InkWell(
-                    onTap: () {
-                      if (categories[index].name == "متاجر قريبة") {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MapStoresScreen()));
-                      } else {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsListScreen(categoryName: categories[index].name)));
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(color: const Color(0xFF1A1A1A), borderRadius: BorderRadius.circular(15), border: Border.all(color: gold.withOpacity(0.15))),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(categories[index].icon, color: gold, size: 32),
-                          const SizedBox(height: 8),
-                          Text(categories[index].name, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 11)),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
+
+            // قسم الخدمات اللوجستية وطلب الأسعار
+            Container(
+              height: 100,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: alibabaStyleServices.map((service) => _buildServiceBox(service)).toList(),
+              ),
             ),
+
+            // بنر عروض رمضان (Amazon Style)
+            _buildAmazonBanner(gold),
+
+            // قسم ركن التوفير
+            _buildSavingCorner(gold),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildServiceBox(ServiceCategory service) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(color: Colors.white10, shape: BoxShape.circle),
+          child: Icon(service.icon, color: service.color, size: 30),
+        ),
+        SizedBox(height: 5),
+        Text(service.title, style: TextStyle(color: Colors.white, fontSize: 10)),
+      ],
+    );
+  }
+
+  Widget _buildAmazonBanner(Color gold) {
+    return Container(
+      margin: EdgeInsets.all(15),
+      height: 180,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [Colors.purple.shade900, Colors.black]),
+        borderRadius: BorderRadius.circular(15),
+        image: DecorationImage(image: NetworkImage('https://via.placeholder.com/400x180'), fit: BoxFit.cover, opacity: 0.5),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("ركن التوفير لرمضان", style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.bold)),
+            Text("وفر و متشيلش هم في الشهر الكريم", style: TextStyle(color: Colors.white, fontSize: 14)),
+            SizedBox(height: 15),
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(backgroundColor: gold),
+              child: Text("تسوق الآن", style: TextStyle(color: Colors.black)),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSavingCorner(Color gold) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text("صفقات لأول أوردر", style: TextStyle(color: gold, fontSize: 18, fontWeight: FontWeight.bold)),
+        ),
+        // هنا يتم إضافة GridView للمنتجات كما في أمازون
+      ],
     );
   }
 }
