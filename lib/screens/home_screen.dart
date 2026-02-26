@@ -13,6 +13,7 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         title: Text("FLEX YEMEN", style: TextStyle(color: gold, fontWeight: FontWeight.bold, letterSpacing: 2)),
         actions: [
+          Stack(children: [IconButton(icon: Icon(Icons.shopping_cart_outlined, color: gold), onPressed: () => _showCartSheet(context, gold)), Positioned(right: 8, top: 8, child: Container(padding: EdgeInsets.all(2), decoration: BoxDecoration(color: Colors.red, shape: BoxShape.circle), child: Text('3', style: TextStyle(fontSize: 10, color: Colors.white))))]),
           IconButton(icon: Icon(Icons.notifications_none, color: gold), onPressed: () {}),
           IconButton(icon: Icon(Icons.person_outline, color: gold), onPressed: () {}),
         ],
@@ -119,3 +120,57 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+  void _showCartSheet(BuildContext context, Color gold) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A1A),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("سلة التسوق", style: TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.bold)),
+            const Divider(color: Colors.white10, height: 30),
+            _buildCartItem("زيت طبخ (ركن التوفير)", "2,500 ريال"),
+            _buildCartItem("أرز بسمتي 5 كيلو", "6,000 ريال"),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("الإجمالي:", style: TextStyle(color: Colors.white70)),
+                Text("8,500 ريال", style: TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 18)),
+              ],
+            ),
+            const SizedBox(height: 25),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("جاري الدفع عبر محفظة فلكس..."), backgroundColor: gold));
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: gold),
+                child: const Text("إتمام الشراء", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCartItem(String name, String price) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(name, style: const TextStyle(color: Colors.white)),
+          Text(price, style: const TextStyle(color: Colors.white70)),
+        ],
+      ),
+    );
+  }
