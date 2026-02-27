@@ -2,14 +2,34 @@ import 'package:flutter/material.dart';
 import 'cart_screen.dart';
 import 'order_tracking_screen.dart';
 import 'product_details_screen.dart';
+import 'qr_scanner_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final Color gold = const Color(0xFFD4AF37);
+  String searchQuery = "";
+
+  // بيانات تجريبية للمنتجات
+  final List<Map<String, dynamic>> allProducts = [
+    {"name": "سكر السعيد 5كجم", "price": "4,500 ر.ي", "icon": Icons.bakery_dining},
+    {"name": "أرز بسمتي 10كجم", "price": "12,000 ر.ي", "icon": Icons.agriculture},
+    {"name": "زيت شروق 1.5 لتر", "price": "2,800 ر.ي", "icon": Icons.opacity},
+    {"name": "حليب ممتاز سائل", "price": "450 ر.ي", "icon": Icons.coffee},
+  ];
 
   @override
   Widget build(BuildContext context) {
+    // تصفية المنتجات بناءً على البحث
+    final filteredProducts = allProducts
+        .where((p) => p['name'].toString().contains(searchQuery))
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("FLEX YEMEN", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
@@ -21,13 +41,18 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // شريط البحث
+            // شريط البحث الذكي
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: TextField(
+                onChanged: (value) => setState(() => searchQuery = value),
                 decoration: InputDecoration(
-                  hintText: "ما الذي تبحث عنه اليوم؟",
+                  hintText: "ابحث عن بضاعتك هنا...",
                   prefixIcon: Icon(Icons.search, color: gold),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.qr_code_scanner, color: gold),
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QRScannerScreen())),
+                  ),
                   filled: true,
                   fillColor: Colors.white10,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
@@ -35,43 +60,42 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // الأزرار المفعلة
+            // الأزرار الرئيسية
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildNavButton(context, Icons.local_shipping_outlined, "تتبع الطلب", const OrderTrackingScreen()),
-                  _buildNavButton(context, Icons.receipt_long_outlined, "الفواتير", const CartScreen()),
-                  _buildNavButton(context, Icons.grid_view_rounded, "الأصناف", null),
+                  _buildNavButton(Icons.local_shipping_outlined, "تتبع الطلب", const OrderTrackingScreen()),
+                  _buildNavButton(Icons.receipt_long_outlined, "الفواتير", const CartScreen()),
+                  _buildNavButton(Icons.grid_view_rounded, "الأصناف", null),
                 ],
               ),
             ),
 
-            // بنر العروض
-            _buildPromoBanner(),
+            if (searchQuery.isEmpty) _buildPromoBanner(),
 
-            // قسم المنتجات (الجديد)
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Text("الأكثر مبيعاً في اليمن", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: Text("المنتجات المتوفرة", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
 
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              childAspectRatio: 0.75,
-              mainAxisSpacing: 15,
-              crossAxisSpacing: 15,
-              children: [
-                _buildProductCard(context, "سكر السعيد 5كجم", "4,500 ر.ي", Icons.Bakery_dining),
-                _buildProductCard(context, "أرز بسمتي 10كجم", "12,000 ر.ي", Icons.Agriculture),
-                _buildProductCard(context, "زيت شروق 1.5 لتر", "2,800 ر.ي", Icons.Opacity),
-                _buildProductCard(context, "حليب ممتاز سائل", "450 ر.ي", Icons.Coffee),
-              ],
-            ),
+            // عرض المنتجات المفلترة
+            filteredProducts.isEmpty 
+              ? const Center(child: Padding(padding: EdgeInsets.all(20), child: Text("عذراً، لم نجد ما تبحث عنه")))
+              : GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: filteredProducts.length,
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15, childAspectRatio: 0.75
+                  ),
+                  itemBuilder: (context, index) {
+                    final p = filteredProducts[index];
+                    return _buildProductCard(context, p['name'], p['price'], p['icon']);
+                  },
+                ),
             const SizedBox(height: 30),
           ],
         ),
@@ -79,13 +103,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavButton(BuildContext context, IconData icon, String label, Widget? destination) {
+  // الدوال المساعدة (NavButton, ProductCard, PromoBanner) تم تحديثها لتعمل داخل الـ State
+  Widget _buildNavButton(IconData icon, String label, Widget? destination) {
     return InkWell(
-      onTap: () {
-        if (destination != null) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => destination));
-        }
-      },
+      onTap: () { if (destination != null) Navigator.push(context, MaterialPageRoute(builder: (context) => destination)); },
       child: Column(
         children: [
           Container(
@@ -94,7 +115,7 @@ class HomeScreen extends StatelessWidget {
             child: Icon(icon, color: gold, size: 28),
           ),
           const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+          Text(label, style: const TextStyle(fontSize: 12)),
         ],
       ),
     );
@@ -102,34 +123,19 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildProductCard(BuildContext context, String name, String price, IconData icon) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetailsScreen(productName: name, price: price)));
-      },
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetailsScreen(productName: name, price: price))),
       child: Container(
         decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(15)),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15)),
-                child: Icon(icon, size: 50, color: gold),
-              ),
-            ),
+            Expanded(child: Icon(icon, size: 50, color: gold)),
             Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14), maxLines: 1),
-                  const SizedBox(height: 4),
+                  Text(name, style: const TextStyle(fontWeight: FontWeight.bold), maxLines: 1),
                   Text(price, style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Icon(Icons.add_circle, color: gold, size: 30),
-                  )
                 ],
               ),
             )
@@ -142,24 +148,14 @@ class HomeScreen extends StatelessWidget {
   Widget _buildPromoBanner() {
     return Container(
       margin: const EdgeInsets.all(20),
-      height: 140,
+      height: 120,
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: const LinearGradient(colors: [Color(0xFF1A1A1A), Color(0xFF333333)]),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: gold.withOpacity(0.3)),
+        border: Border.all(color: gold.withOpacity(0.2)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("عروض رمضان 🌙", style: TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.w900)),
-            const Text("خصومات تصل إلى 30% على السوبر ماركت", style: TextStyle(color: Colors.white70)),
-          ],
-        ),
-      ),
+      child: Center(child: Text("عروض رمضان 🌙", style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.w900))),
     );
   }
 }
