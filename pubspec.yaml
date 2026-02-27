@@ -7,6 +7,9 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  excel: ^4.0.0
+  path_provider: ^2.1.2
+  share_plus: ^10.1.0
   google_maps_flutter: ^2.5.3
   share_plus: ^10.1.0
   carousel_slider: ^5.0.0
@@ -30,6 +33,9 @@ dependencies:
   mobile_scanner: ^5.2.3
 
 dev_dependencies:
+  excel: ^4.0.0
+  path_provider: ^2.1.2
+  share_plus: ^10.1.0
   google_maps_flutter: ^2.5.3
   share_plus: ^10.1.0
   carousel_slider: ^5.0.0
