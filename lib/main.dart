@@ -1,3 +1,4 @@
+import 'screens/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/home_screen.dart';
@@ -30,7 +31,7 @@ class FlexYemenApp extends StatelessWidget {
         primaryColor: const Color(0xFFD4AF37),
         scaffoldBackgroundColor: Colors.black,
       ),
-      home: const MainScreen(),
+      home: Supabase.instance.client.auth.currentUser == null ? const AuthScreen() : const MainScreen(),
     );
   }
 }
