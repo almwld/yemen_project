@@ -1,20 +1,37 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  static Future<void> init() async {
-    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-    await _notificationsPlugin.initialize(initializationSettings);
+  static void initialize() {
+    const InitializationSettings initializationSettings = InitializationSettings(
+      android: AndroidInitializationSettings("@mipmap/ic_launcher"),
+    );
+
+    _notificationsPlugin.initialize(initializationSettings);
   }
 
-  static Future<void> showInstantNotification(String title, String body) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'flex_channel', 'Flex Notifications',
-      importance: Importance.max, priority: Priority.high,
-    );
-    const NotificationDetails platformDetails = NotificationDetails(android: androidDetails);
-    await _notificationsPlugin.show(0, title, body, platformDetails);
+  static void display(RemoteMessage message) async {
+    try {
+      final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      const NotificationDetails notificationDetails = NotificationDetails(
+        android: AndroidNotificationDetails(
+          "flex_yemen_channel",
+          "Flex Yemen Notifications",
+          importance: Importance.max,
+          priority: Priority.high,
+        ),
+      );
+
+      await _notificationsPlugin.show(
+        id,
+        message.notification!.title,
+        message.notification!.body,
+        notificationDetails,
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 }
