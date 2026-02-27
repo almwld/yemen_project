@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../theme/app_theme.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -8,72 +9,75 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final _messageController = TextEditingController();
+  final _controller = TextEditingController();
   final supabase = Supabase.instance.client;
-  late Stream<List<Map<String, dynamic>>> _chatStream;
-
-  @override
-  void initState() {
-    super.initState();
-    // جلب الرسائل في الوقت الفعلي
-    _chatStream = supabase
-        .from('messages')
-        .stream(primaryKey: ['id'])
-        .order('created_at', ascending: false);
-  }
 
   void _sendMessage() async {
-    if (_messageController.text.isEmpty) return;
+    if (_controller.text.isEmpty) return;
+    final user = supabase.auth.currentUser;
     await supabase.from('messages').insert({
-      'content': _messageController.text,
-      'sender_id': supabase.auth.currentUser?.id ?? 'guest',
+      'sender_id': user?.id,
+      'text': _controller.text,
     });
-    _messageController.clear();
+    _controller.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("محادثة فلكس"), backgroundColor: Colors.black),
+      appBar: AppBar(title: const Text("خدمة العملاء - فلكس")),
       body: Column(
         children: [
           Expanded(
             child: StreamBuilder<List<Map<String, dynamic>>>(
-              stream: _chatStream,
+              stream: supabase.from('messages').stream(primaryKey: ['id']).order('created_at'),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-                final messages = snapshot.data!;
+                final msgs = snapshot.data!;
                 return ListView.builder(
-                  reverse: true, // لإظهار الرسائل الجديدة في الأسفل
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) => ListTile(
-                    title: Align(
-                      alignment: Alignment.centerRight,
+                  reverse: true,
+                  itemCount: msgs.length,
+                  itemBuilder: (context, index) {
+                    final m = msgs[msgs.length - 1 - index];
+                    bool isMe = m['sender_id'] == supabase.auth.currentUser?.id;
+                    return Align(
+                      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
-                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD4AF37),
-                          borderRadius: BorderRadius.circular(10),
+                          gradient: isMe ? FlexTheme.goldenGradient : null,
+                          color: isMe ? null : Colors.grey[800],
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                        child: Text(messages[index]['content'], style: const TextStyle(color: Colors.black)),
+                        child: Text(m['text'], style: TextStyle(color: isMe ? Colors.black : Colors.white)),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 );
               },
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(10.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _messageController,
-                    decoration: const InputDecoration(hintText: "اكتب رسالتك..."),
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: "اكتب رسالتك...",
+                      filled: true,
+                      fillColor: Colors.grey[900],
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                    ),
                   ),
                 ),
-                IconButton(icon: const Icon(Icons.send, color: Color(0xFFD4AF37)), onPressed: _sendMessage),
+                const SizedBox(width: 10),
+                CircleAvatar(
+                  backgroundColor: const Color(0xFFB38728),
+                  child: IconButton(icon: const Icon(Icons.send, color: Colors.black), onPressed: _sendMessage),
+                )
               ],
             ),
           ),
