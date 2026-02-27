@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -7,38 +8,48 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String searchQuery = "";
+  final supabase = Supabase.instance.client;
+  late Stream<List<Map<String, dynamic>>> _productsStream;
+
+  @override
+  void initState() {
+    super.initState();
+    // مزامنة حية: أي تغيير في قاعدة البيانات سيظهر فوراً في التطبيق
+    _productsStream = supabase.from('products').stream(primaryKey: ['id']);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // شريط البحث
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                onChanged: (value) => setState(() => searchQuery = value),
-                decoration: InputDecoration(
-                  hintText: "ابحث عن منتج أو متجر...",
-                  prefixIcon: const Icon(Icons.search, color: Color(0xFFD4AF37)),
-                  filled: true,
-                  fillColor: const Color(0xFF1A1A1A),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-              ),
+      appBar: AppBar(title: const Text("فلكس يمن ماركت"), backgroundColor: Colors.black),
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: _productsStream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+          final products = snapshot.data!;
+          return GridView.builder(
+            padding: const EdgeInsets.all(10),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, childAspectRatio: 0.8, crossAxisSpacing: 10, mainAxisSpacing: 10,
             ),
-            if (searchQuery.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("نتائج البحث عن: $searchQuery", style: const TextStyle(color: Colors.grey)),
-              ),
-            // بقية محتوى الصفحة الرئيسية (البنرات والأقسام)
-            const Expanded(child: Center(child: Text("محتوى العروض والمنتجات يظهر هنا"))),
-          ],
-        ),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final product = products[index];
+              return Card(
+                color: const Color(0xFF1A1A1A),
+                child: Column(
+                  children: [
+                    Expanded(child: Image.network(product['image_url'] ?? '', fit: BoxFit.cover)),
+                    Text(product['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${product['price']} ريال", style: const TextStyle(color: Color(0xFFD4AF37))),
+                    ElevatedButton(onPressed: () {}, child: const Text("إضافة")),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
