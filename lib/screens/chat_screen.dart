@@ -1,83 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ChatScreen extends StatelessWidget {
-  final String userName;
-  const ChatScreen({super.key, required this.userName});
+class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  final _messageController = TextEditingController();
+  final supabase = Supabase.instance.client;
+  late Stream<List<Map<String, dynamic>>> _chatStream;
+
+  @override
+  void initState() {
+    super.initState();
+    // جلب الرسائل في الوقت الفعلي
+    _chatStream = supabase
+        .from('messages')
+        .stream(primaryKey: ['id'])
+        .order('created_at', ascending: false);
+  }
+
+  void _sendMessage() async {
+    if (_messageController.text.isEmpty) return;
+    await supabase.from('messages').insert({
+      'content': _messageController.text,
+      'sender_id': supabase.auth.currentUser?.id ?? 'guest',
+    });
+    _messageController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final Color gold = const Color(0xFFD4AF37);
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A1A),
-        title: Row(
-          children: [
-            CircleAvatar(backgroundColor: gold, child: Icon(Icons.person, color: Colors.black)),
-            const SizedBox(width: 10),
-            Text(userName, style: const TextStyle(color: Colors.white, fontSize: 16)),
-          ],
-        ),
-        iconTheme: IconThemeData(color: gold),
-      ),
+      appBar: AppBar(title: const Text("محادثة فلكس"), backgroundColor: Colors.black),
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(20),
+            child: StreamBuilder<List<Map<String, dynamic>>>(
+              stream: _chatStream,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+                final messages = snapshot.data!;
+                return ListView.builder(
+                  reverse: true, // لإظهار الرسائل الجديدة في الأسفل
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) => ListTile(
+                    title: Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD4AF37),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(messages[index]['content'], style: const TextStyle(color: Colors.black)),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
               children: [
-                _buildMessage("السلام عليكم، هل المنتج متوفر؟", true),
-                _buildMessage("وعليكم السلام، نعم متوفر يا فندم بضمانة سنة.", false),
-                _buildMessage("هل يوجد توصيل لشارع تعز؟", true),
-                _buildMessage("موجود، التوصيل خلال ساعتين فقط.", false),
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: const InputDecoration(hintText: "اكتب رسالتك..."),
+                  ),
+                ),
+                IconButton(icon: const Icon(Icons.send, color: Color(0xFFD4AF37)), onPressed: _sendMessage),
               ],
             ),
           ),
-          _buildChatInput(gold),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMessage(String text, bool isMe) {
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isMe ? const Color(0xFFD4AF37) : const Color(0xFF333333),
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(15),
-            topRight: const Radius.circular(15),
-            bottomLeft: Radius.circular(isMe ? 15 : 0),
-            bottomRight: Radius.circular(isMe ? 0 : 15),
-          ),
-        ),
-        child: Text(text, style: TextStyle(color: isMe ? Colors.black : Colors.white)),
-      ),
-    );
-  }
-
-  Widget _buildChatInput(Color gold) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      color: const Color(0xFF1A1A1A),
-      child: Row(
-        children: [
-          IconButton(icon: Icon(Icons.send, color: gold), onPressed: () {}),
-          Expanded(
-            child: TextField(
-              textAlign: TextAlign.right,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: "اكتب رسالتك هنا...",
-                hintStyle: const TextStyle(color: Colors.grey),
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-          IconButton(icon: const Icon(Icons.attach_file, color: Colors.grey), onPressed: () {}),
         ],
       ),
     );
