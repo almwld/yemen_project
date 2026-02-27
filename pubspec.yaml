@@ -7,64 +7,23 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  local_auth: ^2.2.0
-  image_picker: ^1.0.4
-  file_picker: ^8.0.0
-  excel: ^4.0.0
-  path_provider: ^2.1.2
-  share_plus: ^10.1.0
-  google_maps_flutter: ^2.5.3
-  share_plus: ^10.1.0
-  carousel_slider: ^5.0.0
-  carousel_slider: ^5.0.0
-  supabase_flutter: ^2.0.0
-  audioplayers: ^5.2.1
-  carousel_slider: ^4.2.1
-  firebase_core: ^2.24.2
-  firebase_messaging: ^14.7.10
-  flutter_local_notifications: ^16.3.0
-  google_maps_flutter: ^2.5.3
-  geolocator: ^10.1.0
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  local_auth: ^2.1.6
-  shared_preferences: ^2.2.2
-  sqflite: ^2.3.0
-  path: ^1.8.3
-  # إضافة الحزمة المفقودة التي تسببت في الخطأ
-  mobile_scanner: ^5.2.3
-
-dev_dependencies:
-  local_auth: ^2.2.0
+  supabase_flutter: ^2.0.0
+  carousel_slider: ^5.0.0
+  google_maps_flutter: ^2.5.3
   image_picker: ^1.0.4
   file_picker: ^8.0.0
+  local_auth: ^2.2.0
   excel: ^4.0.0
   path_provider: ^2.1.2
   share_plus: ^10.1.0
-  google_maps_flutter: ^2.5.3
-  share_plus: ^10.1.0
-  carousel_slider: ^5.0.0
-  carousel_slider: ^5.0.0
-  supabase_flutter: ^2.0.0
-  audioplayers: ^5.2.1
-  carousel_slider: ^4.2.1
-  firebase_core: ^2.24.2
-  firebase_messaging: ^14.7.10
-  flutter_local_notifications: ^16.3.0
-  google_maps_flutter: ^2.5.3
-  geolocator: ^10.1.0
+
+dev_dependencies:
   flutter_test:
     sdk: flutter
-flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: false
-  image_path: "assets/logo.png"
-  adaptive_icon_background: "#000000"
-  adaptive_icon_foreground: "assets/logo.png"
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/logo.png
-    - assets/logo.png
