@@ -15,147 +15,178 @@ class _HomeScreenState extends State<HomeScreen> {
   final Color gold = const Color(0xFFD4AF37);
   String searchQuery = "";
 
-  // بيانات تجريبية للمنتجات
-  final List<Map<String, dynamic>> allProducts = [
-    {"name": "سكر السعيد 5كجم", "price": "4,500 ر.ي", "icon": Icons.bakery_dining},
-    {"name": "أرز بسمتي 10كجم", "price": "12,000 ر.ي", "icon": Icons.agriculture},
-    {"name": "زيت شروق 1.5 لتر", "price": "2,800 ر.ي", "icon": Icons.opacity},
-    {"name": "حليب ممتاز سائل", "price": "450 ر.ي", "icon": Icons.coffee},
+  final List<Map<String, dynamic>> categories = [
+    {"name": "السوبر ماركت", "icon": Icons.shopping_basket_outlined},
+    {"name": "الموبايلات", "icon": Icons.smartphone_outlined},
+    {"name": "الإلكترونيات", "icon": Icons.tv_outlined},
+    {"name": "الجمال", "icon": Icons.face_retouching_natural_outlined},
+    {"name": "المطبخ", "icon": Icons.kitchen_outlined},
   ];
 
   @override
   Widget build(BuildContext context) {
-    // تصفية المنتجات بناءً على البحث
-    final filteredProducts = allProducts
-        .where((p) => p['name'].toString().contains(searchQuery))
-        .toList();
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("FLEX YEMEN", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+        elevation: 0,
+        title: Text("FLEX YEMEN", style: TextStyle(color: gold, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
         centerTitle: true,
-        leading: const Icon(Icons.person_outline, color: Colors.white),
-        actions: const [Icon(Icons.shopping_cart_outlined, color: Colors.white), SizedBox(width: 15)],
+        leading: IconButton(icon: const Icon(Icons.person_outline), onPressed: () {}),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart_outlined),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CartScreen())),
+          ),
+          const SizedBox(width: 5),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // شريط البحث الذكي
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: TextField(
-                onChanged: (value) => setState(() => searchQuery = value),
-                decoration: InputDecoration(
-                  hintText: "ابحث عن بضاعتك هنا...",
-                  prefixIcon: Icon(Icons.search, color: gold),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.qr_code_scanner, color: gold),
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QRScannerScreen())),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white10,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-                ),
-              ),
-            ),
+            // شريط البحث والـ QR
+            _buildSearchBar(),
 
-            // الأزرار الرئيسية
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildNavButton(Icons.local_shipping_outlined, "تتبع الطلب", const OrderTrackingScreen()),
-                  _buildNavButton(Icons.receipt_long_outlined, "الفواتير", const CartScreen()),
-                  _buildNavButton(Icons.grid_view_rounded, "الأصناف", null),
-                ],
-              ),
-            ),
+            // قائمة الأقسام الدائرية (جديد)
+            _buildCategoryList(),
 
-            if (searchQuery.isEmpty) _buildPromoBanner(),
+            // بنر العروض المتحرك
+            _buildPromoBanner(),
 
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Text("المنتجات المتوفرة", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
-
-            // عرض المنتجات المفلترة
-            filteredProducts.isEmpty 
-              ? const Center(child: Padding(padding: EdgeInsets.all(20), child: Text("عذراً، لم نجد ما تبحث عنه")))
-              : GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filteredProducts.length,
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15, childAspectRatio: 0.75
-                  ),
-                  itemBuilder: (context, index) {
-                    final p = filteredProducts[index];
-                    return _buildProductCard(context, p['name'], p['price'], p['icon']);
-                  },
-                ),
-            const SizedBox(height: 30),
+            // شبكة المنتجات
+            _buildProductSection(),
           ],
         ),
       ),
     );
   }
 
-  // الدوال المساعدة (NavButton, ProductCard, PromoBanner) تم تحديثها لتعمل داخل الـ State
-  Widget _buildNavButton(IconData icon, String label, Widget? destination) {
-    return InkWell(
-      onTap: () { if (destination != null) Navigator.push(context, MaterialPageRoute(builder: (context) => destination)); },
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: gold.withOpacity(0.1), shape: BoxShape.circle),
-            child: Icon(icon, color: gold, size: 28),
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: TextField(
+        onChanged: (v) => setState(() => searchQuery = v),
+        decoration: InputDecoration(
+          hintText: "البحث في المنتجات أو الموردين...",
+          prefixIcon: Icon(Icons.search, color: gold),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.qr_code_scanner, color: gold),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QRScannerScreen())),
           ),
-          const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontSize: 12)),
-        ],
+          filled: true,
+          fillColor: Colors.white10,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+        ),
       ),
     );
   }
 
-  Widget _buildProductCard(BuildContext context, String name, String price, IconData icon) {
-    return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetailsScreen(productName: name, price: price))),
-      child: Container(
-        decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(15)),
-        child: Column(
-          children: [
-            Expanded(child: Icon(icon, size: 50, color: gold)),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(name, style: const TextStyle(fontWeight: FontWeight.bold), maxLines: 1),
-                  Text(price, style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
-                ],
-              ),
-            )
-          ],
-        ),
+  Widget _buildCategoryList() {
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 28,
+                  backgroundColor: gold.withOpacity(0.1),
+                  child: Icon(categories[index]['icon'], color: gold, size: 28),
+                ),
+                const SizedBox(height: 8),
+                Text(categories[index]['name'], style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildPromoBanner() {
     return Container(
-      margin: const EdgeInsets.all(20),
-      height: 120,
-      width: double.infinity,
+      margin: const EdgeInsets.all(15),
+      height: 160,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFF1A1A1A), Color(0xFF333333)]),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: gold.withOpacity(0.2)),
+        gradient: const LinearGradient(colors: [Color(0xFF2E0249), Colors.black], begin: Alignment.topLeft),
+        border: Border.all(color: gold.withOpacity(0.3)),
       ),
-      child: Center(child: Text("عروض رمضان 🌙", style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.w900))),
+      child: Stack(
+        children: [
+          Positioned(
+            right: 20, top: 30,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("ركن التوفير لرمضان", style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.w900)),
+                const Text("وفر ومتحملش هم في الشهر الكريم", style: TextStyle(color: Colors.white70)),
+                const SizedBox(height: 15),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(backgroundColor: gold, foregroundColor: Colors.black, shape: StadiumBorder()),
+                  child: const Text("تسوق الآن"),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductSection() {
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("منتجات تهمك", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text("عرض الكل", style: TextStyle(color: gold, fontSize: 13)),
+            ],
+          ),
+          const SizedBox(height: 15),
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            childAspectRatio: 0.8,
+            mainAxisSpacing: 15,
+            crossAxisSpacing: 15,
+            children: [
+              _productItem("أرز بسمتي 5كجم", "6,500 ر.ي"),
+              _productItem("زيت شروق 1.8لتر", "3,200 ر.ي"),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _productItem(String title, String price) {
+    return Container(
+      decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15)),
+      child: Column(
+        children: [
+          Expanded(child: Icon(Icons.image_outlined, size: 50, color: gold.withOpacity(0.5))),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(price, style: TextStyle(color: gold, fontWeight: FontWeight.w900)),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
