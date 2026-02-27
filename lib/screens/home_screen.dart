@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'qr_scanner_screen.dart';
 
@@ -11,62 +12,82 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final Color gold = const Color(0xFFD4AF37);
+  late Timer _timer;
+  Duration _duration = const Duration(hours: 2, minutes: 45, seconds: 0);
 
-  // قائمة صور البنرات (يمكنك استبدال الروابط بصور حقيقية لاحقاً)
-  final List<String> bannerImages = [
-    'https://via.placeholder.com/800x400/2E0249/D4AF37?text=ركن+التوفير+لرمضان',
-    'https://via.placeholder.com/800x400/000000/D4AF37?text=توصيل+مجاني+لأول+طلب',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_duration.inSeconds > 0) {
+        setState(() {
+          _duration -= const Duration(seconds: 1);
+        });
+      } else {
+        _timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  String _formatDuration(Duration d) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    return "${twoDigits(d.inHours)}:${twoDigits(d.inMinutes.remainder(60))}:${twoDigits(d.inSeconds.remainder(60))}";
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // شريط البحث العلوي الثابت عند التمرير
           SliverAppBar(
-            floating: true,
-            pinned: true,
+            floating: true, pinned: true,
             title: _buildSearchBar(),
-            backgroundColor: Colors.black,
-            elevation: 0,
+            backgroundColor: Colors.black, elevation: 0,
           ),
-          
           SliverList(
             delegate: SliverChildListDelegate([
               const SizedBox(height: 10),
-              
-              // 1. البنرات المتحركة (Carousel)
-              CarouselSlider(
-                options: CarouselOptions(height: 160, autoPlay: true, enlargeCenterPage: true),
-                items: bannerImages.map((url) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      image: DecorationImage(image: NetworkImage(url), fit: BoxFit.cover),
-                    ),
-                  );
-                }).toList(),
-              ),
-
+              _buildCarousel(),
               const SizedBox(height: 20),
-
-              // 2. شبكة الأقسام (مثل أمازون)
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Text("تسوق حسب الفئة", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              ),
-              const SizedBox(height: 10),
+              _buildFlashDealsHeader(), // هنا المؤقت الجديد
               _buildCategoryGrid(),
-
-              const SizedBox(height: 20),
-              
-              // 3. قسم العروض السريعة
-              _buildFlashDeals(),
-              
-              const SizedBox(height: 100), // مساحة إضافية للتمرير
+              const SizedBox(height: 100),
             ]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFlashDealsHeader() {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.symmetric(horizontal: 15),
+      decoration: BoxDecoration(
+        color: Colors.redAccent.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.bolt, color: Colors.redAccent),
+          const SizedBox(width: 8),
+          const Text("عروض تنتهي خلال:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(color: Colors.redAccent, borderRadius: BorderRadius.circular(5)),
+            child: Text(_formatDuration(_duration), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
           ),
         ],
       ),
@@ -79,70 +100,37 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(10)),
       child: TextField(
         decoration: InputDecoration(
-          hintText: "البحث في Flex Yemen...",
-          hintStyle: const TextStyle(color: Colors.white38, fontSize: 14),
+          hintText: "بحث في فلكس يمن...",
           prefixIcon: Icon(Icons.search, color: gold),
-          suffixIcon: IconButton(
-            icon: Icon(Icons.qr_code_scanner, color: gold),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QRScannerScreen())),
-          ),
+          suffixIcon: Icon(Icons.qr_code_scanner, color: gold),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 10),
         ),
       ),
     );
   }
 
-  Widget _buildCategoryGrid() {
-    final List<Map<String, dynamic>> cats = [
-      {"n": "السوبر ماركت", "c": Colors.blueGrey},
-      {"n": "كرتونة رمضان", "c": Colors.orange},
-      {"n": "الموبايلات", "c": Colors.indigo},
-      {"n": "أجهزة المنزل", "c": Colors.teal},
-    ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 1.2
-      ),
-      itemCount: cats.length,
-      itemBuilder: (context, i) {
-        return Container(
-          decoration: BoxDecoration(color: cats[i]['c'].withOpacity(0.2), borderRadius: BorderRadius.circular(15)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.category, color: cats[i]['c'], size: 40),
-              const SizedBox(height: 10),
-              Text(cats[i]['n'], style: const TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-        );
-      },
+  Widget _buildCarousel() {
+    return CarouselSlider(
+      options: CarouselOptions(height: 160, autoPlay: true, enlargeCenterPage: true),
+      items: [1,2].map((i) => Container(color: Colors.white10, child: Center(child: Text("بنر إعلاني $i")))).toList(),
     );
   }
 
-  Widget _buildFlashDeals() {
+  Widget _buildCategoryGrid() {
+    return GridView.count(
+      shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2, padding: const EdgeInsets.all(15), mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 1.5,
+      children: [
+        _catBox("سوبر ماركت", Colors.blue),
+        _catBox("إلكترونيات", Colors.green),
+      ],
+    );
+  }
+
+  Widget _catBox(String title, Color col) {
     return Container(
-      padding: const EdgeInsets.all(15),
-      color: gold.withOpacity(0.1),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Text("عروض تنتهي قريباً", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-              const Spacer(),
-              Text("عرض الكل", style: TextStyle(color: gold)),
-            ],
-          ),
-          const SizedBox(height: 10),
-          // هنا يمكنك إضافة ListView عرضي للمنتجات
-        ],
-      ),
+      decoration: BoxDecoration(color: col.withOpacity(0.2), borderRadius: BorderRadius.circular(15)),
+      child: Center(child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold))),
     );
   }
 }
