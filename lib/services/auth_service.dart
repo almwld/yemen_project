@@ -3,20 +3,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AuthService {
   final supabase = Supabase.instance.client;
 
-  // تسجيل دخول التاجر/المستخدم
-  Future<bool> signIn(String email, String password) async {
-    try {
-      await supabase.auth.signInWithPassword(email: email, password: password);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  // التأكد هل المستخدم هو التاجر (الأدمن)
+  // التحقق هل المستخدم الحالي هو صاحب المتجر
   bool isAdmin() {
     final user = supabase.auth.currentUser;
-    // يمكنك وضع إيميلك هنا كشرط لفتح لوحة التحكم
-    return user?.email == "your-email@example.com"; 
+    // وضعنا إيميلك هنا لضمان خصوصية لوحة التحكم
+    return user?.email == "yementetherusdt@gmail.com";
+  }
+
+  Future<void> signOut() async {
+    await supabase.auth.signOut();
   }
 }

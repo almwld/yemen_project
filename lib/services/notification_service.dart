@@ -1,28 +1,23 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
-  static final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
 
-  static Future<void> initialize() async {
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-    );
-    await _notificationsPlugin.initialize(initializationSettings);
-    
-    // طلب إذن المستخدم (ضروري في أندرويد 13+)
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    await messaging.requestPermission();
+  static Future<void> init() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await _notifications.initialize(initializationSettings);
   }
 
-  static void showOrderNotification(String title, String body) {
-    const NotificationDetails details = NotificationDetails(
-      android: AndroidNotificationDetails(
-        'order_channel', 'Order Updates',
-        importance: Importance.max, priority: Priority.high,
-        icon: '@mipmap/ic_launcher',
-      ),
+  static Future<void> showNotification(String title, String body) async {
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'flex_yemen_channel', 'Flex Yemen Notifications',
+      importance: Importance.max, priority: Priority.high,
+      styleInformation: BigTextStyleInformation(''),
     );
-    _notificationsPlugin.show(0, title, body, details);
+    const NotificationDetails platformDetails = NotificationDetails(android: androidDetails);
+    await _notifications.show(0, title, body, platformDetails);
   }
 }
