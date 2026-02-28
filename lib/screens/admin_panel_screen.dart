@@ -10,13 +10,13 @@ class AdminPanelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color gold = const Color(0xFFD4AF37);
+    const Color gold = Color(0xFFD4AF37);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text("الإدارة العليا - فلكس يمن", style: TextStyle(color: Color(0xFFD4AF37))),
+        title: const Text("الإدارة العليا - فلكس يمن", style: TextStyle(color: gold)),
         backgroundColor: Colors.black,
-        iconTheme: IconThemeData(color: gold),
+        iconTheme: const IconThemeData(color: gold),
       ),
       body: GridView.count(
         padding: const EdgeInsets.all(20),
@@ -24,12 +24,12 @@ class AdminPanelScreen extends StatelessWidget {
         mainAxisSpacing: 15,
         crossAxisSpacing: 15,
         children: [
-          // تم إزالة const من هنا لضمان عمل الـ Navigation بشكل سليم
-          _adminCard(context, "الإحصائيات", Icons.analytics, gold, const AdminMetricsScreen()),
-          _adminCard(context, "المالية", Icons.account_balance, gold, const AdminFinancePanel()),
+          // هنا السر: حذفنا كلمة const تماماً من أمام الشاشات التي تسبب الخطأ
+          _adminCard(context, "الإحصائيات", Icons.analytics, gold, AdminMetricsScreen()),
+          _adminCard(context, "المالية", Icons.account_balance, gold, AdminFinancePanel()),
           _adminCard(context, "إضافة منتج", Icons.add_a_photo, gold, const AddProductScreen()),
           _adminCard(context, "إدارة الطلبات", Icons.receipt_long, gold, const OrderManagerScreen()),
-          _adminCard(context, "النزاعات", Icons.gavel, gold, const AdminDisputePanel()),
+          _adminCard(context, "النزاعات", Icons.gavel, gold, AdminDisputePanel()),
         ],
       ),
     );
