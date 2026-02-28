@@ -13,19 +13,23 @@ class AdminPanelScreen extends StatelessWidget {
     final Color gold = const Color(0xFFD4AF37);
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: const Text("الإدارة العليا - فلكس يمن"), backgroundColor: Colors.black),
+      appBar: AppBar(
+        title: const Text("الإدارة العليا - فلكس يمن", style: TextStyle(color: Color(0xFFD4AF37))),
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: gold),
+      ),
       body: GridView.count(
         padding: const EdgeInsets.all(20),
         crossAxisCount: 2,
         mainAxisSpacing: 15,
         crossAxisSpacing: 15,
         children: [
-          // حذفنا كلمة const من هنا لأن هذه الشاشات ليست ثابتة
-          _adminCard(context, "الإحصائيات", Icons.analytics, gold, AdminMetricsScreen()),
-          _adminCard(context, "المالية", Icons.account_balance, gold, AdminFinancePanel()),
+          // تم إزالة const من هنا لضمان عمل الـ Navigation بشكل سليم
+          _adminCard(context, "الإحصائيات", Icons.analytics, gold, const AdminMetricsScreen()),
+          _adminCard(context, "المالية", Icons.account_balance, gold, const AdminFinancePanel()),
           _adminCard(context, "إضافة منتج", Icons.add_a_photo, gold, const AddProductScreen()),
           _adminCard(context, "إدارة الطلبات", Icons.receipt_long, gold, const OrderManagerScreen()),
-          _adminCard(context, "النزاعات", Icons.gavel, gold, AdminDisputePanel()),
+          _adminCard(context, "النزاعات", Icons.gavel, gold, const AdminDisputePanel()),
         ],
       ),
     );
@@ -36,7 +40,7 @@ class AdminPanelScreen extends StatelessWidget {
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey[900],
+          color: const Color(0xFF1A1A1A),
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: color.withOpacity(0.3)),
         ),
