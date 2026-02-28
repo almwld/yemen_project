@@ -49,7 +49,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
               Marker(
                 markerId: const MarkerId('deliveryBoy'),
                 position: _deliveryBoyPos,
-                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGold), // أيقونة ذهبية للشاحنة
+                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow), // أيقونة ذهبية للشاحنة
               ),
             },
           ),

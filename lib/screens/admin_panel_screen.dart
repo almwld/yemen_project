@@ -46,7 +46,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.insights, color: Colors.gold, size: 30),
+                    Icon(Icons.insights, color: const Color(0xFFD4AF37), size: 30),
                     SizedBox(width: 15),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +56,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                       ],
                     ),
                     Spacer(),
-                    Icon(Icons.arrow_forward_ios, color: Colors.gold, size: 15),
+                    Icon(Icons.arrow_forward_ios, color: const Color(0xFFD4AF37), size: 15),
                   ],
                 ),
               ),
