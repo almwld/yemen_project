@@ -19,10 +19,10 @@ class CartScreen extends StatelessWidget {
               itemBuilder: (context, i) {
                 final item = cart.items.values.toList()[i];
                 return ListTile(
-                  leading: const Icon(Icons.shopping_bag, color: Colors.gold),
+                  leading: const Icon(Icons.shopping_bag, color: const Color(0xFFD4AF37)),
                   title: Text(item.name, style: const TextStyle(color: Colors.white)),
                   subtitle: Text("${item.price} x ${item.quantity}", style: const TextStyle(color: Colors.grey)),
-                  trailing: Text("${item.price * item.quantity} ريال", style: const TextStyle(color: Colors.gold)),
+                  trailing: Text("${item.price * item.quantity} ريال", style: const TextStyle(color: const Color(0xFFD4AF37))),
                 );
               },
             ),
@@ -36,12 +36,12 @@ class CartScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text("الإجمالي المستحق:", style: TextStyle(color: Colors.white, fontSize: 18)),
-                    Text("${cart.totalAmount} ريال", style: const TextStyle(color: Colors.gold, fontSize: 22, fontWeight: FontWeight.bold)),
+                    Text("${cart.totalAmount} ريال", style: const TextStyle(color: const Color(0xFFD4AF37), fontSize: 22, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.gold, minimumSize: const Size(double.infinity, 50)),
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), minimumSize: const Size(double.infinity, 50)),
                   onPressed: () {
                     // هنا سنربط لاحقاً نظام الدفع (كريمي / باينانس)
                   },

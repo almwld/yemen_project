@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
 class FlexTheme {
-  static const LinearGradient goldenGradient = LinearGradient(
-    colors: [Color(0xFFBF953F), Color(0xFFFCF6BA), Color(0xFFB38728), Color(0xFFFBF5B7), Color(0xFFAA771C)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  static ThemeData darkTheme = ThemeData(
-    brightness: Brightness.dark,
-    primaryColor: const Color(0xFFB38728),
-    scaffoldBackgroundColor: Colors.black,
-    appBarTheme: const AppBarTheme(backgroundColor: Colors.black, elevation: 0),
-  );
+  static ThemeData get darkGoldenTheme {
+    return ThemeData.dark().copyWith(
+      primaryColor: const Color(0xFFD4AF37),
+      scaffoldBackgroundColor: Colors.black,
+      appBarTheme: const AppBarTheme(backgroundColor: Colors.black, foregroundColor: Color(0xFFD4AF37)),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), foregroundColor: Colors.black),
+      ),
+    );
+  }
 }

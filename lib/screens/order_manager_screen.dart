@@ -26,7 +26,7 @@ class OrderManagerScreen extends StatelessWidget {
                 child: ListTile(
                   title: Text(order['customer_name'], style: const TextStyle(color: Colors.white)),
                   subtitle: Text("${order['items']}\nالحالة: ${order['status']}", style: const TextStyle(color: Colors.grey)),
-                  trailing: Text("${order['total_amount']} ريال", style: const TextStyle(color: Colors.gold)),
+                  trailing: Text("${order['total_amount']} ريال", style: const TextStyle(color: const Color(0xFFD4AF37))),
                   onTap: () {
                     // هنا نضع أزرار القبول والرفض
                   },

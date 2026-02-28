@@ -74,13 +74,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 decoration: BoxDecoration(
                   color: Colors.grey[900],
                   borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: Colors.gold, style: BorderStyle.none),
+                  border: Border.all(color: const Color(0xFFD4AF37), style: BorderStyle.none),
                 ),
                 child: _imageFile != null 
                   ? Image.file(_imageFile!, fit: BoxFit.cover)
                   : const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Icon(Icons.camera_alt, color: Colors.gold, size: 50), Text("اضغط لإضافة صورة")],
+                      children: [Icon(Icons.camera_alt, color: const Color(0xFFD4AF37), size: 50), Text("اضغط لإضافة صورة")],
                     ),
               ),
             ),
@@ -90,7 +90,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             TextField(controller: _priceController, decoration: const InputDecoration(labelText: "السعر"), keyboardType: TextInputType.number),
             const SizedBox(height: 30),
             _isLoading 
-              ? const CircularProgressIndicator(color: Colors.gold)
+              ? const CircularProgressIndicator(color: const Color(0xFFD4AF37))
               : ElevatedButton(
                   style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
                   onPressed: _saveProduct, 
