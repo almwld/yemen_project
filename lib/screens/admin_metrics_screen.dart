@@ -2,70 +2,53 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AdminMetricsScreen extends StatelessWidget {
+  AdminMetricsScreen({super.key});
+
   final supabase = Supabase.instance.client;
 
-  Future<Map<String, dynamic>> _fetchMetrics() async {
-    // جلب إجمالي المستخدمين
-    final usersCount = await supabase.from('profiles').select('id', const FetchOptions(count: CountOption.exact));
-    
-    // جلب إجمالي الأموال في الضمان (الطلبات التي لم تكتمل بعد)
-    final escrowTotal = await supabase.from('orders').select('price').eq('status', 'paid_escrow');
-    double totalInEscrow = escrowTotal.fold(0, (sum, item) => sum + (item['price'] ?? 0));
-
-    // جلب عدد الصفقات الناجحة
-    final completedOrders = await supabase.from('orders').select('id', const FetchOptions(count: CountOption.exact)).eq('status', 'completed');
+  Future<Map<String, dynamic>> _fetchStats() async {
+    // الطريقة الصحيحة لجلب الأعداد في الإصدارات الحديثة
+    final usersRes = await supabase.from('profiles').select('*', const FetchOptions(count: CountOption.exact));
+    final ordersRes = await supabase.from('orders').select('*', const FetchOptions(count: CountOption.exact));
+    final productsRes = await supabase.from('products').select('*', const FetchOptions(count: CountOption.exact));
 
     return {
-      'users': usersCount.count,
-      'escrow': totalInEscrow,
-      'completed': completedOrders.count,
+      'users': usersRes.length,
+      'orders': ordersRes.length,
+      'products': productsRes.length,
     };
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("إحصائيات فلكس يمن"), backgroundColor: Colors.blueGrey[900]),
+      backgroundColor: Colors.black,
+      appBar: AppBar(title: const Text("إحصائيات المنصة"), backgroundColor: Colors.black),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: _fetchMetrics(),
+        future: _fetchStats(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
-          final data = snapshot.data!;
-
-          return Padding(
-            padding: EdgeInsets.all(15),
-            child: GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              children: [
-                _buildMetricCard("المستخدمين", "${data['users']}", Icons.people, Colors.blue),
-                _buildMetricCard("في الضمان", "${data['escrow']} ر.ي", Icons.security, Colors.orange),
-                _buildMetricCard("صفقات ناجحة", "${data['completed']}", Icons.check_circle, Colors.green),
-                _buildMetricCard("نزاعات قائمة", "قيد المراجعة", Icons.gavel, Colors.red),
-              ],
-            ),
+          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+          final stats = snapshot.data!;
+          return ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              _statTile("إجمالي المستخدمين", stats['users'].toString(), Icons.people),
+              _statTile("الطلبات الناجحة", stats['orders'].toString(), Icons.shopping_bag),
+              _statTile("المنتجات المعروضة", stats['products'].toString(), Icons.inventory),
+            ],
           );
         },
       ),
     );
   }
 
-  Widget _buildMetricCard(String title, String value, IconData icon, Color color) {
-    return Container(
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: color.withOpacity(0.5)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 40),
-          SizedBox(height: 10),
-          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          Text(value, style: TextStyle(fontSize: 14, color: color)),
-        ],
+  Widget _statTile(String label, String value, IconData icon) {
+    return Card(
+      color: Colors.grey[900],
+      child: ListTile(
+        leading: Icon(icon, color: const Color(0xFFD4AF37)),
+        title: Text(label, style: const TextStyle(color: Colors.white)),
+        trailing: Text(value, style: const TextStyle(color: Color(0xFFD4AF37), fontSize: 20, fontWeight: FontWeight.bold)),
       ),
     );
   }

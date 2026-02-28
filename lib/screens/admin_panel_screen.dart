@@ -20,12 +20,12 @@ class AdminPanelScreen extends StatelessWidget {
         mainAxisSpacing: 15,
         crossAxisSpacing: 15,
         children: [
-          _adminCard(context, "الإحصائيات", Icons.analytics, gold, const AdminMetricsScreen()),
-          _adminCard(context, "المالية", Icons.account_balance, gold, const AdminFinancePanel()),
+          // حذفنا كلمة const من هنا لأن هذه الشاشات ليست ثابتة
+          _adminCard(context, "الإحصائيات", Icons.analytics, gold, AdminMetricsScreen()),
+          _adminCard(context, "المالية", Icons.account_balance, gold, AdminFinancePanel()),
           _adminCard(context, "إضافة منتج", Icons.add_a_photo, gold, const AddProductScreen()),
           _adminCard(context, "إدارة الطلبات", Icons.receipt_long, gold, const OrderManagerScreen()),
-          _adminCard(context, "النزاعات", Icons.gavel, gold, const AdminDisputePanel()),
-          _adminCard(context, "التنبيهات العامة", Icons.broadcast_on_personal, gold, Container()),
+          _adminCard(context, "النزاعات", Icons.gavel, gold, AdminDisputePanel()),
         ],
       ),
     );
