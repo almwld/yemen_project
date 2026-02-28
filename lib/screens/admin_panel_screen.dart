@@ -1,3 +1,4 @@
+import "order_manager_screen.dart";
 import "add_product_screen.dart";
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -32,7 +33,7 @@ class AdminPanelScreen extends StatelessWidget {
             _buildChartSection(),
             const SizedBox(height: 20),
             ListTile(leading: Icon(Icons.add_shopping_cart, color: Color(0xFFD4AF37)), title: Text("إضافة منتج جديد", style: TextStyle(color: Colors.white)), trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddProductScreen()))),
-            _buildQuickAction(context, "إدارة الطلبات", Icons.delivery_dining),
+            ListTile(leading: Icon(Icons.delivery_dining, color: Color(0xFFD4AF37)), title: Text("إدارة الطلبات", style: TextStyle(color: Colors.white)), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderManagerScreen()))),
             _buildQuickAction(context, "إعدادات المتجر", Icons.settings),
           ],
         ),
