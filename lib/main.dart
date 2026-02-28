@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/cart_provider.dart';
 import 'screens/admin_panel_screen.dart';
 import 'theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // ملاحظة: قمنا بتعطيل فحص الدخول لفتح التطبيق فوراً
-  runApp(const FlexYemenApp());
+  runApp(
+    // تفعيل نظام السلة في كامل التطبيق
+    ChangeNotifierProvider(
+      create: (context) => CartProvider(),
+      child: const FlexYemenApp(),
+    ),
+  );
 }
 
 class FlexYemenApp extends StatelessWidget {
@@ -14,10 +21,9 @@ class FlexYemenApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'فلكس يمن - الإدارة',
+      title: 'فلكس يمن',
       theme: FlexTheme.darkGoldenTheme,
       debugShowCheckedModeBanner: false,
-      // الدخول المباشر للوحة التحكم (Admin Panel)
       home: const AdminPanelScreen(), 
     );
   }
