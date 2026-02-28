@@ -1,20 +1,14 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'sound_service.dart';
 
 class OrderService {
-  final supabase = Supabase.instance.client;
-
-  Future<void> createEscrowOrder(String productId, double amount) async {
-    final userId = supabase.auth.currentUser!.id;
+  static Future<void> placeOrder(Map<String, dynamic> orderData) async {
+    final supabase = Supabase.instance.client;
     
-    try {
-      // استدعاء الوظيفة الذكية التي برمجناها في SQL
-      await supabase.rpc('purchase_product', params: {
-        'p_buyer_id': userId,
-        'p_product_id': productId,
-        'p_amount': amount,
-      });
-    } catch (e) {
-      throw Exception("فشلت العملية: $e");
-    }
+    // إدخال الطلب في قاعدة البيانات
+    await supabase.from('orders').insert(orderData);
+    
+    // تشغيل صوت الكاشير فوراً!
+    await SoundService.playCashSound();
   }
 }
