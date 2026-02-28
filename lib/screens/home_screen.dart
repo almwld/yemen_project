@@ -1,7 +1,8 @@
-import "package:provider/provider.dart";
-import "../providers/cart_provider.dart";
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import 'cart_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -9,35 +10,47 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final supabase = Supabase.instance.client;
+    final cart = Provider.of<CartProvider>(context);
 
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text("متجر فلكس يمن", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
         backgroundColor: Colors.black,
-        elevation: 0,
+        actions: [
+          // زر السلة مع عداد المنتجات
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart_outlined, color: Color(0xFFD4AF37)),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CartScreen())),
+              ),
+              if (cart.itemCount > 0)
+                Positioned(
+                  right: 8, top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10)),
+                    constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                    child: Text('${cart.itemCount}', style: const TextStyle(color: Colors.white, fontSize: 10), textAlign: TextAlign.center),
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
       body: StreamBuilder<List<Map<String, dynamic>>>(
-        // جلب البيانات مباشرة من جدول المنتجات وترتيبها بالأحدث
         stream: supabase.from('products').stream(primaryKey: ['id']).order('created_at'),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37)));
-          }
-
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("المتجر فارغ حالياً، انتظر مفاجآتنا!", style: TextStyle(color: Colors.grey)));
-          }
+          if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37)));
+          if (!snapshot.hasData || snapshot.data!.isEmpty) return const Center(child: Text("المتجر فارغ حالياً", style: TextStyle(color: Colors.grey)));
 
           final products = snapshot.data!;
-
           return GridView.builder(
             padding: const EdgeInsets.all(15),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.75,
-              crossAxisSpacing: 15,
-              mainAxisSpacing: 15,
+              crossAxisCount: 2, childAspectRatio: 0.7, crossAxisSpacing: 15, mainAxisSpacing: 15,
             ),
             itemCount: products.length,
             itemBuilder: (context, index) {
@@ -45,52 +58,33 @@ class HomeScreen extends StatelessWidget {
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[900],
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.2)),
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.1)),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // عرض الصورة المرفوعة
                     Expanded(
                       child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                        child: Image.network(
-                          product['image_url'] ?? 'https://via.placeholder.com/150',
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                        child: Image.network(product['image_url'], fit: BoxFit.cover, width: double.infinity),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(8.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            product['name'] ?? 'منتج بدون اسم',
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                            maxLines: 1, overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            "${product['price']} ريال",
-                            style: const TextStyle(color: Color(0xFFD4AF37), fontSize: 14, fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(height: 10),
-                          // زر أضف للسلة
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFD4AF37),
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                padding: const EdgeInsets.symmetric(vertical: 5),
-                              ),
-                              child: const Text("أضف للسلة", style: TextStyle(fontWeight: FontWeight.bold)),
-                            ),
+                          Text(product['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          Text("${product['price']} ريال", style: const TextStyle(color: Color(0xFFD4AF37))),
+                          const SizedBox(height: 8),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), foregroundColor: Colors.black),
+                            onPressed: () {
+                              cart.addItem(product['id'].toString(), product['name'], (product['price'] as num).toDouble());
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("تم إضافة ${product['name']} للسلة"), duration: const Duration(seconds: 1)),
+                              );
+                            },
+                            child: const Text("أضف للسلة"),
                           ),
                         ],
                       ),
