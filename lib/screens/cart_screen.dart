@@ -42,7 +42,7 @@ class CartScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), minimumSize: const Size(double.infinity, 50)),
-                  onPressed: () {
+                  onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (context) => const DeliveryMapScreen())); 
                     // هنا سنربط لاحقاً نظام الدفع (كريمي / باينانس)
                   },
                   child: const Text("تأكيد الطلب وإرسال التحويل", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
