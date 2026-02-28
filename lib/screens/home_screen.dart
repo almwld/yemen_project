@@ -1,96 +1,128 @@
 import 'package:flutter/material.dart';
-import 'admin_panel_screen.dart';
+// استيراد الشاشات الفعلية الموجودة في مشروعك
 import 'flex_wallet_screen.dart';
-import 'mall_explorer_screen.dart';
+import 'marketplace_screen.dart';
+import 'delivery_map_screen.dart';
 import 'auctions_screen.dart';
+import 'real_estate_screen.dart';
+import 'admin_panel_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
   final Color gold = const Color(0xFFD4AF37);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(child: Container(color: Colors.black)), // سأترك لك برمجة القائمة لاحقاً
       appBar: AppBar(
-        leading: const Icon(Icons.menu, color: Color(0xFFD4AF37)),
-        title: const Text("FLEX YEMEN SUPER APP", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 16)),
+        title: Text("FLEX YEMEN", style: TextStyle(color: gold, fontWeight: FontWeight.bold, letterSpacing: 2)),
         actions: [
-          IconButton(icon: const Icon(Icons.notifications_none, color: Color(0xFFD4AF37)), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.person_outline, color: Color(0xFFD4AF37)), onPressed: () {}),
+          IconButton(icon: Icon(Icons.qr_code_scanner, color: gold), onPressed: () {}),
         ],
-        backgroundColor: Colors.black,
-        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // بنر العروض المتحرك (محللي)
-            Container(
-              margin: const EdgeInsets.all(15),
-              height: 150,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [gold, Colors.black]),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Center(child: Text("أهلاً بك في فلكس يمن\nعالم من الخدمات بين يديك", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
-            ),
-            
-            // شبكة الخدمات (Super App Grid)
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 3,
-              padding: const EdgeInsets.all(15),
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 20,
-              children: [
-                _buildServiceItem(context, "المول", Icons.shopping_bag, const MallExplorerScreen()),
-                _buildServiceItem(context, "المحفظة", Icons.account_balance_wallet, const FlexWalletScreen()),
-                _buildServiceItem(context, "المزادات", Icons.gavel, const AuctionsScreen()),
-                _buildServiceItem(context, "عقارات", Icons.home_work, const HomeScreen()), // استبدلها لاحقاً
-                _buildServiceItem(context, "توصيل", Icons.delivery_dining, const HomeScreen()),
-                _buildServiceItem(context, "الإدارة", Icons.admin_panel_settings, const AdminPanelScreen()),
-              ],
-            ),
-            
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Align(alignment: Alignment.centerRight, child: Text("خدمات مميزة", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold))),
-            ),
-            
-            // قائمة خدمات سريعة
-            _buildQuickAction("دفع فواتير", Icons.receipt),
-            _buildQuickAction("شحن رصيد", Icons.phone_android),
-            _buildQuickAction("تحويل مالي", Icons.send),
+            _buildHeroSection(),
+            _buildServiceGrid(context),
+            _buildQuickActions(),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildServiceItem(BuildContext context, String title, IconData icon, Widget screen) {
-    return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(15), border: Border.all(color: gold.withOpacity(0.3))),
-            child: Icon(icon, color: gold, size: 30),
-          ),
-          const SizedBox(height: 8),
-          Text(title, style: const TextStyle(color: Colors.white, fontSize: 12)),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
+        selectedItemColor: gold,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+          BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'المحفظة'),
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'اكتشف'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
         ],
       ),
     );
   }
 
-  Widget _buildQuickAction(String title, IconData icon) {
-    return ListTile(
-      leading: Icon(icon, color: gold),
-      title: Text(title, style: const TextStyle(color: Colors.white)),
-      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
+  Widget _buildHeroSection() {
+    return Container(
+      height: 180,
+      width: double.infinity,
+      margin: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(colors: [Color(0xFF1A1A1A), Colors.black]),
+        border: Border.all(color: gold.withOpacity(0.3)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.auto_awesome, color: gold, size: 40),
+          const SizedBox(height: 10),
+          const Text("فلكس يمن - منصة المستقبل", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text("كل ما تحتاجه في مكان واحد", style: TextStyle(color: gold.withOpacity(0.7))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildServiceGrid(BuildContext context) {
+    final List<Map<String, dynamic>> services = [
+      {'title': 'المول', 'icon': Icons.shopping_cart, 'screen': const MarketplaceScreen()},
+      {'title': 'المحفظة', 'icon': Icons.account_balance_wallet, 'screen': const FlexWalletScreen()},
+      {'title': 'المزادات', 'icon': Icons.gavel, 'screen': const AuctionsScreen()},
+      {'title': 'التوصيل', 'icon': Icons.local_shipping, 'screen': const DeliveryMapScreen()},
+      {'title': 'عقارات', 'icon': Icons.apartment, 'screen': const RealEstateScreen()},
+      {'title': 'الإدارة', 'icon': Icons.admin_panel_settings, 'screen': const AdminPanelScreen()},
+    ];
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(15),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisSpacing: 15, crossAxisSpacing: 15),
+      itemCount: services.length,
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => services[index]['screen'])),
+          child: Container(
+            decoration: BoxDecoration(color: const Color(0xFF111111), borderRadius: BorderRadius.circular(15), border: Border.all(color: gold.withOpacity(0.1))),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(services[index]['icon'], color: gold, size: 30),
+                const SizedBox(height: 8),
+                Text(services[index]['title'], style: const TextStyle(color: Colors.white, fontSize: 12)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildQuickActions() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("وصول سريع", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          ListTile(
+            leading: Icon(Icons.flash_on, color: gold),
+            title: const Text("شحن فوري للرصيد"),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+          ),
+          ListTile(
+            leading: Icon(Icons.map, color: gold),
+            title: const Text("تتبع الطلبات الحية"),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+          ),
+        ],
+      ),
     );
   }
 }
