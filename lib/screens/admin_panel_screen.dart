@@ -16,7 +16,7 @@ class AdminPanelScreen extends StatelessWidget {
             icon: const Icon(Icons.account_circle_outlined, color: Color(0xFFD4AF37)),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("تم التبديل لوضع الضيف مؤقتاً")),
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen())),
               );
             },
           ),
