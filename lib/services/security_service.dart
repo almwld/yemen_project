@@ -1,4 +1,5 @@
 import 'package:local_auth/local_auth.dart';
+import 'package:local_auth/local_auth.dart';
 
 class SecurityService {
   static final LocalAuthentication _auth = LocalAuthentication();

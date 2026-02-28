@@ -1,3 +1,4 @@
+import '../theme/flex_theme.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import '../theme/app_theme.dart';
