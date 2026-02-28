@@ -1,98 +1,135 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
 
-class CheckoutScreen extends StatelessWidget {
-  final String productTitle;
-  final double price;
+class CheckoutScreen extends StatefulWidget {
+  const CheckoutScreen({super.key});
 
-  CheckoutScreen({required this.productTitle, required this.price});
+  @override
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  String? _selectedPayment;
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+
+  // القائمة المحدثة بجميع المحافظ اليمنية والطرق العالمية
+  final Map<String, String> _paymentAccounts = {
+    'جيب (Jeeb)': '77XXXXXXX',
+    'فلوسك (Kuraimi)': '12345678',
+    'إيزي (PYS)': '77XXXXXXX',
+    'بنكي لايت (YKB)': '77XXXXXXX',
+    'جوالي (CAC)': '77XXXXXXX',
+    'النجم (حوالة)': 'باسم: فلكس يمن للخدمات',
+    'باينانس (USDT)': 'TRC20: TXXXXXXXXXXXXX',
+  };
 
   @override
   Widget build(BuildContext context) {
-    // احتساب العمولة 5%
-    double commission = price * 0.05; 
-    double total = price + commission;
+    final cart = Provider.of<CartProvider>(context);
 
     return Scaffold(
-      backgroundColor: Color(0xFF121212),
-      appBar: AppBar(title: Text("تأكيد العملية"), centerTitle: true),
-      body: Padding(
-        padding: EdgeInsets.all(20),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: const Text("إنهاء الطلب"), 
+        backgroundColor: Colors.black,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("ملخص الفاتورة", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.amber)),
-            SizedBox(height: 20),
+            const Text("بيانات التواصل", style: TextStyle(color: Color(0xFFD4AF37), fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _nameController,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: "الاسم الكامل", 
+                labelStyle: const TextStyle(color: Colors.grey),
+                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[800]!)),
+              ),
+            ),
+            TextField(
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: "رقم الهاتف / الواتساب", 
+                labelStyle: const TextStyle(color: Colors.grey),
+                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[800]!)),
+              ),
+            ),
+            const SizedBox(height: 30),
+            const Text("اختر وسيلة الدفع", style: TextStyle(color: Color(0xFFD4AF37), fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
             
-            // هنا قمنا بتصحيح طريقة عرض علامة الدولار لتجنب خطأ Codemagic
-            _buildSummaryRow("اسم المنتج", productTitle),
-            _buildSummaryRow("سعر المنتج", price.toStringAsFixed(2) + " \$"),
-            _buildSummaryRow("رسوم الخدمة (5%)", commission.toStringAsFixed(2) + " \$"),
-            
-            Divider(color: Colors.white24, height: 40),
-            _buildSummaryRow("الإجمالي المطلوب", total.toStringAsFixed(2) + " \$", isTotal: true),
-            
-            SizedBox(height: 40),
-            Text("اختر وسيلة الدفع", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 15),
-            _paymentOption("محفظة كجيب (K-Jib)", Icons.account_balance_wallet),
-            _paymentOption("محفظة جوالي (Jawaly)", Icons.phone_android),
-            
-            Spacer(),
+            // عرض قائمة المحافظ بشكل مرتب
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[900],
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Column(
+                children: _paymentAccounts.keys.map((method) => RadioListTile<String>(
+                  title: Text(method, style: const TextStyle(color: Colors.white, fontSize: 15)),
+                  value: method,
+                  groupValue: _selectedPayment,
+                  activeColor: const Color(0xFFD4AF37),
+                  onChanged: (val) => setState(() => _selectedPayment = val),
+                )).toList(),
+              ),
+            ),
+
+            if (_selectedPayment != null) ...[
+              const SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD4AF37).withOpacity(0.1), 
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.5)),
+                ),
+                child: Column(
+                  children: [
+                    const Text("يرجى تحويل المبلغ إلى:", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                    const SizedBox(height: 5),
+                    SelectableText(
+                      _paymentAccounts[_selectedPayment]!, 
+                      style: const TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 5),
+                    const Text("(اضغط مطولاً للنسخ)", style: TextStyle(color: Colors.grey, fontSize: 10)),
+                  ],
+                ),
+              ),
+            ],
+
+            const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: () => _showSuccessDialog(context),
-              child: Text("تأكيد ودفع الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber,
-                minimumSize: Size(double.infinity, 60),
+                backgroundColor: const Color(0xFFD4AF37), 
+                minimumSize: const Size(double.infinity, 55),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
+              onPressed: () {
+                if (_nameController.text.isEmpty || _phoneController.text.isEmpty || _selectedPayment == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("يرجى إكمال جميع البيانات واختيار طريقة الدفع")),
+                  );
+                  return;
+                }
+                // سيتم هنا ربط الإرسال للواتساب في الخطوة القادمة
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("جاري تجهيز رسالة الطلب...")));
+              },
+              child: const Text("تأكيد الطلب عبر واتساب", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSummaryRow(String label, String value, {bool isTotal = false}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: TextStyle(color: isTotal ? Colors.white : Colors.white70, fontSize: isTotal ? 18 : 16, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
-          Text(value, style: TextStyle(color: isTotal ? Colors.amber : Colors.white, fontSize: isTotal ? 20 : 16, fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
-  }
-
-  Widget _paymentOption(String title, IconData icon) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.white10)),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.amber),
-          SizedBox(width: 15),
-          Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-          Spacer(),
-          Icon(Icons.radio_button_off, color: Colors.grey),
-        ],
-      ),
-    );
-  }
-
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Color(0xFF1E1E1E),
-        title: Icon(Icons.check_circle, color: Colors.green, size: 60),
-        content: Text("تم حجز المبلغ بنجاح! سيتم تحويله للتاجر فور استلامك للمنتج.", textAlign: TextAlign.center),
-        actions: [
-          TextButton(onPressed: () => Navigator.pushNamed(context, "/"), child: Text("موافق", style: TextStyle(color: Colors.amber))),
-        ],
       ),
     );
   }
