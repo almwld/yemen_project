@@ -1,99 +1,96 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'admin_panel_screen.dart';
+import 'flex_wallet_screen.dart';
+import 'mall_explorer_screen.dart';
+import 'auctions_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final supabase = Supabase.instance.client;
   final Color gold = const Color(0xFFD4AF37);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("فلكس يمن - فخر الصناعة", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.black,
-        elevation: 0,
+        leading: const Icon(Icons.menu, color: Color(0xFFD4AF37)),
+        title: const Text("FLEX YEMEN SUPER APP", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 16)),
         actions: [
-          IconButton(icon: Icon(Icons.refresh, color: gold), onPressed: () => setState(() {})),
+          IconButton(icon: const Icon(Icons.notifications_none, color: Color(0xFFD4AF37)), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.person_outline, color: Color(0xFFD4AF37)), onPressed: () {}),
+        ],
+        backgroundColor: Colors.black,
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // بنر العروض المتحرك (محللي)
+            Container(
+              margin: const EdgeInsets.all(15),
+              height: 150,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [gold, Colors.black]),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Center(child: Text("أهلاً بك في فلكس يمن\nعالم من الخدمات بين يديك", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
+            ),
+            
+            // شبكة الخدمات (Super App Grid)
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 3,
+              padding: const EdgeInsets.all(15),
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              children: [
+                _buildServiceItem(context, "المول", Icons.shopping_bag, const MallExplorerScreen()),
+                _buildServiceItem(context, "المحفظة", Icons.account_balance_wallet, const FlexWalletScreen()),
+                _buildServiceItem(context, "المزادات", Icons.gavel, const AuctionsScreen()),
+                _buildServiceItem(context, "عقارات", Icons.home_work, const HomeScreen()), // استبدلها لاحقاً
+                _buildServiceItem(context, "توصيل", Icons.delivery_dining, const HomeScreen()),
+                _buildServiceItem(context, "الإدارة", Icons.admin_panel_settings, const AdminPanelScreen()),
+              ],
+            ),
+            
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Align(alignment: Alignment.centerRight, child: Text("خدمات مميزة", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold))),
+            ),
+            
+            // قائمة خدمات سريعة
+            _buildQuickAction("دفع فواتير", Icons.receipt),
+            _buildQuickAction("شحن رصيد", Icons.phone_android),
+            _buildQuickAction("تحويل مالي", Icons.send),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceItem(BuildContext context, String title, IconData icon, Widget screen) {
+    return InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(15), border: Border.all(color: gold.withOpacity(0.3))),
+            child: Icon(icon, color: gold, size: 30),
+          ),
+          const SizedBox(height: 8),
+          Text(title, style: const TextStyle(color: Colors.white, fontSize: 12)),
         ],
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: supabase.from('products').select().order('created_at', ascending: false),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator(color: gold));
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text("خطأ في جلب البيانات: ${snapshot.error}", style: TextStyle(color: Colors.red)));
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.inventory_2_outlined, color: gold, size: 60),
-                SizedBox(height: 10),
-                Text("لا توجد منتجات حالياً في فلكس يمن", style: TextStyle(color: Colors.white)),
-              ],
-            ));
-          }
+    );
+  }
 
-          final products = snapshot.data!;
-          return GridView.builder(
-            padding: const EdgeInsets.all(12),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.75,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              final p = products[index];
-              return Container(
-                decoration: BoxDecoration(
-                  color: Color(0xFF1A1A1A),
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: gold.withOpacity(0.2)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                        child: Image.network(
-                          p['image_url'] ?? 'https://via.placeholder.com/150',
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, color: gold),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(p['name'] ?? 'منتج بدون اسم', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
-                          SizedBox(height: 4),
-                          Text("${p['price']} ريال", style: TextStyle(color: gold, fontSize: 16, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
-      ),
+  Widget _buildQuickAction(String title, IconData icon) {
+    return ListTile(
+      leading: Icon(icon, color: gold),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
+      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
     );
   }
 }
