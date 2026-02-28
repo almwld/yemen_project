@@ -6,4 +6,11 @@ class FlexTheme {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
+
+  static ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
+    primaryColor: const Color(0xFFB38728),
+    scaffoldBackgroundColor: Colors.black,
+    appBarTheme: const AppBarTheme(backgroundColor: Colors.black, elevation: 0),
+  );
 }
