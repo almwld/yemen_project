@@ -75,7 +75,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 return GestureDetector(
                   onTap: () {
                     setState(() => selectedCity = yemenCities[index]);
-                    NotificationService.showNotification(title: "تم تغيير المنطقة", body: "أنت الآن تتصفح أحدث العروض في $selectedCity");
+                    NotificationService.showNotification("تم تغيير المنطقة", "أنت الآن تتصفح أحدث العروض في $selectedCity");
                     performSearch(searchQuery);
                   },
                   child: Container(
