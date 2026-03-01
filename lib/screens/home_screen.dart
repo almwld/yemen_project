@@ -1,3 +1,4 @@
+import '../services/biometric_service.dart';
 import '../services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'qr_scanner_screen.dart';
@@ -60,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisSpacing: 15,
                     crossAxisSpacing: 15,
                     children: [
-                      _buildGoldService("المحفظة", Icons.account_balance_wallet),
+                      GestureDetector(onTap: () async { bool authenticated = await BiometricService.authenticate(); if(authenticated) { Navigator.push(context, MaterialPageRoute(builder: (context) => const FlexWalletScreen())); } }, child: _buildGoldService("المحفظة", Icons.account_balance_wallet)),
                       _buildGoldService("تحويل أموال", Icons.swap_horizontal_circle),
                       _buildGoldService("تسديد فواتير", Icons.receipt_long),
                       _buildGoldService("سوق فلكس", Icons.shopping_bag),

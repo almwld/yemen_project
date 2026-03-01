@@ -6,6 +6,7 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  local_auth: ^2.3.0
   mobile_scanner: ^4.0.1
   cupertino_icons: ^1.0.6
   mobile_scanner: ^5.1.0
@@ -23,6 +24,7 @@ dependencies:
   printing: ^5.11.1
 
 dev_dependencies:
+  local_auth: ^2.3.0
   mobile_scanner: ^4.0.1
   cupertino_icons: ^1.0.6
   mobile_scanner: ^5.1.0
