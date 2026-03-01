@@ -6,14 +6,13 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  mobile_scanner: ^5.1.0
-  qr_flutter: ^4.1.0
-  share_plus: ^7.2.2
   local_auth: ^2.3.0
-  cupertino_icons: ^1.0.6
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
+  mobile_scanner: ^5.1.0
+  qr_flutter: ^4.1.0
+  share_plus: ^7.2.2
   supabase_flutter: ^2.0.2
   google_maps_flutter: ^2.5.3
   local_auth: ^2.1.6
@@ -24,13 +23,13 @@ dependencies:
   printing: ^5.11.1
 
 dev_dependencies:
+  local_auth: ^2.3.0
+  flutter_test:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
   mobile_scanner: ^5.1.0
   qr_flutter: ^4.1.0
   share_plus: ^7.2.2
-  local_auth: ^2.3.0
-  cupertino_icons: ^1.0.6
-  flutter_test:
-    sdk: flutter
   flutter_launcher_icons: ^0.13.1
 
 # تعديل الإعدادات لتجنب البحث عن ملفات آيفون مفقودة
