@@ -38,7 +38,7 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
 
           if (products.isEmpty) return const Center(child: Text("لا توجد منتجات حالياً", style: TextStyle(color: Colors.white54)));
 
-          return GridView.builder(
+          return GridView.builder(physics: const BouncingScrollPhysics(),(
             padding: const EdgeInsets.all(15),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
