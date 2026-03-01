@@ -1,86 +1,112 @@
-import '../services/security_service.dart';
-import '../services/security_service.dart';
-import 'admin_panel_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  final Color gold = const Color(0xFFD4AF37);
-
   @override
   Widget build(BuildContext context) {
+    final Color gold = const Color(0xFFD4AF37);
+    final user = Supabase.instance.client.auth.currentUser;
+
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text("حسابي", style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        actions: [IconButton(icon: const Icon(Icons.logout, color: Colors.redAccent), onPressed: () {})],
+        title: Text("الملف الشخصي", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.black,
+        elevation: 0,
+        actions: [
+          IconButton(icon: Icon(Icons.logout, color: gold), onPressed: () async {
+            await Supabase.instance.client.auth.signOut();
+            Navigator.pushReplacementNamed(context, '/login');
+          }),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 20),
-            // قسم معلومات المستخدم
-            const CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.white10,
-              child: Icon(Icons.person, size: 60, color: Color(0xFFD4AF37)),
-            ),
-            const SizedBox(height: 15),
-            const Text("أهلاً بك، مستخدم فلكس", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const Text("user@yemen.com", style: TextStyle(color: Colors.white54)),
-            const SizedBox(height: 25),
-
-            // قسم المحفظة (Wallet Card)
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFF8C6E1A)]),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("رصيد المحفظة", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
-                      Text("15,500 ر.ي", style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.w900)),
-                    ],
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: gold),
-                    child: const Text("شحن"),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 25),
-
-            // القائمة (List Options)
-            _buildOption(Icons.inventory_2_outlined, "طلباتي السابقة"),
-            _buildOption(Icons.location_on_outlined, "عناوين التوصيل"),
-            _buildOption(Icons.account_balance_wallet_outlined, "سجل العمليات"),
-            _buildOption(Icons.headset_mic_outlined, "الدعم الفني"),
-            _buildOption(Icons.info_outline, "عن فلكس يمن"),
+            // قسم الصورة والهوية
+            _buildHeader(user, gold),
+            const SizedBox(height: 30),
+            // كرت المعلومات السريع (مثل الصورة التي أرفقتها)
+            _buildQuickInfoCard(user?.id ?? "ID", gold),
+            const SizedBox(height: 20),
+            // قائمة الخيارات الملكية
+            _buildProfileOption("تحديث بياناتي", Icons.cloud_upload_outlined, gold),
+            _buildProfileOption("إدارة الأجهزة", Icons.phonelink_setup, gold),
+            _buildProfileOption("الخصوصية والأمان", Icons.security_outlined, gold),
+            _buildProfileOption("الدعم والمساعدة", Icons.headset_mic_outlined, gold),
+            const SizedBox(height: 40),
+            Text("إصدار فلكس يمن 1.0.0 VIP", style: TextStyle(color: gold.withOpacity(0.3), fontSize: 10)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildOption(IconData icon, String title) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(10)),
-        child: Icon(icon, color: gold),
+  Widget _buildHeader(User? user, Color gold) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: gold, width: 2)),
+          child: CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.grey[900],
+            child: Icon(Icons.person, size: 50, color: gold),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text("صباح الخير", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+        Text(user?.email?.split('@')[0] ?? "عضو فلكس", style: TextStyle(color: gold, fontSize: 14)),
+      ],
+    );
+  }
+
+  Widget _buildQuickInfoCard(String id, Color gold) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.grey[900],
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: gold.withOpacity(0.2)),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white38),
-      onTap: () {},
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("رقم الحساب المميز", style: TextStyle(color: Colors.white54, fontSize: 12)),
+              Text(id.substring(0, 8).toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 2)),
+            ],
+          ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            child: QrImageView(data: id, size: 50, version: QrVersions.auto),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileOption(String title, IconData icon, Color gold) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: gold),
+        title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 14)),
+        trailing: Icon(Icons.arrow_forward_ios, color: gold.withOpacity(0.3), size: 16),
+        onTap: () {},
+      ),
     );
   }
 }
