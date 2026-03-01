@@ -1,3 +1,4 @@
+import '../widgets/flex_watermark_background.dart';
 import 'merchant_wallet_screen.dart';
 import 'profile_screen.dart';
 import 'merchant_wallet_screen.dart';
@@ -27,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return FlexWatermarkBackground(child: Scaffold(
       backgroundColor: isDarkMode ? Colors.black : Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.transparent,
