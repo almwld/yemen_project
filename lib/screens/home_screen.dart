@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context, snapshot) {
               if (!snapshot.hasData) return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
               final items = snapshot.data!;
-              return SliverPadding(
+              return SliverPadding(padding: const EdgeInsets.symmetric(horizontal: 10), sliver: 
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 SliverGrid(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -1,29 +1,25 @@
+import 'package:flutter/material.dart'; // إضافة الاستيراد المفقود
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
-  static final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final _notifications = FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
+    const settings = InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
     );
-
-    await _notificationsPlugin.initialize(initializationSettings);
+    await _notifications.initialize(settings);
   }
 
-  static Future<void> showNotification({required String title, required String body}) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'flex_yemen_channel',
-      'تنبيهات فلكس يمن',
-      importance: Importance.max,
-      priority: Priority.high,
-      color: Color(0xFFD4AF37),
+  static Future<void> showNotification(String title, String body) async {
+    const details = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'flex_channel', 'Flex Notifications',
+        importance: Importance.max,
+        priority: Priority.high,
+        color: Color(0xFFD4AF37), // الآن سيعمل بنجاح
+      ),
     );
-
-    const NotificationDetails notificationDetails = NotificationDetails(android: androidDetails);
-    await _notificationsPlugin.show(0, title, body, notificationDetails);
+    await _notifications.show(0, title, body, details);
   }
 }
