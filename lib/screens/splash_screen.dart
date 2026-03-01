@@ -1,7 +1,6 @@
 import '../theme/flex_theme.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
