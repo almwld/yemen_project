@@ -24,6 +24,13 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
   ];
 
   @override
+  String _formatPrice(dynamic price) {
+    if (price == null) return "0";
+    String str = price.toString();
+    RegExp reg = RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))");
+    return str.replaceAllMapped(reg, (Match m) => "${m[1]},");
+  }
+
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -156,7 +163,7 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
                 const SizedBox(height: 5),
                 Text(p['category'] ?? "عام", style: TextStyle(color: gold.withOpacity(0.5), fontSize: 12)),
                 const SizedBox(height: 10),
-                Text("${p['price']} ريال", style: TextStyle(color: gold, fontSize: 18, fontWeight: FontWeight.w900)),
+                Text("${_formatPrice(p['price'])} ريال", style: TextStyle(color: gold, fontSize: 18, fontWeight: FontWeight.w900)),
               ],
             ),
           ),
