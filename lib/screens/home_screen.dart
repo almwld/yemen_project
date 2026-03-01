@@ -1,3 +1,4 @@
+import 'internal_chat_screen.dart';
 import 'merchant_dashboard.dart';
 import 'transfer_screen.dart';
 import 'virtual_card_screen.dart';
