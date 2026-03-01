@@ -1,3 +1,4 @@
+import 'verification_request_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -34,6 +35,7 @@ class ProfileScreen extends StatelessWidget {
             _buildQuickInfoCard(user?.id ?? "ID", gold),
             const SizedBox(height: 20),
             // قائمة الخيارات الملكية
+            _buildProfileOption("توثيق حسابي الملكي", Icons.verified_user_outlined, gold, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VerificationRequestScreen()))),
             _buildProfileOption("تحديث بياناتي", Icons.cloud_upload_outlined, gold),
             _buildProfileOption("إدارة الأجهزة", Icons.phonelink_setup, gold),
             _buildProfileOption("الخصوصية والأمان", Icons.security_outlined, gold),
