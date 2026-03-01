@@ -1,3 +1,4 @@
+import 'transactions_screen.dart';
 import 'qr_scanner_screen.dart';
 import 'package:flutter/material.dart';
 import 'flex_wallet_screen.dart';
@@ -145,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildNavItem(Icons.home, "الرئيسية", true),
           _buildNavItem(Icons.category, "الخدمات", false),
           const SizedBox(width: 40),
-          _buildNavItem(Icons.list_alt, "العمليات", false),
+          GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TransactionsScreen())), child: _buildNavItem(Icons.list_alt, "العمليات", false)),
           _buildNavItem(Icons.person, "الملف", false),
         ],
       ),
