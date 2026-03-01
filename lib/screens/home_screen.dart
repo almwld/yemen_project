@@ -1,3 +1,4 @@
+import 'qr_scanner_screen.dart';
 import 'package:flutter/material.dart';
 import 'flex_wallet_screen.dart';
 import 'add_item_screen.dart';
