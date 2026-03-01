@@ -1,10 +1,6 @@
-import 'flex_wallet_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'search_screen.dart';
-import 'add_item_screen.dart';
 import 'flex_wallet_screen.dart';
-import '../widgets/main_drawer.dart';
+import 'add_item_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,144 +10,125 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final Color gold = const Color(0xFFD4AF37);
-  final supabase = Supabase.instance.client;
+  final Color primaryRed = const Color(0xFFE31E24); // لون تطبيق جيب المميز
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      drawer: const MainDrawer(),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: Icon(Icons.menu_open, color: gold, size: 28),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+        title: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("رمضان كريم", style: TextStyle(color: Colors.white70, fontSize: 14)),
+            Text("أحمد الكبسي", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+          ],
         ),
-        title: const Text("FLEX YEMEN", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
         actions: [
-          IconButton(icon: Icon(Icons.qr_code_scanner, color: gold), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.notifications_none, color: Colors.white), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.headset_mic_outlined, color: Colors.white), onPressed: () {}),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. سلايدر الترحيب (Hero Banner)
-            _buildHeroBanner(),
+            // 1. بطاقات المحفظة المنزلقة (Horizontal Cards)
+            _buildWalletCarousel(),
 
-            // 2. شبكة الخدمات الرئيسية (Services Grid)
+            // 2. شبكة الخدمات الملونة (Services Grid)
             Padding(
               padding: const EdgeInsets.all(15),
               child: GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 3,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
                 children: [
-                  _buildServiceItem("المول", Icons.shopping_basket, Colors.orange),
-                  _buildServiceItem("المحفظة", Icons.account_balance_wallet, Colors.green),
-                  _buildServiceItem("المزادات", Icons.gavel, Colors.blue),
-                  _buildServiceItem("عقارات", Icons.location_city, Colors.purple),
-                  _buildServiceItem("التوصيل", Icons.delivery_dining, Colors.red),
-                  _buildServiceItem("الخدمات", Icons.dashboard_customize, Colors.teal),
+                  _buildModernService("تحويلات مالية", Icons.swap_horiz, Colors.blue),
+                  _buildModernService("شبكة تحويل", Icons.send_to_mobile, Colors.orange),
+                  _buildModernService("الشحن والسداد", Icons.receipt, Colors.purple),
+                  _buildModernService("شراء اونلاين", Icons.shopping_cart, Colors.teal),
+                  _buildModernService("دفع المشتريات", Icons.qr_code_scanner, Colors.red),
+                  _buildModernService("سحب نقدي", Icons.atm, Colors.green),
+                  _buildModernService("المدفوعات", Icons.account_balance_wallet, Colors.amber),
+                  _buildModernService("خدمات ترفيه", Icons.videogame_asset, Colors.pink),
+                  _buildModernService("جيبي", Icons.person_outline, Colors.cyan),
                 ],
               ),
             ),
-
-            // 3. قسم الوصول السريع (Quick Actions)
-            _buildQuickActionTile("شحن فوري للرصيد", Icons.bolt, "اشحن محفظتك بضغطة زر"),
-            _buildQuickActionTile("تتبع الطلبات الحية", Icons.map, "شاهد مندوبك على الخريطة الآن"),
-
-            // 4. عنوان المنتجات
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("أحدث العروض", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text("عرض الكل", style: TextStyle(color: Color(0xFFD4AF37))),
-                ],
-              ),
-            ),
-            
-            // هنا تظهر المنتجات المرفوعة من سوبابيس (نفس الكود السابق)
           ],
         ),
       ),
       bottomNavigationBar: _buildBottomNav(),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: gold,
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddItemScreen())),
-        child: const Icon(Icons.add, color: Colors.black, size: 30),
+        backgroundColor: primaryRed,
+        child: const Icon(Icons.grid_view_rounded, color: Colors.white),
+        onPressed: () {},
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
-  Widget _buildHeroBanner() {
+  Widget _buildWalletCarousel() {
     return Container(
-      margin: const EdgeInsets.all(15),
-      height: 120,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [gold, const Color(0xFFB8860B)]),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Stack(
+      height: 200,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
-          Positioned(right: -20, top: -20, child: Icon(Icons.rocket_launch, size: 100, color: Colors.white.withOpacity(0.2))),
-          const Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("فلكس يمن", style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
-                Text("منصة المستقبل للتجارة والخدمات", style: TextStyle(color: Colors.black54, fontSize: 14)),
-              ],
-            ),
-          ),
+          _buildBalanceCard("ريال يمني", "32.39", primaryRed),
+          _buildBalanceCard("دولار أمريكي", "150.00", Colors.blueGrey[800]!),
         ],
       ),
     );
   }
 
-  Widget _buildServiceItem(String title, IconData icon, Color color) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(15), border: Border.all(color: gold.withOpacity(0.1))),
-          child: Icon(icon, color: gold, size: 30),
-        ),
-        const SizedBox(height: 8),
-        Text(title, style: const TextStyle(color: Colors.white, fontSize: 12)),
-      ],
-    );
-  }
-
-  Widget _buildQuickActionTile(String title, IconData icon, String sub) {
+  Widget _buildBalanceCard(String currency, String balance, Color color) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(15)),
-      child: Row(
+      width: 280,
+      margin: const EdgeInsets.only(right: 15),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: gold),
-          const SizedBox(width: 15),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              Text(sub, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+              const Icon(Icons.wallet, color: Colors.white70),
+              Text(currency, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ],
           ),
           const Spacer(),
-          const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14),
+          Text(balance, style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [Icon(Icons.visibility, color: Colors.white70, size: 20)],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModernService(String title, IconData icon, Color color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(title, style: const TextStyle(color: Colors.white, fontSize: 11), textAlign: TextAlign.center),
         ],
       ),
     );
@@ -159,21 +136,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBottomNav() {
     return BottomAppBar(
-      color: Colors.grey[900],
+      color: const Color(0xFF1E1E1E),
       shape: const CircularNotchedRectangle(),
-      child: SizedBox(
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(icon: const Icon(Icons.home, color: Color(0xFFD4AF37)), onPressed: () {}),
-            IconButton(icon: const Icon(Icons.wallet, color: Colors.white54), onPressed: () {}),
-            const SizedBox(width: 40),
-            IconButton(icon: const Icon(Icons.explore, color: Colors.white54), onPressed: () {}),
-            IconButton(icon: const Icon(Icons.person, color: Colors.white54), onPressed: () {}),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildNavItem(Icons.home, "الرئيسية", true),
+          _buildNavItem(Icons.category, "الخدمات", false),
+          const SizedBox(width: 40),
+          _buildNavItem(Icons.list_alt, "العمليات", false),
+          _buildNavItem(Icons.person, "الملف", false),
+        ],
       ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, String label, bool active) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: active ? primaryRed : Colors.white54),
+        Text(label, style: TextStyle(color: active ? primaryRed : Colors.white54, fontSize: 10)),
+      ],
     );
   }
 }
