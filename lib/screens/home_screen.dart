@@ -1,3 +1,4 @@
+import 'transfer_screen.dart';
 import 'virtual_card_screen.dart';
 import '../services/biometric_service.dart';
 import '../services/notification_service.dart';
@@ -63,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisSpacing: 15,
                     children: [
                       GestureDetector(onTap: () async { bool authenticated = await BiometricService.authenticate(); if(authenticated) { Navigator.push(context, MaterialPageRoute(builder: (context) => const FlexWalletScreen())); } }, child: _buildGoldService("المحفظة", Icons.account_balance_wallet)),
-                      _buildGoldService("تحويل أموال", Icons.swap_horizontal_circle),
+                      GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TransferScreen())), child: _buildGoldService("تحويل أموال", Icons.swap_horizontal_circle)),
                       _buildGoldService("تسديد فواتير", Icons.receipt_long),
                       _buildGoldService("سوق فلكس", Icons.shopping_bag),
                       _buildGoldService("عقارات VIP", Icons.location_city),
