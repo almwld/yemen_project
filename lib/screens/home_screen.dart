@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/royal_nav_bar.dart';
-import '../widgets/flex_watermark_background.dart';
 import 'market_explorer_screen.dart';
-import 'profile_screen.dart';
-import 'merchant_wallet_screen.dart';
+import '../widgets/royal_nav_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,35 +11,33 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  final Color gold = const Color(0xFFD4AF37);
 
+  // مصفوفة الشاشات - جعلناها حالياً تعرض السوق في كل الأزرار لضمان عدم حدوث خطأ
   final List<Widget> _pages = [
-    const MarketExplorerScreen(), // المنصة (السوق) هي الصفحة الأولى
-    const MerchantWalletScreen(),  // المحفظة كخيار ثانٍ
-    const ProfileScreen(),         // البروفايل
+    const MarketExplorerScreen(), // 0: السوق
+    const Center(child: Text("البحث قيد التطوير")), // 1
+    const Center(child: Text("التنبيهات قيد التطوير")), // 2
+    const Center(child: Text("إضافة منتج قيد التطوير")), // 3 (الزائد)
+    const Center(child: Text("المحفظة قيد التطوير")), // 4
+    const Center(child: Text("الدردشة قيد التطوير")), // 5
+    const Center(child: Text("الحساب قيد التطوير")), // 6
   ];
 
   @override
   Widget build(BuildContext context) {
-    return FlexWatermarkBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: IndexedStack(
-          index: _currentIndex,
-          children: _pages,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.black,
-          selectedItemColor: gold,
-          unselectedItemColor: Colors.white24,
-          currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.storefront), label: "المنصة"),
-            BottomNavigationBarItem(icon: Icon(Icons.wallet), label: "المحفظة"),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "حسابي"),
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: RoyalNavBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
       ),
     );
   }
