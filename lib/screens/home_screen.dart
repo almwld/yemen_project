@@ -1,3 +1,4 @@
+import 'flex_wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'search_screen.dart';
