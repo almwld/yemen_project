@@ -1,8 +1,6 @@
-import 'transactions_screen.dart';
-import 'qr_scanner_screen.dart';
 import 'package:flutter/material.dart';
-import 'flex_wallet_screen.dart';
-import 'add_item_screen.dart';
+import 'qr_scanner_screen.dart';
+import 'transactions_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,154 +10,181 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final Color primaryRed = const Color(0xFFE31E24); // لون تطبيق جيب المميز
+  bool isDarkMode = true; // خيار تبديل الثيم
+  final Color gold = const Color(0xFFD4AF37); // اللون الذهبي الأصلي
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: isDarkMode ? Colors.black : Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("رمضان كريم", style: TextStyle(color: Colors.white70, fontSize: 14)),
-            Text("أحمد الكبسي", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+            Text("مرحباً بك في", style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54, fontSize: 12)),
+            Text("فلكس يمن VIP", style: TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 20)),
           ],
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.notifications_none, color: Colors.white), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.headset_mic_outlined, color: Colors.white), onPressed: () {}),
+          // زر تغيير الثيم (ليلي / نهاري)
+          IconButton(
+            icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode, color: gold),
+            onPressed: () => setState(() => isDarkMode = !isDarkMode),
+          ),
+          IconButton(icon: Icon(Icons.qr_code_scanner, color: isDarkMode ? Colors.white : Colors.black), 
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QrScannerScreen()))),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // 1. بطاقات المحفظة المنزلقة (Horizontal Cards)
-            _buildWalletCarousel(),
-
-            // 2. شبكة الخدمات الملونة (Services Grid)
-            Padding(
-              padding: const EdgeInsets.all(15),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 3,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                children: [
-                  _buildModernService("تحويلات مالية", Icons.swap_horiz, Colors.blue),
-                  _buildModernService("شبكة تحويل", Icons.send_to_mobile, Colors.orange),
-                  _buildModernService("الشحن والسداد", Icons.receipt, Colors.purple),
-                  _buildModernService("شراء اونلاين", Icons.shopping_cart, Colors.teal),
-                  _buildModernService("دفع المشتريات", Icons.qr_code_scanner, Colors.red),
-                  _buildModernService("سحب نقدي", Icons.atm, Colors.green),
-                  _buildModernService("المدفوعات", Icons.account_balance_wallet, Colors.amber),
-                  _buildModernService("خدمات ترفيه", Icons.videogame_asset, Colors.pink),
-                  _buildModernService("جيبي", Icons.person_outline, Colors.cyan),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: _buildBottomNav(),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryRed,
-        child: const Icon(Icons.grid_view_rounded, color: Colors.white),
-        onPressed: () {},
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
-  }
-
-  Widget _buildWalletCarousel() {
-    return Container(
-      height: 200,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+      body: Stack(
         children: [
-          _buildBalanceCard("ريال يمني", "32.39", primaryRed),
-          _buildBalanceCard("دولار أمريكي", "150.00", Colors.blueGrey[800]!),
+          // خلفية مذهبة في الزوايا للإيحاء بالفخامة
+          Positioned(top: -50, right: -50, child: _buildCornerGold()),
+          Positioned(bottom: -50, left: -50, child: _buildCornerGold()),
+
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                // 1. سلايدر إعلانات VIP (البطاقات المنزلقة)
+                _buildVIPAdsSlider(),
+
+                // 2. شبكة الخدمات الذهبية
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 15,
+                    crossAxisSpacing: 15,
+                    children: [
+                      _buildGoldService("المحفظة", Icons.account_balance_wallet),
+                      _buildGoldService("تحويل أموال", Icons.swap_horizontal_circle),
+                      _buildGoldService("تسديد فواتير", Icons.receipt_long),
+                      _buildGoldService("سوق فلكس", Icons.shopping_bag),
+                      _buildGoldService("عقارات VIP", Icons.location_city),
+                      _buildGoldService("سيارات", Icons.directions_car),
+                    ],
+                  ),
+                ),
+                
+                // 3. قسم كشف الحساب المختصر
+                _buildQuickHistory(),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildBalanceCard(String currency, String balance, Color color) {
+  Widget _buildCornerGold() {
     return Container(
-      width: 280,
-      margin: const EdgeInsets.only(right: 15),
+      width: 150,
+      height: 150,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(colors: [gold.withOpacity(0.15), Colors.transparent]),
+      ),
+    );
+  }
+
+  Widget _buildVIPAdsSlider() {
+    return SizedBox(
+      height: 180,
+      child: PageView(
+        children: [
+          _buildAdCard("عروض رمضان VIP", "خصومات تصل إلى 50% على العقارات", Icons.star),
+          _buildAdCard("شحن رصيد فوري", "اشحن محفظتك واحصل على كاش باك ذهبي", Icons.bolt),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdCard(String title, String sub, IconData icon) {
+    return Container(
+      margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: gold.withOpacity(0.5), width: 1),
+        gradient: LinearGradient(
+          colors: [Colors.black, Colors.grey[900]!],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [BoxShadow(color: gold.withOpacity(0.2), blurRadius: 10)],
       ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(title, style: TextStyle(color: gold, fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 5),
+                Text(sub, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+              ],
+            ),
+          ),
+          Icon(icon, color: gold, size: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGoldService(String title, IconData icon) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: gold.withOpacity(0.2)),
+        boxShadow: [if (!isDarkMode) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5)],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: gold, size: 30),
+          const SizedBox(height: 8),
+          Text(title, style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickHistory() {
+    return Container(
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(Icons.wallet, color: Colors.white70),
-              Text(currency, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              Text("آخر العمليات", style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontWeight: FontWeight.bold)),
+              Text("شاهد الكل", style: TextStyle(color: gold, fontSize: 12)),
             ],
           ),
-          const Spacer(),
-          Text(balance, style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [Icon(Icons.visibility, color: Colors.white70, size: 20)],
-          )
+          const SizedBox(height: 15),
+          _historyItem("شراء أرض - صنعاء", "- 20,000,000 ريال", "ناجحة"),
         ],
       ),
     );
   }
 
-  Widget _buildModernService(String title, IconData icon, Color color) {
+  Widget _historyItem(String title, String price, String status) {
     return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
-          Text(title, style: const TextStyle(color: Colors.white, fontSize: 11), textAlign: TextAlign.center),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return BottomAppBar(
-      color: const Color(0xFF1E1E1E),
-      shape: const CircularNotchedRectangle(),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(color: isDarkMode ? Colors.grey[900] : Colors.white, borderRadius: BorderRadius.circular(10)),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildNavItem(Icons.home, "الرئيسية", true),
-          _buildNavItem(Icons.category, "الخدمات", false),
-          const SizedBox(width: 40),
-          GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TransactionsScreen())), child: _buildNavItem(Icons.list_alt, "العمليات", false)),
-          _buildNavItem(Icons.person, "الملف", false),
+          Text(title, style: const TextStyle(color: Colors.white70)),
+          Text(price, style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
         ],
       ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool active) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: active ? primaryRed : Colors.white54),
-        Text(label, style: TextStyle(color: active ? primaryRed : Colors.white54, fontSize: 10)),
-      ],
     );
   }
 }
