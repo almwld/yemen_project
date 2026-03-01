@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/royal_nav_bar.dart';
 import '../widgets/flex_watermark_background.dart';
 import 'market_explorer_screen.dart';
 import 'profile_screen.dart';
