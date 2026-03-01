@@ -70,12 +70,12 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildServiceGrid(BuildContext context) {
     final List<Map<String, dynamic>> services = [
-      {'title': 'المول', 'icon': Icons.shopping_cart, 'screen': const MarketplaceScreen()},
-      {'title': 'المحفظة', 'icon': Icons.account_balance_wallet, 'screen': const FlexWalletScreen()},
-      {'title': 'المزادات', 'icon': Icons.gavel, 'screen': const AuctionsScreen()},
-      {'title': 'التوصيل', 'icon': Icons.local_shipping, 'screen': const DeliveryMapScreen()},
-      {'title': 'عقارات', 'icon': Icons.apartment, 'screen': const RealEstateScreen()},
-      {'title': 'الإدارة', 'icon': Icons.admin_panel_settings, 'screen': const AdminPanelScreen()},
+      {'title': 'المول', 'icon': Icons.shopping_cart, 'screen': MarketplaceScreen()},
+      {'title': 'المحفظة', 'icon': Icons.account_balance_wallet, 'screen': FlexWalletScreen()},
+      {'title': 'المزادات', 'icon': Icons.gavel, 'screen': AuctionsScreen()},
+      {'title': 'التوصيل', 'icon': Icons.local_shipping, 'screen': DeliveryMapScreen()},
+      {'title': 'عقارات', 'icon': Icons.apartment, 'screen': RealEstateScreen()},
+      {'title': 'الإدارة', 'icon': Icons.admin_panel_settings, 'screen': AdminPanelScreen()},
     ];
 
     return GridView.builder(
