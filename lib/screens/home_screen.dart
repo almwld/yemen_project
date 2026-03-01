@@ -1,3 +1,4 @@
+import 'virtual_card_screen.dart';
 import '../services/biometric_service.dart';
 import '../services/notification_service.dart';
 import 'package:flutter/material.dart';
