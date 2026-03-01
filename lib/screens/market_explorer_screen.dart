@@ -142,7 +142,7 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
                 const SizedBox(height: 5),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: gold, minimumSize: const Size(double.infinity, 30)),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => InternalChatScreen(receiverId: p['merchant_id'], receiverName: "التاجر", productId: p['id']))),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => InternalChatScreen(merchantId: p['merchant_id'], productName: p['name'], productId: p['id']))),
                   child: const Text("مراسلة", style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
                 ),
               ],

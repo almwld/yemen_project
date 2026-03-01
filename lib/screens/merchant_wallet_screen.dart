@@ -58,7 +58,7 @@ class _MerchantWalletScreenState extends State<MerchantWalletScreen> {
       child: Column(
         children: [
           const Text("الرصيد المتاح", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
-          const Text("750,000 YR", style: TextStyle(color: Colors.black, fontSize: 32, fontWeight: FontWeight.black)),
+          const Text("750,000 YR", style: TextStyle(color: Colors.black, fontSize: 32, fontWeight: FontWeight.w900)),
           const Divider(color: Colors.black26),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -128,7 +128,7 @@ class _MerchantWalletScreenState extends State<MerchantWalletScreen> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: 3,
           itemBuilder: (context, index) => ListTile(
-            leading: CircleAvatar(backgroundColor: Colors.white05, child: Icon(Icons.arrow_downward, color: gold, size: 16)),
+            leading: CircleAvatar(backgroundColor: Colors.white.withOpacity(0.05), child: Icon(Icons.arrow_downward, color: gold, size: 16)),
             title: const Text("مبيعات منتج #442", style: TextStyle(color: Colors.white, fontSize: 13)),
             subtitle: const Text("اليوم - 10:30 AM", style: TextStyle(color: Colors.white24, fontSize: 10)),
             trailing: Text("+15,000 YR", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
