@@ -1,3 +1,4 @@
+import 'merchant_dashboard.dart';
 import 'transfer_screen.dart';
 import 'virtual_card_screen.dart';
 import '../services/biometric_service.dart';
@@ -69,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _buildGoldService("سوق فلكس", Icons.shopping_bag),
                       _buildGoldService("عقارات VIP", Icons.location_city),
                       _buildGoldService("سيارات", Icons.directions_car),
+                      GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MerchantDashboard())), child: _buildGoldService("لوحة التاجر", Icons.storefront_outlined)),
                     ],
                   ),
                 ),
