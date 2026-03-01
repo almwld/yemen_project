@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../services/notification_service.dart';
+import '../services/receipt_service.dart';
 
 class TransferScreen extends StatefulWidget {
   const TransferScreen({super.key});
@@ -16,26 +16,51 @@ class _TransferScreenState extends State<TransferScreen> {
   bool _isLoading = false;
 
   Future<void> _processTransfer() async {
+    if (_amountController.text.isEmpty || _phoneController.text.isEmpty) return;
+
     setState(() => _isLoading = true);
     try {
-      // 1. البحث عن المستلم برقم هاتفه
-      final receiver = await _supabase
+      final double amount = double.parse(_amountController.text);
+      final String phone = _phoneController.text;
+
+      // 1. استدعاء وظيفة سوبابيس الذكية التي أصلحناها (RPC)
+      await _supabase.rpc('transfer_funds_with_commission', params: {
+        'p_sender_id': _supabase.auth.currentUser!.id,
+        'p_receiver_phone': phone,
+        'p_amount': amount,
+      });
+
+      // 2. جلب اسم المستلم لإظهاره في الإيصال
+      final receiverData = await _supabase
           .from('profiles')
-          .select()
-          .eq('phone_number', _phoneController.text)
+          .select('full_name, commission_rate')
+          .eq('phone_number', phone)
           .single();
 
-      if (receiver == null) throw "رقم الهاتف غير مسجل في فلكس يمن";
-
-      // 2. التحقق من رصيد المرسل (تبسيطاً للبرمجة هنا)
-      // في الواقع نستخدم RPC (Stored Procedure) لضمان الأمان الذري (Atomicity)
+      final String receiverName = receiverData['full_name'] ?? "عميل فلكس";
+      final double rate = (receiverData['commission_rate'] ?? 0.01).toDouble();
       
-      GoldNotification.showSuccess(context, "تم تحويل ${_amountController.text} ريال إلى ${receiver['full_name']}");
-      Navigator.pop(context);
+      // 3. حساب الحسبة للإيصال
+      final double fee = amount * rate;
+      final double total = amount; // المبلغ المخصوم من المرسل
+
+      if (!mounted) return;
+
+      // 4. إظهار الإيصال الذهبي الفخم
+      ReceiptService.showGoldReceipt(
+        context,
+        receiverName: receiverName,
+        amount: (amount - fee).toStringAsFixed(2), // الصافي للمستلم
+        fee: fee.toStringAsFixed(2),
+        total: total.toStringAsFixed(2),
+      );
+
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("خطأ: ${e.toString()}"), backgroundColor: Colors.red),
+      );
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -44,24 +69,33 @@ class _TransferScreenState extends State<TransferScreen> {
     final Color gold = const Color(0xFFD4AF37);
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: const Text("تحويل سريع"), backgroundColor: Colors.black),
-      body: Padding(
+      appBar: AppBar(
+        title: const Text("تحويل ذهبي سريع", style: TextStyle(color: Color(0xFFD4AF37))),
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: gold),
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(25),
         child: Column(
           children: [
+            const Icon(Icons.send_to_mobile, color: Color(0xFFD4AF37), size: 80),
+            const SizedBox(height: 30),
             _buildGoldTextField("رقم هاتف المستلم", Icons.phone_android, _phoneController),
             const SizedBox(height: 20),
-            _buildGoldTextField("المبلغ بالريال", Icons.money, _amountController),
+            _buildGoldTextField("المبلغ المراد تحويله", Icons.account_balance_wallet, _amountController),
             const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: gold, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: gold,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                ),
                 onPressed: _isLoading ? null : _processTransfer,
                 child: _isLoading 
                   ? const CircularProgressIndicator(color: Colors.black) 
-                  : const Text("تأكيد التحويل الذهبي", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
+                  : const Text("إرسال الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
               ),
             ),
           ],
@@ -81,7 +115,7 @@ class _TransferScreenState extends State<TransferScreen> {
         enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white10), borderRadius: BorderRadius.circular(15)),
         focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFD4AF37)), borderRadius: BorderRadius.circular(15)),
       ),
-      keyboardType: TextInputType.phone,
+      keyboardType: TextInputType.number,
     );
   }
 }
