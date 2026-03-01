@@ -84,7 +84,7 @@ class _FeaturedSliderState extends State<FeaturedSlider> {
                   fit: StackFit.expand,
                   children: [
                     // هنا نضع الصورة (Image.network)
-                    Opacity(opacity: 0.4, child: Icon(Icons.Campaign, size: 80, color: gold)), 
+                    Opacity(opacity: 0.4, child: Icon(Icons.campaign, size: 80, color: gold)), 
                     Container(
                       padding: const EdgeInsets.all(20),
                       child: Column(
