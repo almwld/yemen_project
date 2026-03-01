@@ -1,25 +1,19 @@
-import 'services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/home_screen.dart';
-import 'screens/splash_screen.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService.init();
   
-  // 1. تشغيل واجهة فلكس يمن فوراً
-  runApp(const FlexYemenApp());
+  // ربط المنصة ببيانات هندس "الكبسي" الحقيقية
+  await Supabase.initialize(
+    url: 'https://ziqpohdxtemsmunnhlkm.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppcXBvaGR4dGVtc211bm5obGttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3ODQzNDcsImV4cCI6MjA4NzM2MDM0N30.ABAg5YZSrrAtBTWATJ3eRTmo4BuZVyVlrMV1HZjRWs0',
+  );
 
-  // 2. محاولة الربط الصامت بقاعدة البيانات
-  try {
-    await Supabase.initialize(
-      url: 'https://ziqpohdxtemsmunnhlkm.supabase.co',
-      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppcXBvaGR4dGVtc211bm5obGttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3ODQzNDcsImV4cCI6MjA4NzM2MDM0N30.ABAg5YZSrrAtBTWATJ3eRTmo4BuZVyVlrMV1HZjRWs0',
-    );
-  } catch (e) {
-    debugPrint("Background Sync: Database will connect shortly.");
-  }
+  await NotificationService.init();
+  runApp(const FlexYemenApp());
 }
 
 class FlexYemenApp extends StatelessWidget {
@@ -27,17 +21,15 @@ class FlexYemenApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color gold = const Color(0xFFD4AF37);
     return MaterialApp(
-      title: 'فلكس يمن - Super App',
+      title: 'فلكس يمن',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: gold,
+        primaryColor: const Color(0xFFD4AF37),
         scaffoldBackgroundColor: Colors.black,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.black, centerTitle: true),
+        fontFamily: 'Almarai', // لضمان ظهور الخط العربي بشكل احترافي
       ),
-      // الانطلاق من الشاشة الرئيسية مباشرة لتجنب التعليق
       home: const HomeScreen(),
     );
   }
