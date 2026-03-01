@@ -5,10 +5,10 @@ import 'screens/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // تهيئة سوبابيس (بيانات مشروع فلكس يمن)
+  // دمج مفاتيحك الخاصة فلكس يمن
   await Supabase.initialize(
-    url: 'https://pqqpivfylzlybbtasvbw.supabase.co',
-    anonKey: 'YOUR_ANON_KEY', // مفتاحك الآمن
+    url: 'https://zipqohdxtemsmunnhlkm.supabase.co',
+    anonKey: 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppcXBvaGR4dGVtc211bm5obGttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3ODQzNDcsImV4cCI6MjA4NzM2MDM0N30.ABAg5YZSrrAtBTWATJ3eRTmo4BuZVyVlrMV1HZjRWs0',
   );
 
   runApp(const FlexYemenApp());
@@ -24,8 +24,9 @@ class FlexYemenApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.black,
         primaryColor: const Color(0xFFD4AF37),
-        fontFamily: 'Tajawal', // الخط العربي الأنيق
+        fontFamily: 'Tajawal',
       ),
       home: const HomeScreen(),
     );
