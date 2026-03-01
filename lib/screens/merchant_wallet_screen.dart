@@ -1,3 +1,4 @@
+import 'bill_payment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/biometric_service.dart';
@@ -86,7 +87,7 @@ class _MerchantWalletScreenState extends State<MerchantWalletScreen> {
         childAspectRatio: 1.5,
         children: [
           _buildServiceBtn("تحويل أموال", Icons.send_rounded),
-          _buildServiceBtn("تسديد فواتير", Icons.receipt_long_rounded),
+          _buildServiceBtn("تسديد فواتير", Icons.receipt_long_rounded, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BillPaymentScreen()))),
           _buildServiceBtn("شحن رصيد", Icons.phone_android_rounded),
           _buildServiceBtn("طلب سحب", Icons.account_balance_rounded),
         ],
