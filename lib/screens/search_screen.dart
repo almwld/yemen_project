@@ -1,75 +1,120 @@
+import '../services/notification_service.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
   @override
-  _SearchScreenState createState() => _SearchScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  String _searchQuery = "";
+  final Color gold = const Color(0xFFD4AF37);
+  final supabase = Supabase.instance.client;
   
-  final List<Map<String, String>> _allData = [
-    {"title": "سيارة تويوتا 2022", "type": "سيارات", "price": "15,000\$"},
-    {"title": "شقة في حدة", "type": "عقارات", "price": "80,000\$"},
-    {"title": "جنبية صيفاني قديمة", "type": "مزادات", "price": "2,000\$"},
-    {"title": "آيفون 15 برو", "type": "إلكترونيات", "price": "1,100\$"},
-  ];
+  String selectedCity = "الكل";
+  String searchQuery = "";
+  List<dynamic> searchResults = [];
+  bool isLoading = false;
+
+  final List<String> yemenCities = ["الكل", "صنعاء", "عدن", "تعز", "إب", "حضرموت", "الحديدة", "مأرب"];
+
+  // دالة البحث الحقيقي من جداول سوبابيس
+  Future<void> performSearch(String query) async {
+    setState(() { isLoading = true; searchQuery = query; });
+    
+    try {
+      var request = supabase.from('items').select(); // نفترض أن الجدول الرئيسي اسمه items
+      
+      // التصفية حسب النص
+      if (query.isNotEmpty) {
+        request = request.ilike('title', '%$query%');
+      }
+      
+      // التصفية حسب المحافظة
+      if (selectedCity != "الكل") {
+        request = request.eq('city', selectedCity);
+      }
+
+      final data = await request.limit(20);
+      setState(() { searchResults = data; isLoading = false; });
+    } catch (e) {
+      setState(() { isLoading = false; });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    var filteredResults = _allData
-        .where((item) => item['title']!.contains(_searchQuery) || item['type']!.contains(_searchQuery))
-        .toList();
-
     return Scaffold(
-      backgroundColor: Color(0xFF0A0A0A),
+      backgroundColor: Colors.black,
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: TextField(
-          autofocus: true,
-          style: TextStyle(color: Colors.white),
+          onChanged: (value) => performSearch(value),
+          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            hintText: "ابحث عن سيارة، عقار، أو مزاد...",
-            hintStyle: TextStyle(color: Colors.white54),
+            hintText: "ابحث في $selectedCity...",
+            hintStyle: TextStyle(color: gold.withOpacity(0.5)),
+            suffixIcon: Icon(Icons.search, color: gold),
             border: InputBorder.none,
           ),
-          onChanged: (val) => setState(() => _searchQuery = val),
         ),
       ),
       body: Column(
         children: [
-          _buildFilterChips(),
-          Expanded(
-            child: filteredResults.isEmpty 
-              ? Center(child: Text("لا توجد نتائج مطابقة لبحثك"))
-              : ListView.builder(
-                  itemCount: filteredResults.length,
-                  itemBuilder: (context, index) => ListTile(
-                    leading: Icon(Icons.search, color: Colors.amber),
-                    title: Text(filteredResults[index]['title']!),
-                    subtitle: Text(filteredResults[index]['type']!),
-                    trailing: Text(filteredResults[index]['price']!, style: TextStyle(color: Colors.green)),
+          // شريط المحافظات
+          Container(
+            height: 50,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: yemenCities.length,
+              itemBuilder: (context, index) {
+                bool isSelected = selectedCity == yemenCities[index];
+                return GestureDetector(
+                  onTap: () {
+                    setState(() => selectedCity = yemenCities[index]);
+                    NotificationService.showNotification(title: "تم تغيير المنطقة", body: "أنت الآن تتصفح أحدث العروض في $selectedCity");
+                    performSearch(searchQuery);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    decoration: BoxDecoration(
+                      color: isSelected ? gold : Colors.grey[900],
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
+                      child: Text(yemenCities[index], 
+                        style: TextStyle(color: isSelected ? Colors.black : Colors.white)),
+                    ),
                   ),
-                ),
+                );
+              },
+            ),
+          ),
+          
+          // نتائج البحث
+          Expanded(
+            child: isLoading 
+              ? Center(child: CircularProgressIndicator(color: gold))
+              : searchResults.isEmpty 
+                ? Center(child: Text("لا توجد نتائج مطابقة", style: TextStyle(color: gold.withOpacity(0.5))))
+                : ListView.builder(
+                    itemCount: searchResults.length,
+                    itemBuilder: (context, index) {
+                      final item = searchResults[index];
+                      return ListTile(
+                        leading: Icon(Icons.shopping_bag_outlined, color: gold),
+                        title: Text(item['title'] ?? '', style: const TextStyle(color: Colors.white)),
+                        subtitle: Text(item['city'] ?? '', style: TextStyle(color: gold.withOpacity(0.7))),
+                        trailing: Text("${item['price']} ريال", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+                      );
+                    },
+                  ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFilterChips() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.all(10),
-      child: Row(
-        children: ["الكل", "سيارات", "عقارات", "مزادات", "مقتنيات"].map((filter) => Padding(
-          padding: EdgeInsets.only(right: 8),
-          child: ChoiceChip(
-            label: Text(filter),
-            selected: false,
-            onSelected: (val) {},
-            backgroundColor: Color(0xFF1E1E1E),
-          ),
-        )).toList(),
       ),
     );
   }

@@ -1,96 +1,105 @@
+import 'invoice_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
-  final Map<String, dynamic> product;
+  final Map<String, dynamic> item;
+  const ProductDetailsScreen({super.key, required this.item});
 
-  const ProductDetailsScreen({super.key, required this.product});
+  final Color gold = const Color(0xFFD4AF37);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      extendBodyBehindAppBar: true,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // صورة المنتج الكبيرة
-            Hero(
-              tag: 'product-${product['id']}',
-              child: Image.network(
-                product['image_url'] ?? '',
-                width: double.infinity,
-                height: 400,
-                fit: BoxFit.cover,
-              ),
+      body: CustomScrollView(
+        slivers: [
+          // 1. صورة المنتج مع زر الرجوع
+          SliverAppBar(
+            expandedHeight: 350,
+            backgroundColor: Colors.black,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Image.network(item['image_url'] ?? '', fit: BoxFit.cover),
             ),
-            
-            Padding(
-              padding: const EdgeInsets.all(20.0),
+            leading: CircleAvatar(
+              backgroundColor: Colors.black54,
+              child: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
+            ),
+          ),
+          
+          // 2. محتوى التفاصيل
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // اسم المنتج والسعر
+                  Text(item['title'], style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  Text("${item['price']} ريال يمني", style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Text(
-                          product['name'],
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Text(
-                        "${product['price']} ريال",
-                        style: const TextStyle(fontSize: 22, color: Color(0xFFD4AF37), fontWeight: FontWeight.bold),
-                      ),
+                      Icon(Icons.location_on, color: gold, size: 18),
+                      const SizedBox(width: 5),
+                      Text(item['city'], style: const TextStyle(color: Colors.white70)),
+                      const Spacer(),
+                      const Icon(Icons.star, color: Colors.amber, size: 18),
+                      const Text(" 4.8", style: TextStyle(color: Colors.white)),
                     ],
                   ),
+                  const Divider(color: Colors.white24, height: 40),
+                  const Text("الوصف", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  const Text("وصف المنتج:", style: TextStyle(color: Colors.grey, fontSize: 16)),
-                  const SizedBox(height: 8),
-                  Text(
-                    product['description'] ?? "لا يوجد وصف متوفر لهذا المنتج حالياً.",
-                    style: const TextStyle(fontSize: 16, height: 1.5),
-                  ),
-                  const SizedBox(height: 30),
-                  
-                  // زر الإضافة للعربة
-                  SizedBox(
-                    width: double.infinity,
-                    height: 55,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFD4AF37),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      onPressed: () {
-                        // سنربط منطق العربة هنا لاحقاً
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("تمت الإضافة إلى العربة")),
-                        );
-                      },
-                      icon: const Icon(Icons.shopping_cart_checkout, color: Colors.black),
-                      label: const Text(
-                        "أضف إلى العربة",
-                        style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
+                  Text(item['description'] ?? 'لا يوجد وصف متاح لهذا المنتج.', style: const TextStyle(color: Colors.white70, fontSize: 15, height: 1.5)),
+                  const SizedBox(height: 100), // مساحة للأزرار السفلية
                 ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      
+      // 3. أزرار التواصل والشراء السفلية (Sticky Bottom Bar)
+      bottomSheet: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        color: Colors.grey[900],
+        child: Row(
+          children: [
+            // زر الواتساب
+            _buildContactButton(Icons.chat, Colors.green, () => _launchURL("https://wa.me/967xxxxxxxxx")),
+            const SizedBox(width: 10),
+            // زر الاتصال
+            _buildContactButton(Icons.phone, Colors.blue, () => _launchURL("tel:967xxxxxxxxx")),
+            const SizedBox(width: 15),
+            // زر الشراء عبر المحفظة
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: gold, padding: const EdgeInsets.symmetric(vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                onPressed: () {
+                  // هنا يتم استدعاء منطق خصم الرصيد من المحفظة
+                },
+                child: const Text("شراء الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildContactButton(IconData icon, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(10), border: Border.all(color: color)),
+        child: Icon(icon, color: color),
+      ),
+    );
+  }
+
+  void _launchURL(String url) async {
+    if (await canLaunch(url)) { await launch(url); }
   }
 }

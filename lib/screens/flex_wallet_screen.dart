@@ -1,3 +1,4 @@
+import '../services/database_helper.dart';
 import 'package:flutter/material.dart';
 
 class FlexWalletScreen extends StatelessWidget {

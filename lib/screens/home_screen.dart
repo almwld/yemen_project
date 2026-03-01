@@ -1,125 +1,157 @@
+import 'product_details_screen.dart';
 import 'package:flutter/material.dart';
-// استيراد الشاشات الفعلية الموجودة في مشروعك
-import 'flex_wallet_screen.dart';
-import 'marketplace_screen.dart';
-import 'delivery_map_screen.dart';
-import 'auctions_screen.dart';
-import 'real_estate_screen.dart';
-import 'admin_panel_screen.dart';
-import 'profile_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'search_screen.dart';
+import 'add_item_screen.dart';
+import '../widgets/main_drawer.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final Color gold = const Color(0xFFD4AF37);
+  final supabase = Supabase.instance.client;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(child: Container(color: Colors.black)), // سأترك لك برمجة القائمة لاحقاً
+      backgroundColor: Colors.black,
+      drawer: const MainDrawer(),
       appBar: AppBar(
-        title: Text("FLEX YEMEN", style: TextStyle(color: gold, fontWeight: FontWeight.bold, letterSpacing: 2)),
-        actions: [
-          IconButton(icon: Icon(Icons.qr_code_scanner, color: gold), onPressed: () {}),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildHeroSection(),
-            _buildServiceGrid(context),
-            _buildQuickActions(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
-        selectedItemColor: gold,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'المحفظة'),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'اكتشف'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeroSection() {
-    return Container(
-      height: 180,
-      width: double.infinity,
-      margin: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(colors: [Color(0xFF1A1A1A), Colors.black]),
-        border: Border.all(color: gold.withOpacity(0.3)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.auto_awesome, color: gold, size: 40),
-          const SizedBox(height: 10),
-          const Text("فلكس يمن - منصة المستقبل", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          Text("كل ما تحتاجه في مكان واحد", style: TextStyle(color: gold.withOpacity(0.7))),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildServiceGrid(BuildContext context) {
-    final List<Map<String, dynamic>> services = [
-      {'title': 'المول', 'icon': Icons.shopping_cart, 'screen': MarketplaceScreen()},
-      {'title': 'المحفظة', 'icon': Icons.account_balance_wallet, 'screen': FlexWalletScreen()},
-      {'title': 'المزادات', 'icon': Icons.gavel, 'screen': AuctionsScreen()},
-      {'title': 'التوصيل', 'icon': Icons.local_shipping, 'screen': DeliveryMapScreen()},
-      {'title': 'عقارات', 'icon': Icons.apartment, 'screen': RealEstateScreen()},
-      {'title': 'الإدارة', 'icon': Icons.admin_panel_settings, 'screen': AdminPanelScreen()},
-    ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(15),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisSpacing: 15, crossAxisSpacing: 15),
-      itemCount: services.length,
-      itemBuilder: (context, index) {
-        return InkWell(
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => services[index]['screen'])),
+        elevation: 0,
+        title: GestureDetector(
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchScreen())),
           child: Container(
-            decoration: BoxDecoration(color: const Color(0xFF111111), borderRadius: BorderRadius.circular(15), border: Border.all(color: gold.withOpacity(0.1))),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey[900],
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(color: gold.withOpacity(0.3)),
+            ),
+            child: Row(
               children: [
-                Icon(services[index]['icon'], color: gold, size: 30),
-                const SizedBox(height: 8),
-                Text(services[index]['title'], style: const TextStyle(color: Colors.white, fontSize: 12)),
+                Icon(Icons.search, color: gold, size: 20),
+                const SizedBox(width: 10),
+                Text("ابحث في فلكس يمن...", style: TextStyle(color: gold.withOpacity(0.5), fontSize: 14)),
               ],
             ),
           ),
-        );
-      },
+        ),
+        actions: [
+          IconButton(icon: Icon(Icons.notifications_none, color: gold), onPressed: () {}),
+        ],
+      ),
+      body: CustomScrollView(
+        slivers: [
+          // 1. شريط الأقسام (Categories)
+          SliverToBoxAdapter(
+            child: Container(
+              height: 100,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _buildCategoryItem("المول", Icons.shopping_bag),
+                  _buildCategoryItem("عقارات", Icons.home),
+                  _buildCategoryItem("سيارات", Icons.directions_car),
+                  _buildCategoryItem("مزادات", Icons.gavel),
+                  _buildCategoryItem("خدمات", Icons.build),
+                ],
+              ),
+            ),
+          ),
+          
+          // 2. عنوان "اكتشف العروض"
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(15),
+              child: Text("أحدث العروض الحصرية", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+          ),
+
+          // 3. شبكة المنتجات (Product Grid) - تشبه أمازون
+          StreamBuilder<List<Map<String, dynamic>>>(
+            stream: supabase.from('items').stream(primaryKey: ['id']).order('created_at'),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
+              final items = snapshot.data!;
+              return SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.75,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => _buildProductCard(items[index]),
+                    childCount: items.length,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: gold,
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddItemScreen())),
+        child: const Icon(Icons.add, color: Colors.black, size: 30),
+      ),
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildCategoryItem(String title, IconData icon) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      width: 80,
+      child: Column(
+        children: [
+          CircleAvatar(backgroundColor: Colors.grey[900], radius: 25, child: Icon(icon, color: gold)),
+          const SizedBox(height: 5),
+          Text(title, style: const TextStyle(color: Colors.white, fontSize: 12)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductCard(Map<String, dynamic> item) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[900],
+        borderRadius: BorderRadius.circular(15),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("وصول سريع", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
-          ListTile(
-            leading: Icon(Icons.flash_on, color: gold),
-            title: const Text("شحن فوري للرصيد"),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+          Expanded(
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+              child: Image.network(item['image_url'] ?? '', fit: BoxFit.cover, width: double.infinity),
+            ),
           ),
-          ListTile(
-            leading: Icon(Icons.map, color: gold),
-            title: const Text("تتبع الطلبات الحية"),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item['title'], maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text("${item['price']} ريال", style: TextStyle(color: gold, fontSize: 16, fontWeight: FontWeight.bold)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(item['city'], style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                    Icon(Icons.favorite_border, color: gold, size: 16),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
