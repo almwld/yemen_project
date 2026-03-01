@@ -1,3 +1,4 @@
+import 'merchant_wallet_screen.dart';
 import 'market_explorer_screen.dart';
 import 'add_product_screen.dart';
 import 'add_product_screen.dart';
