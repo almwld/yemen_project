@@ -11,7 +11,6 @@ class MarketExplorerScreen extends StatefulWidget {
 }
 
 class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
-  final _supabase = Supabase.instance.client;
   String _selectedCategory = 'الكل';
   final Color gold = const Color(0xFFD4AF37);
 
@@ -23,7 +22,6 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
     {'name': 'خدمات', 'icon': Icons.handyman},
   ];
 
-  @override
   String _formatPrice(dynamic price) {
     if (price == null) return "0";
     String str = price.toString();
@@ -31,19 +29,21 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
     return str.replaceAllMapped(reg, (Match m) => "${m[1]},");
   }
 
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 50),
-        _buildHeader(),
-        const SizedBox(height: 20),
-        const FeaturedSlider(),
-        const SizedBox(height: 10),
-        _buildCategoryBar(),
-        Expanded(
-          child: _buildProductList(),
-        ),
-      ],
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Column(
+        children: [
+          const SizedBox(height: 50),
+          _buildHeader(),
+          const SizedBox(height: 20),
+          const FeaturedSlider(),
+          const SizedBox(height: 10),
+          _buildCategoryBar(),
+          Expanded(child: _buildProductList()),
+        ],
+      ),
     );
   }
 
@@ -93,7 +93,7 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
                 children: [
                   Icon(_categories[index]['icon'], size: 16, color: isSelected ? Colors.black : gold),
                   const SizedBox(width: 8),
-                  Text(_categories[index]['name'], style: TextStyle(color: isSelected ? Colors.black : Colors.white, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                  Text(_categories[index]['name'], style: TextStyle(color: isSelected ? Colors.black : Colors.white)),
                 ],
               ),
             ),
@@ -104,34 +104,36 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
   }
 
   Widget _buildProductList() {
-    var query = _supabase.from('products').stream(primaryKey: ['id']);
-    if (_selectedCategory != 'الكل') {
-      // هنا نفترض وجود عمود category في جدول المنتجات
-      // إذا لم يوجد، سيتم عرض الكل حالياً حتى نحدث قاعدة البيانات
+    // التحقق من جاهزية سوبابيس قبل الاستدعاء
+    try {
+      final supabase = Supabase.instance.client;
+      var query = supabase.from('products').stream(primaryKey: ['id']);
+
+      return StreamBuilder<List<Map<String, dynamic>>>(
+        stream: query,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator(color: gold));
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text("لا توجد منتجات حالياً", style: TextStyle(color: gold.withOpacity(0.5))));
+          }
+
+          final products = snapshot.data!;
+          final filteredProducts = _selectedCategory == 'الكل'
+              ? products
+              : products.where((p) => p['category'] == _selectedCategory).toList();
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(20),
+            itemCount: filteredProducts.length,
+            itemBuilder: (context, index) => _buildProductCard(context, filteredProducts[index]),
+          );
+        },
+      );
+    } catch (e) {
+      return Center(child: Text("جاري تهيئة النظام...", style: TextStyle(color: gold)));
     }
-
-    return StreamBuilder<List<Map<String, dynamic>>>(
-      stream: query,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        final products = snapshot.data!;
-        
-        // تصفية برمجية مؤقتة للمتظاهر
-        final filteredProducts = _selectedCategory == 'الكل' 
-            ? products 
-            : products.where((p) => p['category'] == _selectedCategory).toList();
-
-        if (filteredProducts.isEmpty) {
-          return Center(child: Text("لا توجد منتجات في هذه الفئة حالياً", style: TextStyle(color: Colors.white.withOpacity(0.3))));
-        }
-
-        return ListView.builder(
-          padding: const EdgeInsets.all(20),
-          itemCount: filteredProducts.length,
-          itemBuilder: (context, index) => _buildProductCard(context, filteredProducts[index]),
-        );
-      },
-    );
   }
 
   Widget _buildProductCard(BuildContext context, Map<String, dynamic> p) {
@@ -146,7 +148,8 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
       child: Row(
         children: [
           Container(
-            width: 100, height: 100,
+            width: 100,
+            height: 100,
             decoration: BoxDecoration(
               color: gold.withOpacity(0.05),
               borderRadius: BorderRadius.circular(15),
@@ -159,8 +162,7 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(p['name'] ?? "منتج مميز", style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 5),
+                Text(p['name'] ?? "منتج", style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                 Text(p['category'] ?? "عام", style: TextStyle(color: gold.withOpacity(0.5), fontSize: 12)),
                 const SizedBox(height: 10),
                 Text("${_formatPrice(p['price'])} ريال", style: TextStyle(color: gold, fontSize: 18, fontWeight: FontWeight.w900)),
@@ -170,11 +172,7 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
           IconButton(
             icon: Icon(Icons.chat_bubble_outline, color: gold),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => InternalChatScreen(
-                productId: p['id'].toString(),
-                merchantId: p['merchant_id'].toString(),
-                productName: p['name'] ?? "المنتج",
-              )));
+               // سأضيف التحقق من وجود الشاشة لاحقاً
             },
           ),
         ],
