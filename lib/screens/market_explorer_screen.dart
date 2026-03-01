@@ -1,7 +1,7 @@
-import '../services/seed_service.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'internal_chat_screen.dart';
+import '../services/seed_service.dart';
 
 class MarketExplorerScreen extends StatefulWidget {
   const MarketExplorerScreen({super.key});
@@ -13,6 +13,14 @@ class MarketExplorerScreen extends StatefulWidget {
 class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
   final _supabase = Supabase.instance.client;
   String _selectedCategory = 'الكل';
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    SeedService.insertDefaultProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +28,11 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("معرض فلكس VIP", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+        title: _buildSearchField(gold),
         backgroundColor: Colors.black,
+        elevation: 0,
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
+          preferredSize: const Size.fromHeight(60),
           child: _buildCategoryBar(gold),
         ),
       ),
@@ -32,13 +41,18 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
           
-          final products = _selectedCategory == 'الكل' 
-              ? snapshot.data! 
-              : snapshot.data!.where((p) => p['category'] == _selectedCategory).toList();
+          // منطق الفلترة المزدوج (فئة + بحث)
+          final products = snapshot.data!.where((p) {
+            final matchesCategory = _selectedCategory == 'الكل' || p['category'] == _selectedCategory;
+            final matchesSearch = p['name'].toString().toLowerCase().contains(_searchQuery.toLowerCase()) || 
+                                p['description'].toString().toLowerCase().contains(_searchQuery.toLowerCase());
+            return matchesCategory && matchesSearch;
+          }).toList();
 
-          if (products.isEmpty) return const Center(child: Text("لا توجد منتجات حالياً", style: TextStyle(color: Colors.white54)));
+          if (products.isEmpty) return _buildEmptyState();
 
-          return GridView.builder(physics: const BouncingScrollPhysics(),(
+          return GridView.builder(
+            physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.all(15),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -47,20 +61,34 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
               mainAxisSpacing: 15,
             ),
             itemCount: products.length,
-            itemBuilder: (context, index) {
-              final p = products[index];
-              return _buildProductCard(p, gold);
-            },
+            itemBuilder: (context, index) => _buildProductCard(products[index], gold),
           );
         },
       ),
     );
   }
 
+  Widget _buildSearchField(Color gold) {
+    return TextField(
+      controller: _searchController,
+      style: const TextStyle(color: Colors.white),
+      onChanged: (value) => setState(() => _searchQuery = value),
+      decoration: InputDecoration(
+        hintText: "ابحث عن سيارات، عقارات، أو جوالات...",
+        hintStyle: const TextStyle(color: Colors.white24, fontSize: 14),
+        prefixIcon: Icon(Icons.search, color: gold),
+        filled: true,
+        fillColor: Colors.white10,
+        contentPadding: const EdgeInsets.symmetric(vertical: 0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+      ),
+    );
+  }
+
   Widget _buildCategoryBar(Color gold) {
     List<String> cats = ['الكل', 'عقارات', 'سيارات', 'إلكترونيات', 'خدمات'];
-    return SizedBox(
-      height: 50,
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: cats.length,
@@ -80,51 +108,42 @@ class _MarketExplorerScreenState extends State<MarketExplorerScreen> {
     );
   }
 
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off, color: Colors.white24, size: 80),
+          const SizedBox(height: 20),
+          Text("عذراً، لم نجد ما تبحث عنه في سوق فلكس", style: TextStyle(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+
   Widget _buildProductCard(Map<String, dynamic> p, Color gold) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[900],
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: gold.withOpacity(0.3)),
+        border: Border.all(color: gold.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: gold.withOpacity(0.1),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-              ),
-              child: Center(child: Icon(Icons.image, color: gold.withOpacity(0.5), size: 50)),
-            ),
-          ),
+          Expanded(child: Container(color: gold.withOpacity(0.05), child: Center(child: Icon(Icons.image, color: gold.withOpacity(0.3), size: 40)))),
           Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(p['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14), maxLines: 1),
-                Text("${p['price']} ريال", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => InternalChatScreen(
-                    receiverId: p['merchant_id'],
-                    receiverName: "تاجر فلكس",
-                    productId: p['id'],
-                  ))),
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(color: gold, borderRadius: BorderRadius.circular(5)),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.chat_bubble_outline, size: 14, color: Colors.black),
-                        SizedBox(width: 5),
-                        Text("مراسلة التاجر", style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ),
+                Text(p['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13), maxLines: 1),
+                Text("${p['price']} ريال", style: TextStyle(color: gold, fontSize: 12, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 5),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: gold, minimumSize: const Size(double.infinity, 30)),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => InternalChatScreen(receiverId: p['merchant_id'], receiverName: "التاجر", productId: p['id']))),
+                  child: const Text("مراسلة", style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
