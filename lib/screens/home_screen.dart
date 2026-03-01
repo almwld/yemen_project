@@ -1,3 +1,4 @@
+import 'merchant_wallet_screen.dart';
 import 'profile_screen.dart';
 import 'merchant_wallet_screen.dart';
 import 'market_explorer_screen.dart';
@@ -70,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisSpacing: 15,
                     crossAxisSpacing: 15,
                     children: [
-                      GestureDetector(onTap: () async { bool authenticated = await BiometricService.authenticate(); if(authenticated) { Navigator.push(context, MaterialPageRoute(builder: (context) => const FlexWalletScreen())); } }, child: _buildGoldService("المحفظة", Icons.account_balance_wallet)),
+                      GestureDetector(onTap: () async { bool authenticated = await BiometricService.authenticate(); if(authenticated) { Navigator.push(context, MaterialPageRoute(builder: (context) => const MerchantWalletScreen())); } }, child: _buildGoldService("المحفظة", Icons.account_balance_wallet)),
                       GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TransferScreen())), child: _buildGoldService("تحويل أموال", Icons.swap_horizontal_circle)),
                       _buildGoldService("تسديد فواتير", Icons.receipt_long),
                       GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MarketExplorerScreen())), child: _buildGoldService("سوق فلكس", Icons.shopping_bag)),

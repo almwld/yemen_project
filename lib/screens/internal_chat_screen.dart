@@ -28,7 +28,7 @@ class _InternalChatScreenState extends State<InternalChatScreen> {
     super.initState();
     _messageStream = _supabase
         .from('internal_messages')
-        .stream(primary_key: ['id'])
+        .stream(primaryKey: ['id'])
         .order('created_at')
         .map((maps) => maps.where((m) => 
             (m['sender_id'] == _supabase.auth.currentUser!.id && m['receiver_id'] == widget.receiverId) ||

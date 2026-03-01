@@ -52,7 +52,7 @@ class GoldNotification {
         backgroundColor: const Color(0xFF121212),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25),
-          side: Border.all(color: gold, width: 1),
+          side: BorderSide(color: gold, width: 1),
         ),
         title: Text(title, style: TextStyle(color: gold, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
         content: Text(content, style: const TextStyle(color: Colors.white70), textAlign: TextAlign.center),
