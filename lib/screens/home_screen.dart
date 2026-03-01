@@ -1,3 +1,4 @@
+import '../services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'qr_scanner_screen.dart';
 import 'transactions_screen.dart';
