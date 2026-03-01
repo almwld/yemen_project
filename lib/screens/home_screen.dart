@@ -1,3 +1,5 @@
+import 'add_product_screen.dart';
+import 'add_product_screen.dart';
 import 'internal_chat_screen.dart';
 import 'merchant_dashboard.dart';
 import 'transfer_screen.dart';
@@ -68,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       GestureDetector(onTap: () async { bool authenticated = await BiometricService.authenticate(); if(authenticated) { Navigator.push(context, MaterialPageRoute(builder: (context) => const FlexWalletScreen())); } }, child: _buildGoldService("المحفظة", Icons.account_balance_wallet)),
                       GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TransferScreen())), child: _buildGoldService("تحويل أموال", Icons.swap_horizontal_circle)),
                       _buildGoldService("تسديد فواتير", Icons.receipt_long),
-                      _buildGoldService("سوق فلكس", Icons.shopping_bag),
+                      GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddProductScreen())), child: _buildGoldService("سوق فلكس", Icons.shopping_bag)),
                       _buildGoldService("عقارات VIP", Icons.location_city),
                       _buildGoldService("سيارات", Icons.directions_car),
                       GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MerchantDashboard())), child: _buildGoldService("لوحة التاجر", Icons.storefront_outlined)),

@@ -9,94 +9,85 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
-  // استدعاء الكلاينت مباشرة لتجنب خطأ التعديل المتأخر
-  final _supabase = Supabase.instance.client;
-  
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
+  final _descController = TextEditingController();
+  String _selectedCategory = 'إلكترونيات';
   bool _isLoading = false;
 
-  Future<void> _uploadProduct() async {
-    if (_nameController.text.isEmpty || _priceController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("يرجى ملء جميع الحقول")),
-      );
-      return;
-    }
-
+  void _uploadProduct() async {
     setState(() => _isLoading = true);
-
     try {
-      await _supabase.from('products').insert({
+      final user = Supabase.instance.client.auth.currentUser;
+      await Supabase.instance.client.from('products').insert({
+        'merchant_id': user!.id,
         'name': _nameController.text,
         'price': double.parse(_priceController.text),
-        'image_url': 'https://via.placeholder.com/150', // صورة افتراضية مؤقتاً
+        'description': _descController.text,
+        'category': _selectedCategory,
       });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("تم نشر المنتج بنجاح في فلكس يمن!")),
-        );
-        Navigator.pop(context);
-      }
+      Navigator.pop(context);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("خطأ في الرفع: $e")),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("خطأ: $e")));
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    const Color gold = Color(0xFFD4AF37);
+    final Color gold = const Color(0xFFD4AF37);
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text("إضافة منتج جديد", style: TextStyle(color: gold)),
-        backgroundColor: Colors.black,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      appBar: AppBar(title: Text("إضافة منتج VIP", style: TextStyle(color: gold)), backgroundColor: Colors.black),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(25),
         child: Column(
           children: [
-            TextField(
-              controller: _nameController,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: "اسم المنتج",
-                labelStyle: TextStyle(color: gold),
-                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: gold)),
-              ),
-            ),
+            _buildField("اسم المنتج", _nameController, Icons.shopping_bag),
+            const SizedBox(height: 15),
+            _buildField("السعر (ريال يمني)", _priceController, Icons.payments, isNumber: true),
+            const SizedBox(height: 15),
+            _buildField("وصف المختصر", _descController, Icons.description, maxLines: 3),
             const SizedBox(height: 20),
-            TextField(
-              controller: _priceController,
-              keyboardType: TextInputType.number,
+            DropdownButtonFormField<String>(
+              value: _selectedCategory,
+              dropdownColor: Colors.grey[900],
               style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: "السعر",
-                labelStyle: TextStyle(color: gold),
-                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: gold)),
-              ),
+              decoration: InputDecoration(labelText: "الفئة", labelStyle: TextStyle(color: gold)),
+              items: ['إلكترونيات', 'عقارات', 'سيارات', 'خدمات'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: (v) => setState(() => _selectedCategory = v!),
             ),
             const SizedBox(height: 40),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: gold),
-                onPressed: _isLoading ? null : _uploadProduct,
-                child: _isLoading 
-                  ? const CircularProgressIndicator(color: Colors.black)
-                  : const Text("نشر في المتجر الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-              ),
-            ),
+            S誘Btn(gold),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildField(String label, TextEditingController controller, IconData icon, {bool isNumber = false, int maxLines = 1}) {
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: const Color(0xFFD4AF37)),
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.white54),
+        enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white10)),
+      ),
+    );
+  }
+
+  Widget S誘Btn(Color gold) {
+    return SizedBox(
+      width: double.infinity, height: 50,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: gold),
+        onPressed: _isLoading ? null : _uploadProduct,
+        child: _isLoading ? const CircularProgressIndicator() : const Text("نشر في السوق الذهبي", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
     );
   }
