@@ -63,6 +63,7 @@ class MerchantDashboard extends StatelessWidget {
             _buildMerchantAction(Icons.print, "طباعة ملصق المحل", gold),
             _buildMerchantAction(Icons.account_balance, "طلب سحب الأرباح بالكريمي", Colors.blueAccent),
             _buildMerchantAction(Icons.history, "سجل المبيعات المفصل", Colors.white54),
+            _buildMerchantAction(Icons.confirmation_number_outlined, "إنشاء كود خصم جديد", Colors.pinkAccent),
           ],
         ),
       ),
