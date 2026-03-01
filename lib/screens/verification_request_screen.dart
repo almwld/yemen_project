@@ -103,7 +103,7 @@ class _VerificationRequestScreenState extends State<VerificationRequestScreen> {
           child: Container(
             height: 150,
             width: double.infinity,
-            decoration: BoxDecoration(color: Colors.white05, borderRadius: BorderRadius.circular(15), border: Border.all(color: gold.withOpacity(0.1))),
+            decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(15), border: Border.all(color: gold.withOpacity(0.1))),
             child: _image == null 
               ? Icon(Icons.add_a_photo_outlined, size: 50, color: gold) 
               : Image.file(_image!, fit: BoxFit.cover),

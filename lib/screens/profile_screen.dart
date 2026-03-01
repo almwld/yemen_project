@@ -96,7 +96,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileOption(String title, IconData icon, Color gold) {
+  Widget _buildProfileOption(String title, IconData icon, Color gold, {VoidCallback? onTap}) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
@@ -107,7 +107,7 @@ class ProfileScreen extends StatelessWidget {
         leading: Icon(icon, color: gold),
         title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 14)),
         trailing: Icon(Icons.arrow_forward_ios, color: gold.withOpacity(0.3), size: 16),
-        onTap: () {},
+        onTap: onTap,
       ),
     );
   }
