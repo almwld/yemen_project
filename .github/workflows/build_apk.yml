@@ -1,8 +1,13 @@
-name: Build Flex Yemen APK (Final Force)
+name: Build Flex Yemen APK
 
 on:
   push:
     branches: [ main ]
+
+# هذه الميزة تمنع البناء المزدوج وتلغي القديم تلقائياً
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -21,11 +26,9 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Force Clean & Repair
+      - name: Prepare Environment
         run: |
           flutter clean
-          rm -rf android/.gradle
-          rm -f android/local.properties
           echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
           echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
           flutter pub get
@@ -36,5 +39,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Flex-Yemen-Final
+          name: Flex-Yemen-Release
           path: build/app/outputs/flutter-apk/app-release.apk
