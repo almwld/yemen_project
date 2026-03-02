@@ -25,19 +25,19 @@ class RealEstateHome extends StatefulWidget {
 class _RealEstateHomeState extends State<RealEstateHome> {
   int _currentSlide = 0;
   final List<Map<String, String>> propertyList = [
-    {'img': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500', 'title': 'فيلا النخبة - حدة', 'price': '250,000$'},
-    {'img': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500', 'title': 'شقة الستين المودرن', 'price': '95,000$'},
-    {'img': 'https://images.unsplash.com/photo-1582408921715-18e7806365c1?w=500', 'title': 'عمارة تجارية استثمارية', 'price': '450,000$'},
-    {'img': 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500', 'title': 'مكاتب رجال الأعمال', 'price': '2,500$/شهر'},
-    {'img': 'https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?w=500', 'title': 'شقة سكنية - الأصبحي', 'price': '60,000$'},
-    {'img': 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500', 'title': 'أرض سكنية - عصر', 'price': '180,000$'},
+    {'img': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500', 'title': 'فيلا النخبة - حدة', 'price': '250,000\$'},
+    {'img': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500', 'title': 'شقة الستين المودرن', 'price': '95,000\$'},
+    {'img': 'https://images.unsplash.com/photo-1582408921715-18e7806365c1?w=500', 'title': 'عمارة تجارية استثمارية', 'price': '450,000\$'},
+    {'img': 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500', 'title': 'مكاتب رجال الأعمال', 'price': '2,500\$/شهر'},
+    {'img': 'https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?w=500', 'title': 'شقة سكنية - الأصبحي', 'price': '60,000\$'},
+    {'img': 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500', 'title': 'أرض سكنية - عصر', 'price': '180,000\$'},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("فلكس عقارات 🇾🇪", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+        title: Text("عقارات فلكس 🇾🇪", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
@@ -69,7 +69,6 @@ class _RealEstateHomeState extends State<RealEstateHome> {
                 );
               }).toList(),
             ),
-            // هنا يمكنك إضافة الأقسام لاحقاً
           ],
         ),
       ),
