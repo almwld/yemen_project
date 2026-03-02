@@ -8,3 +8,5 @@ build/
 **/ios/Runner/GeneratedPluginRegistrant.*
 **/build/
 **/flutter_export_environment.sh
+build/
+.dart_tool/
