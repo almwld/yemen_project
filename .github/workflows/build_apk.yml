@@ -26,22 +26,16 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Reconstruct Android Project
+      - name: Master Reconstruction
         run: |
-          # مسح أي مخلفات سابقة
           flutter clean
-          
-          # إجبار فلوتر على إنشاء مجلد أندرويد جديد تماماً ومتوافق
-          flutter create . --platforms android --org com.almwld.yemen
-          
-          # جلب المكتبات
+          # خلق المشروع مع منع الكتابة فوق ملف build.gradle الذي أنشأناه للتو
+          flutter create . --platforms android --org com.almwld.yemen || true
           flutter pub get
           
-          # ضبط الخصائص للسيرفر
           echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
           echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
 
       - name: Build APK
         run: |
-          # البناء بصيغة Release للـ ARM64 فقط لتسريع العملية وتقليل الأخطاء
           flutter build apk --release --target-platform android-arm64 --no-tree-shake-icons
