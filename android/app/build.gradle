@@ -21,6 +21,19 @@ android {
     }
 }
 
+// هذا الجزء هو "المفتاح" الذي سيقضي على الـ 33 خطأ
+dependencies {
+    def flutterCompileMode = 'release'
+    if (project.hasProperty('target-platform')) {
+        def targetPlatform = project.property('target-platform')
+        if (targetPlatform.contains('arm64')) {
+            implementation "io.flutter:arm64_v8a_release:1.0.0-+"
+        }
+    }
+    implementation "io.flutter:flutter_embedding_release:1.0.0-+"
+    implementation "androidx.annotation:annotation:1.7.0"
+}
+
 flutter {
     source '../..'
 }
