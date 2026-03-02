@@ -1,4 +1,4 @@
-name: Build Flex Yemen APK
+name: Build Flex Yemen APK (Final Force)
 
 on:
   push:
@@ -19,11 +19,16 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0' # إجبار السيرفر على نسخة مستقرة 100%
           channel: 'stable'
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Force Clean & Repair
+        run: |
+          flutter clean
+          rm -rf android/.gradle
+          rm -f android/local.properties
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+          echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
+          flutter pub get
 
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
@@ -31,5 +36,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Flex-Yemen-Release
+          name: Flex-Yemen-Final
           path: build/app/outputs/flutter-apk/app-release.apk
