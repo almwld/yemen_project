@@ -26,13 +26,19 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Build Preparation
+      - name: Fix Android Linkage
         run: |
-          flutter clean
-          flutter pub get
-          # إنشاء ملف المسارات يدوياً لضمان الدقة
+          # حذف أي ملفات ربط قديمة تسبب التعارض
+          rm -rf android/app/src/main/java/io/flutter/plugins/
+          
+          # إعادة ضبط local.properties بشكل صحيح للسيرفر
           echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
           echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
-
+          
+          # تفعيل الربط التلقائي للمكتبات
+          flutter pub get
+          
       - name: Build APK
-        run: flutter build apk --release --no-tree-shake-icons
+        run: |
+          # سنستخدم أمر build مباشر يحاول إصلاح المشاكل تلقائياً
+          flutter build apk --release --no-tree-shake-icons --target-platform android-arm64
