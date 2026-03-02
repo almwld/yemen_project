@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'market_explorer_screen.dart';
+import 'add_product_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const MarketExplorerScreen(),
     const Center(child: Text("محرك البحث الذكي")),
     const Center(child: Text("التنبيهات الملكية")),
-    const Center(child: Text("واجهة رفع المنتجات")), // الزر المركزي
+    const AddProductScreen(), // الزر المركزي
     const Center(child: Text("المحفظة الرقمية")),
     const Center(child: Text("الدردشة الفورية")),
     const Center(child: Text("إعدادات الحساب")),
