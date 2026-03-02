@@ -21,7 +21,6 @@ android {
     }
 }
 
-// حذفنا الـ dependency اليدوي وتركنا فلوتر يدير الأمر عبر الـ plugin
 flutter {
     source '../..'
 }

@@ -4,3 +4,7 @@ build/
 .flutter-plugins
 .flutter-plugins-dependencies
 *.log
+**/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/build/
+**/flutter_export_environment.sh
