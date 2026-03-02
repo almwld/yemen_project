@@ -19,13 +19,13 @@ jobs:
           flutter-version: '3.22.2'
           channel: 'stable'
       
-      # هذه هي الخطوة السحرية: السيرفر سيقوم بإنشاء الملفات الناقصة
       - name: Recreate missing android files
         run: flutter create . --platforms android
 
-      - name: Build APK
+      - name: Build APK (Single File)
         run: |
           flutter pub get
+          # تم إزالة --split-per-abi لإنتاج ملف واحد شامل
           flutter build apk --release --no-tree-shake-icons
         
       - name: Upload APK
