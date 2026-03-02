@@ -26,19 +26,22 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Fix Android Linkage
+      - name: Reconstruct Android Project
         run: |
-          # حذف أي ملفات ربط قديمة تسبب التعارض
-          rm -rf android/app/src/main/java/io/flutter/plugins/
+          # مسح أي مخلفات سابقة
+          flutter clean
           
-          # إعادة ضبط local.properties بشكل صحيح للسيرفر
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
-          echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
+          # إجبار فلوتر على إنشاء مجلد أندرويد جديد تماماً ومتوافق
+          flutter create . --platforms android --org com.almwld.yemen
           
-          # تفعيل الربط التلقائي للمكتبات
+          # جلب المكتبات
           flutter pub get
           
+          # ضبط الخصائص للسيرفر
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+          echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
+
       - name: Build APK
         run: |
-          # سنستخدم أمر build مباشر يحاول إصلاح المشاكل تلقائياً
-          flutter build apk --release --no-tree-shake-icons --target-platform android-arm64
+          # البناء بصيغة Release للـ ARM64 فقط لتسريع العملية وتقليل الأخطاء
+          flutter build apk --release --target-platform android-arm64 --no-tree-shake-icons
