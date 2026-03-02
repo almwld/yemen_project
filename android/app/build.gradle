@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace "com.example.yemen_project"
+    namespace "com.example.yemen_project" // هذا يجب أن يطابق الـ package في MainActivity
     compileSdk 34
 
     compileOptions {
@@ -17,10 +17,6 @@ android {
         jvmTarget = '17'
     }
 
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
-
     defaultConfig {
         applicationId "com.example.yemen_project"
         minSdk 21
@@ -28,16 +24,4 @@ android {
         versionCode 1
         versionName "1.0.0"
     }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.debug
-            minifyEnabled false
-            shrinkResources false
-        }
-    }
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
