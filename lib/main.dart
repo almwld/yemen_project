@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 void main() => runApp(FlexYemenApp());
 
@@ -22,125 +23,83 @@ class MainNavigationScreen extends StatefulWidget {
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
-  int _selectedIndex = 4; // نبدأ بصفحة الحساب كما في طلبك
+  int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    Center(child: Text("الرئيسية")),
-    Center(child: Text("استكشف")),
-    Center(child: Text("أضف إعلان")),
-    Center(child: Text("المفضلة")),
-    AccountSettingsScreen(), // صفحة الحساب المبرمجة
+  // قائمة الصور الست (ضع روابط صورك هنا)
+  final List<String> imgList = [
+    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=500', // عقارات حدة
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=500', // فيلات مودرن
+    'https://images.unsplash.com/photo-1582408921715-18e7806365c1?q=80&w=500', // عقارات تجارية
+    'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=500', // مكاتب فاخرة
+    'https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=500', // شقق مفروشة
+    'https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=500', // استثمارات
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Text("فلكس يمن 🇾🇪", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+        centerTitle: true,
+      ),
+      body: _selectedIndex == 0 ? _buildHomeBody() : Center(child: Text("صفحة أخرى")),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.black,
         selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'استكشف'),
+          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'الأقسام'),
           BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'أضف'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'المفضلة'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'حسابي'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'خريطة'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
         ],
       ),
     );
   }
-}
 
-// واجهة إعدادات الحساب (نفس الصورة المرفقة)
-class AccountSettingsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("إعدادات الحساب", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black,
-        centerTitle: true,
-      ),
-      body: ListView(
-        children: [
-          // رأس الحساب (User Profile Header)
-          Container(
-            padding: EdgeInsets.all(20),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 35,
-                  backgroundColor: Colors.amber,
-                  child: Icon(Icons.person, size: 40, color: Colors.black),
-                ),
-                SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("اسم المستخدم", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 5),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Text("ID: 2026889", style: TextStyle(color: Colors.amber, fontSize: 12)),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Icon(Icons.edit_note, color: Colors.amber),
-              ],
-            ),
+  Widget _buildHomeBody() {
+    return ListView(
+      children: [
+        SizedBox(height: 15),
+        // السلايدر بـ 6 صور
+        CarouselSlider(
+          options: CarouselOptions(
+            height: 180.0,
+            enlargeCenterPage: true,
+            autoPlay: true,
+            aspectRatio: 16/9,
+            autoPlayCurve: Curves.fastOutSlowIn,
+            enableInfiniteScroll: true,
+            autoPlayAnimationDuration: Duration(milliseconds: 800),
+            viewportFraction: 0.85,
           ),
-
-          _buildSectionTitle("إدارة الأموال"),
-          _buildSettingsItem(Icons.account_balance_wallet, "المحفظة المالية", "رصيدك، شحن، سحب أرباح", context),
-          _buildSettingsItem(Icons.history, "سجل العمليات", "تفاصيل المبيعات والمشتريات", context),
-
-          _buildSectionTitle("التوثيق والأمان"),
-          _buildSettingsItem(Icons.verified_user, "(KYC) توثيق الهوية", "ارفع بطاقتك للحصول على العلامة الزرقاء", context),
-          _buildSettingsItem(Icons.lock, "تغيير كلمة المرور", "تحديث بيانات الدخول", context),
-
-          _buildSectionTitle("إعدادات التطبيق"),
-          _buildSettingsItem(Icons.language, "لغة التطبيق", "العربية (اليمن)", context),
-          _buildSettingsItem(Icons.notifications, "إعدادات التنبيهات", "التحكم في وصول الإشعارات", context),
-
-          _buildSectionTitle("الدعم الفني"),
-          _buildSettingsItem(Icons.headset_mic, "اتصل بنا", "واتساب، إيميل، اتصال مباشر", context),
-          
-          SizedBox(height: 20),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Text(title, style: TextStyle(color: Colors.grey, fontSize: 14)),
-    );
-  }
-
-  Widget _buildSettingsItem(IconData icon, String title, String subtitle, BuildContext context) {
-    return ListTile(
-      leading: Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(10)),
-        child: Icon(icon, color: Colors.amber),
-      ),
-      title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey)),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: () {
-        // هنا يتم فتح النوافذ الفرعية
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("فتح $title...")));
-      },
+          items: imgList.map((item) => Container(
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.network(item, fit: BoxFit.cover, width: 1000),
+              ),
+            ),
+          )).toList(),
+        ),
+        
+        // الأقسام أسفل السلايدر (أمثلة بجانب السلايدر كما طلبت)
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("عقارات متميزة", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber)),
+              Text("عرض الكل", style: TextStyle(color: Colors.grey)),
+            ],
+          ),
+        ),
+        // هنا يمكنك إضافة Grid للأقسام أو الإعلانات
+      ],
     );
   }
 }
