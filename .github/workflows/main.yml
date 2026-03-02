@@ -20,16 +20,22 @@ jobs:
           flutter-version: '3.22.2'
           channel: 'stable'
       
-      # الخطوة الأساسية: مسح أي إعدادات قديمة وإعادة إنشاء مشروع أندرويد متوافق مع Flutter 3.22
       - name: Fresh Android Project Generation
         run: |
           rm -rf android
           flutter create . --platforms android --org com.flexyemen --project-name yemen_project
-          flutter pub get
+          
+          # تحديث نسخة الكوتلن في ملف الإعدادات الجديد (الطريقة الأضمن لـ Flutter 3.22)
+          sed -i 's/id "org.jetbrains.kotlin.android" version "[0-9.]*"/id "org.jetbrains.kotlin.android" version "1.9.10"/' android/settings.gradle
+          
+          # تحديث ملف build.gradle الاحتياطي
+          if [ -f android/build.gradle ]; then
+            sed -i 's/ext.kotlin_version = .*/ext.kotlin_version = "1.9.10"/' android/build.gradle
+          fi
 
       - name: Build APK
         run: |
-          # السيرفر سيعالج نسخة الكوتلن والجافا تلقائياً أثناء البناء
+          flutter pub get
           flutter build apk --release --no-tree-shake-icons
         
       - name: Upload APK
