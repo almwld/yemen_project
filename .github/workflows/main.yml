@@ -1,0 +1,28 @@
+name: Build Flex Yemen APK
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'
+          channel: 'stable'
+      
+      # خطوة إجبارية لتحديث Gradle في بيئة GitHub
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 8.0
+
+      - run: flutter pub get
+      - run: flutter build apk --release
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: flex-yemen-release
+          path: build/app/outputs/flutter-apk/app-release.apk
