@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
 
-# هذه الميزة تمنع البناء المزدوج وتلغي القديم تلقائياً
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -19,19 +18,22 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '17' # نسخة جافا 17 هي الأكثر استقراراً حالياً
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.24.0' # إجبار السيرفر على نسخة مستقرة لتجنب أخطاء المحرك
           channel: 'stable'
 
-      - name: Prepare Environment
+      - name: Prepare Environment & Add Plugins
         run: |
           flutter clean
+          # إضافة المكتبات برمجياً لأنك لا تملك فلوتر محلي
+          flutter pub add flutter_svg
+          flutter pub get
           echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
           echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
-          flutter pub get
 
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
