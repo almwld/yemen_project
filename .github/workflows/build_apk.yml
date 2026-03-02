@@ -26,16 +26,18 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Master Reconstruction
+      - name: Prepare & Link
         run: |
-          flutter clean
-          # خلق المشروع مع منع الكتابة فوق ملف build.gradle الذي أنشأناه للتو
-          flutter create . --platforms android --org com.almwld.yemen || true
           flutter pub get
-          
           echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
           echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
 
       - name: Build APK
         run: |
           flutter build apk --release --target-platform android-arm64 --no-tree-shake-icons
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flex-Yemen-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
