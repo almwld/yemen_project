@@ -8,37 +8,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Java
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      - uses: subosito/flutter-action@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
           channel: 'stable'
       
-      - name: Reconstruct Android Project
-        run: flutter create . --platforms android --org com.example --project-name yemen_project
-
-      - name: Force Update Kotlin & Java Version
+      # الخطوة الأساسية: مسح أي إعدادات قديمة وإعادة إنشاء مشروع أندرويد متوافق مع Flutter 3.22
+      - name: Fresh Android Project Generation
         run: |
-          # 1. تحديث نسخة الكوتلن في ملف build.gradle الرئيسي (أياً كانت الصيغة)
-          find android/ -name "build.gradle" -exec sed -i 's/ext.kotlin_version = .*/ext.kotlin_version = "1.9.0"/' {} +
-          find android/ -name "build.gradle" -exec sed -i 's/kotlin_version = .*/kotlin_version = "1.9.0"/' {} +
-          
-          # 2. تحديث نسخة الكوتلن في حال كانت موجودة بصيغة id "org.jetbrains.kotlin.android" version
-          find android/ -name "*.gradle" -exec sed -i 's/version "[0-9.]*"/version "1.9.0"/' {} +
-          
-          # 3. التأكد من توافق Java 17
-          find android/app/ -name "build.gradle" -exec sed -i 's/sourceCompatibility JavaVersion.VERSION_.*/sourceCompatibility JavaVersion.VERSION_17/' {} +
-          find android/app/ -name "build.gradle" -exec sed -i 's/targetCompatibility JavaVersion.VERSION_.*/targetCompatibility JavaVersion.VERSION_17/' {} +
-          find android/app/ -name "build.gradle" -exec sed -i 's/jvmTarget = .*/jvmTarget = "17"/' {} +
+          rm -rf android
+          flutter create . --platforms android --org com.flexyemen --project-name yemen_project
+          flutter pub get
 
       - name: Build APK
         run: |
-          flutter pub get
+          # السيرفر سيعالج نسخة الكوتلن والجافا تلقائياً أثناء البناء
           flutter build apk --release --no-tree-shake-icons
         
       - name: Upload APK
