@@ -1,7 +1,6 @@
 plugins {
     id "com.android.application"
     id "dev.flutter.flutter-gradle-plugin"
-    id "org.jetbrains.kotlin.android"
 }
 
 android {
@@ -22,11 +21,7 @@ android {
     }
 }
 
-// هذا الجزء هو الذي سيحل الـ 33 خطأ فوراً
-dependencies {
-    implementation "io.flutter:flutter_embedding_release:1.0.0-+"
-}
-
+// حذفنا الـ dependency اليدوي وتركنا فلوتر يدير الأمر عبر الـ plugin
 flutter {
     source '../..'
 }
