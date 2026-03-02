@@ -13,6 +13,9 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven {
+            url "$flutterSdkPath/bin/cache/artifacts/engine/android-arm64-release"
+        }
     }
 }
 
