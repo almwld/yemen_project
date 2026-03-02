@@ -1,43 +1,35 @@
 name: yemen_project
-description: Flex Yemen Super App
+description: "A new Flutter project for Yemen Market."
 version: 1.0.0+1
+publish_to: 'none'
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  carousel_slider: ^5.0.0
-  smooth_page_indicator: ^1.1.0
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
+  supabase_flutter: ^2.5.0
+  provider: ^6.1.1
+  url_launcher: ^6.2.5
+  fl_chart: ^0.66.0
+  image_picker: ^1.0.7
   geolocator: ^12.0.0
   google_maps_flutter: ^2.7.0
-  supabase_flutter: ^2.0.2
-  local_auth: ^2.3.0
-  mobile_scanner: ^5.1.0
-  qr_flutter: ^4.1.0
-  share_plus: ^7.2.2
-  google_maps_flutter: ^2.5.3
-  flutter_local_notifications: ^17.0.0
-  image_picker: ^1.0.7
-  path: ^1.8.3
-  pdf: ^3.10.8
-  printing: ^5.11.1
 
 dev_dependencies:
-  carousel_slider: ^5.0.0
-  smooth_page_indicator: ^1.1.0
   flutter_test:
     sdk: flutter
+  flutter_lints: ^3.0.0
   flutter_launcher_icons: ^0.13.1
 
 flutter_launcher_icons:
-  android: true
+  android: "launcher_icon"
   ios: false
   image_path: "assets/logo.png"
-  min_sdk_android: 21
 
 flutter:
   uses-material-design: true
-
+  assets:
+    - assets/
