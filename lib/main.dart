@@ -1,43 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'screens/home_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: const HomeScreen(),
-  ));
+  runApp(const FlexYemenApp());
+  
+  // تشغيل سوبابيس في الخلفية لضمان عدم السواد
+  try {
+    await Supabase.initialize(
+      url: 'https://zipqohdxtemsmunnhlkm.supabase.co',
+      anonKey: 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppcXBvaGR4dGVtc211bm5obGttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3ODQzNDcsImV4cCI6MjA4NzM2MDM0N30.ABAg5YZSrrAtBTWATJ3eRTmo4BuZVyVlrMV1HZjRWs0',
+    );
+  } catch (e) { debugPrint("Background Init: $e"); }
 }
 
-class EmergencyScreen extends StatelessWidget {
-  const EmergencyScreen({super.key});
-
+class FlexYemenApp extends StatelessWidget {
+  const FlexYemenApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.flash_on, color: Color(0xFFD4AF37), size: 100),
-            SizedBox(height: 20),
-            Text(
-              "FLEX YEMEN",
-              style: TextStyle(
-                color: Color(0xFFD4AF37),
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 5,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "جاري فحص النظام...",
-              style: TextStyle(color: Colors.white54, fontSize: 16),
-            ),
-          ],
-        ),
+    return MaterialApp(
+      title: 'Flex Yemen',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.black,
+        primaryColor: const Color(0xFFD4AF37),
+        fontFamily: 'Tajawal',
       ),
+      home: const HomeScreen(),
     );
   }
 }

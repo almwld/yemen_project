@@ -1,79 +1,83 @@
 import 'package:flutter/material.dart';
+import 'market_explorer_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 3; // نبدأ من الزر المركزي (الإضافة) كاختبار
+  int _currentIndex = 0;
+  final Color gold = const Color(0xFFD4AF37);
 
   final List<Widget> _pages = [
-    _placeholderPage("شاشة السوق"),    // 0
-    _placeholderPage("البحث"),        // 1
-    _placeholderPage("التنبيهات"),    // 2
-    _placeholderPage("إضافة منتج"),    // 3 - الزر الذهبي
-    _placeholderPage("المحفظة"),       // 4
-    _placeholderPage("الدردشة"),      // 5
-    _placeholderPage("الحساب"),        // 6
+    const MarketExplorerScreen(),
+    const Center(child: Text("محرك البحث الذكي")),
+    const Center(child: Text("التنبيهات الملكية")),
+    const Center(child: Text("واجهة رفع المنتجات")), // الزر المركزي
+    const Center(child: Text("المحفظة الرقمية")),
+    const Center(child: Text("الدردشة الفورية")),
+    const Center(child: Text("إعدادات الحساب")),
   ];
-
-  static Widget _placeholderPage(String title) {
-    return Center(child: Text(title, style: const TextStyle(color: Color(0xFFD4AF37), fontSize: 20)));
-  }
 
   @override
   Widget build(BuildContext context) {
-    final Color gold = const Color(0xFFD4AF37);
-
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: _pages[_currentIndex],
-      bottomNavigationBar: Container(
-        height: 90,
-        decoration: BoxDecoration(
-          color: const Color(0xFF0D0D0D),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
-          boxShadow: [BoxShadow(color: gold.withOpacity(0.05), blurRadius: 10)],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _navIcon(Icons.grid_view_rounded, 0),
-            _navIcon(Icons.search, 1),
-            _navIcon(Icons.notifications_none, 2),
-            
-            // الزر الذهبي المركزي (الزائد)
-            GestureDetector(
-              onTap: () => setState(() => _currentIndex = 3),
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: gold,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [BoxShadow(color: gold.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))],
-                ),
-                child: const Icon(Icons.add, color: Colors.black, size: 35),
-              ),
-            ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
+      bottomNavigationBar: _buildRoyalNavBar(),
+    );
+  }
 
-            _navIcon(Icons.account_balance_wallet_outlined, 4),
-            _navIcon(Icons.chat_bubble_outline, 5),
-            _navIcon(Icons.person_outline, 6),
-          ],
-        ),
+  Widget _buildRoyalNavBar() {
+    return Container(
+      height: 85,
+      padding: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0A0A0A),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        boxShadow: [BoxShadow(color: gold.withOpacity(0.05), blurRadius: 20)],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _navItem(Icons.grid_view_rounded, 0, "سوق"),
+          _navItem(Icons.search, 1, "بحث"),
+          _navItem(Icons.notifications_none, 2, "تنبيه"),
+          _centerActionBtn(),
+          _navItem(Icons.wallet, 4, "محفظة"),
+          _navItem(Icons.chat_bubble_outline, 5, "دردشة"),
+          _navItem(Icons.person_outline, 6, "حساب"),
+        ],
       ),
     );
   }
 
-  Widget _navIcon(IconData icon, int index) {
-    bool isActive = _currentIndex == index;
-    return IconButton(
-      icon: Icon(icon, color: isActive ? const Color(0xFFD4AF37) : Colors.grey[700], size: 28),
-      onPressed: () => setState(() => _currentIndex = index),
+  Widget _navItem(IconData icon, int index, String label) {
+    bool active = _currentIndex == index;
+    return GestureDetector(
+      onTap: () => setState(() => _currentIndex = index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: active ? gold : Colors.grey[700], size: 24),
+          Text(label, style: TextStyle(color: active ? gold : Colors.grey[700], fontSize: 10)),
+        ],
+      ),
+    );
+  }
+
+  Widget _centerActionBtn() {
+    return GestureDetector(
+      onTap: () => setState(() => _currentIndex = 3),
+      child: Container(
+        width: 58, height: 58,
+        decoration: BoxDecoration(
+          color: gold, borderRadius: BorderRadius.circular(18),
+          boxShadow: [BoxShadow(color: gold.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 5))],
+        ),
+        child: const Icon(Icons.add, color: Colors.black, size: 32),
+      ),
     );
   }
 }
