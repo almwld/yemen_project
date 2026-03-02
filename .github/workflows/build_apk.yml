@@ -22,18 +22,17 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
       
-      - name: Recreate Android & Build
+      - name: Master Build
         run: |
-          # تنظيف أي كاش
           flutter clean
+          # إنشاء المشروع (سيفشل في بناء APK لكن سينجح في إنشاء الملفات)
+          flutter create . --platforms android --org com.almwld.yemen || true
           
-          # إنشاء مجلد أندرويد جديد تماماً (v2 Embedding آلياً)
-          flutter create . --platforms android --org com.almwld.yemen
+          # استبدال ملف build.gradle بملفنا الذي يحتوي على الإصلاح العالمي
+          cp android/build.gradle android/build.gradle.bak # نسخة احتياطية
+          # سنستخدم الملف الذي رفعناه من Termux
           
-          # تحميل المكتبات
           flutter pub get
-          
-          # بناء الـ APK
           flutter build apk --release --no-tree-shake-icons
           
       - name: Upload APK
