@@ -20,10 +20,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+}
 
-    kotlinOptions {
-        jvmTarget = '17'
-    }
+// هذا الجزء هو الذي سيحل الـ 33 خطأ فوراً
+dependencies {
+    implementation "io.flutter:flutter_embedding_release:1.0.0-+"
 }
 
 flutter {
