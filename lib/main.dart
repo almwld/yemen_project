@@ -24,7 +24,7 @@ class RealEstateHome extends StatefulWidget {
 
 class _RealEstateHomeState extends State<RealEstateHome> {
   int _currentSlide = 0;
-  final List<Map<String, String>> properties = [
+  final List<Map<String, String>> propertyList = [
     {'img': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500', 'title': 'فيلا النخبة - حدة', 'price': '250,000$'},
     {'img': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500', 'title': 'شقة الستين المودرن', 'price': '95,000$'},
     {'img': 'https://images.unsplash.com/photo-1582408921715-18e7806365c1?w=500', 'title': 'عمارة تجارية استثمارية', 'price': '450,000$'},
@@ -36,34 +36,42 @@ class _RealEstateHomeState extends State<RealEstateHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("عقارات فلكس 🇾🇪", style: TextStyle(color: Colors.amber)), backgroundColor: Colors.black),
-      body: Column(
-        children: [
-          SizedBox(height: 20),
-          CarouselSlider(
-            options: CarouselOptions(
-              height: 200, 
-              autoPlay: true, 
-              enlargeCenterPage: true,
-              onPageChanged: (index, _) => setState(() => _currentSlide = index),
+      appBar: AppBar(
+        title: Text("فلكس عقارات 🇾🇪", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.black,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 220.0,
+                autoPlay: true,
+                enlargeCenterPage: true,
+                onPageChanged: (index, _) => setState(() => _currentSlide = index),
+              ),
+              items: propertyList.map((item) {
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(image: NetworkImage(item['img']!), fit: BoxFit.cover),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: LinearGradient(colors: [Colors.black87, Colors.transparent], begin: Alignment.bottomCenter, end: Alignment.topCenter),
+                    ),
+                    padding: EdgeInsets.all(15),
+                    alignment: Alignment.bottomRight,
+                    child: Text("${item['title']}\n${item['price']}", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                  ),
+                );
+              }).toList(),
             ),
-            items: properties.map((p) => Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                image: DecorationImage(image: NetworkImage(p['img']!), fit: BoxFit.cover),
-              ),
-              child: Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.black45),
-                padding: EdgeInsets.all(10),
-                alignment: Alignment.bottomRight,
-                child: Text("${p['title']}\n${p['price']}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              ),
-            )).toList(),
-          ),
-          SizedBox(height: 20),
-          Text("تصفح الأقسام", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          // هنا تكملة الأقسام...
-        ],
+            // هنا يمكنك إضافة الأقسام لاحقاً
+          ],
+        ),
       ),
     );
   }
