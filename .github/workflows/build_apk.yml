@@ -22,19 +22,18 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
       
-      - name: Build Preparation
+      - name: Auto-Fix & Build
         run: |
-          # تنظيف الكاش
-          flutter clean
+          # 1. مسح مجلد الأندرويد المليء بالتعديلات اليدوية بالكامل
+          rm -rf android/
           
-          # إنشاء ملفات الأندرويد المفقودة فقط دون المساس بـ build.gradle المرفوع
-          flutter create . --platforms android --org com.almwld.yemen || true
+          # 2. ترك فلوتر ينشئ مجلد أندرويد حديث ونظيف 100%
+          flutter create . --platforms android --org com.almwld.yemen
           
-          flutter pub get
+          # 3. الضربة القاضية: تحديث المكتبات القديمة (مثل app_links) لنسخ تدعم الـ SDK الجديد
+          flutter pub upgrade
           
-      - name: Build APK
-        run: |
-          # البناء مع تجاوز فحص إصدارات المكتبات التالفة
+          # 4. بناء التطبيق بسلام
           flutter build apk --release --no-tree-shake-icons
           
       - name: Upload APK
