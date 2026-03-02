@@ -19,42 +19,20 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: '3.22.2'
           channel: 'stable'
-      
-      - name: Ironclad CI Patch & Build
-        run: |
-          # 1. إنشاء الأندرويد النظيف
-          rm -rf android/
-          flutter create . --platforms android --org com.almwld.yemen
-          
-          # 2. تحميل كل المكتبات (بما فيها app_links العنيدة)
-          flutter pub get
-          
-          # 3. 🚨 الترقيع العنيف: إصلاح خطأ Null Pointer في كل المكتبات آلياً
-          find ~/.pub-cache/hosted/pub.dev/ -name "build.gradle" -exec sed -i 's/\.substring(/?\.substring(/g' {} + || true
-          
-          # 4. 🚨 الترقيع العنيف 2: إجبار app_links على استخدام SDK 34 غصباً عنها
-          find ~/.pub-cache/hosted/pub.dev/ -name "app_links*" -type d | while read dir; do
-            if [ -f "$dir/android/build.gradle" ]; then
-              sed -i 's/compileSdkVersion.*/compileSdkVersion 34/g' "$dir/android/build.gradle"
-            fi
-          done
-          
-          # 5. حقن الإعدادات كشبكة أمان لباقي المكتبات
-          cat << 'INNER_EOF' >> android/build.gradle
-          ext {
-              compileSdkVersion = 34
-              minSdkVersion = 21
-              targetSdkVersion = 34
-          }
-          INNER_EOF
-          
-          # 6. البناء الآن والمكتبة مرغمة على العمل
-          flutter build apk --release --no-tree-shake-icons
-          
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Generate Launcher Icons
+        run: dart run flutter_launcher_icons || true
+
+      - name: Build APK
+        run: flutter build apk --release --no-tree-shake-icons
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Flex-Yemen-APK
+          name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
