@@ -19,14 +19,18 @@ jobs:
           flutter-version: '3.22.2'
           channel: 'stable'
       
-      # توليد مجلد أندرويد جديد ونظيف باسم الحزمة الصحيح
       - name: Reconstruct Android Project
         run: flutter create . --platforms android --org com.example --project-name yemen_project
+
+      # الخطوة السحرية: تحديث نسخة الكوتلن في الملف المولد تلقائياً
+      - name: Patch Kotlin Version
+        run: |
+          sed -i 's/ext.kotlin_version = .*/ext.kotlin_version = "1.9.0"/' android/build.gradle
+          sed -i 's/jvmTarget = .*/jvmTarget = "17"/' android/app/build.gradle
 
       - name: Build APK
         run: |
           flutter pub get
-          # بناء ملف واحد شامل يعمل في كل اليمن
           flutter build apk --release --no-tree-shake-icons
         
       - name: Upload APK
