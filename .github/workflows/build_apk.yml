@@ -22,18 +22,35 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
       
-      - name: Auto-Fix & Build
+      - name: Ironclad CI Patch & Build
         run: |
-          # 1. مسح مجلد الأندرويد المليء بالتعديلات اليدوية بالكامل
+          # 1. إنشاء الأندرويد النظيف
           rm -rf android/
-          
-          # 2. ترك فلوتر ينشئ مجلد أندرويد حديث ونظيف 100%
           flutter create . --platforms android --org com.almwld.yemen
           
-          # 3. الضربة القاضية: تحديث المكتبات القديمة (مثل app_links) لنسخ تدعم الـ SDK الجديد
-          flutter pub upgrade
+          # 2. تحميل كل المكتبات (بما فيها app_links العنيدة)
+          flutter pub get
           
-          # 4. بناء التطبيق بسلام
+          # 3. 🚨 الترقيع العنيف: إصلاح خطأ Null Pointer في كل المكتبات آلياً
+          find ~/.pub-cache/hosted/pub.dev/ -name "build.gradle" -exec sed -i 's/\.substring(/?\.substring(/g' {} + || true
+          
+          # 4. 🚨 الترقيع العنيف 2: إجبار app_links على استخدام SDK 34 غصباً عنها
+          find ~/.pub-cache/hosted/pub.dev/ -name "app_links*" -type d | while read dir; do
+            if [ -f "$dir/android/build.gradle" ]; then
+              sed -i 's/compileSdkVersion.*/compileSdkVersion 34/g' "$dir/android/build.gradle"
+            fi
+          done
+          
+          # 5. حقن الإعدادات كشبكة أمان لباقي المكتبات
+          cat << 'INNER_EOF' >> android/build.gradle
+          ext {
+              compileSdkVersion = 34
+              minSdkVersion = 21
+              targetSdkVersion = 34
+          }
+          INNER_EOF
+          
+          # 6. البناء الآن والمكتبة مرغمة على العمل
           flutter build apk --release --no-tree-shake-icons
           
       - name: Upload APK
