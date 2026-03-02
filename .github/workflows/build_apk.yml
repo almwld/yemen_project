@@ -22,17 +22,19 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
       
-      - name: Master Build
+      - name: Build Preparation
         run: |
+          # تنظيف الكاش
           flutter clean
-          # إنشاء المشروع (سيفشل في بناء APK لكن سينجح في إنشاء الملفات)
+          
+          # إنشاء ملفات الأندرويد المفقودة فقط دون المساس بـ build.gradle المرفوع
           flutter create . --platforms android --org com.almwld.yemen || true
           
-          # استبدال ملف build.gradle بملفنا الذي يحتوي على الإصلاح العالمي
-          cp android/build.gradle android/build.gradle.bak # نسخة احتياطية
-          # سنستخدم الملف الذي رفعناه من Termux
-          
           flutter pub get
+          
+      - name: Build APK
+        run: |
+          # البناء مع تجاوز فحص إصدارات المكتبات التالفة
           flutter build apk --release --no-tree-shake-icons
           
       - name: Upload APK
