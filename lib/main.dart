@@ -19,167 +19,115 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
         scaffoldBackgroundColor: Colors.black,
         primaryColor: Color(0xFFD4AF37),
       ) : ThemeData.light(),
-      home: MainDashboard(
-        onThemeToggle: () => setState(() => isDarkMode = !isDarkMode),
+      home: RootNavigation(
         isDarkMode: isDarkMode,
+        onThemeToggle: () => setState(() => isDarkMode = !isDarkMode),
       ),
     );
   }
 }
 
-class MainDashboard extends StatelessWidget {
-  final VoidCallback onThemeToggle;
+class RootNavigation extends StatefulWidget {
   final bool isDarkMode;
+  final VoidCallback onThemeToggle;
+  RootNavigation({required this.isDarkMode, required this.onThemeToggle});
 
-  MainDashboard({required this.onThemeToggle, required this.isDarkMode});
+  @override
+  _RootNavigationState createState() => _RootNavigationState();
+}
 
-  final List<String> propertyImages = [
-    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800',
-    'https://images.unsplash.com/photo-1582408921715-18e7806365c1?w=800',
-  ];
+class _RootNavigationState extends State<RootNavigation> {
+  int _currentIndex = 0;
+
+  // تعريف الواجهات السبعة مع تغيير "عقارات" إلى "خرائط"
+  late List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      HomeScreen(),       // 0 الرئيسية
+      MapsScreen(),       // 1 الخرائط (بدلاً من عقارات)
+      WalletScreen(),     // 2 محفظة
+      AddPostScreen(),    // 3 إضافة (الزر الذهبي)
+      OrdersScreen(),     // 4 طلباتي
+      NotifyScreen(),     // 5 تنبيهات
+      ProfileScreen(),    // 6 حسابي
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      // --- الشريط العلوي المطور (حسب الصورة) ---
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
-        toolbarHeight: 140, // زيادة الارتفاع ليشمل شريط البحث
+        toolbarHeight: 110,
         title: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("فلكس يمن", 
-                  style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 24)),
+                Text("FLEX YEMEN", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
                 Row(
                   children: [
                     IconButton(
-                      icon: Icon(isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: Color(0xFFD4AF37)),
-                      onPressed: onThemeToggle, // برمجة زر الثيم
+                      icon: Icon(widget.isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: Color(0xFFD4AF37)),
+                      onPressed: widget.onThemeToggle,
                     ),
-                    IconButton(
-                      icon: Icon(Icons.shopping_cart, color: Color(0xFFD4AF37)),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("تم فتح السلة")));
-                      }, // برمجة زر السلة
-                    ),
+                    Icon(Icons.shopping_cart, color: Color(0xFFD4AF37)),
                   ],
                 ),
               ],
             ),
-            SizedBox(height: 15),
-            // شريط البحث (Search Bar)
             Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: Color(0xFF1E1E1E),
-                borderRadius: BorderRadius.circular(25),
-              ),
+              height: 40,
+              margin: EdgeInsets.only(top: 10),
+              decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(20)),
               child: TextField(
                 textAlign: TextAlign.right,
                 decoration: InputDecoration(
-                  hintText: "...بحث في 1000 قسم",
-                  hintStyle: TextStyle(color: Colors.white54, fontSize: 14),
-                  prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37)),
+                  hintText: "بحث في الخرائط والأقسام...",
+                  prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37), size: 20),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 12),
                 ),
-                onSubmitted: (val) {
-                  print("البحث عن: $val");
-                },
               ),
             ),
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 10),
-            // السلايدر العقاري
-            CarouselSlider(
-              options: CarouselOptions(
-                height: 200.0,
-                autoPlay: true,
-                enlargeCenterPage: true,
-                viewportFraction: 0.9,
-              ),
-              items: propertyImages.map((url) {
-                return Container(
-                  margin: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(image: NetworkImage(url), fit: BoxFit.cover),
-                  ),
-                );
-              }).toList(),
-            ),
-            
-            // عنوان المعروضات الحديثة
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Text("المعروضات الحديثة", style: TextStyle(fontSize: 18, color: Colors.white70)),
-              ),
-            ),
+      
+      body: _screens[_currentIndex],
 
-            // شبكة الخدمات
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                childAspectRatio: 1.5,
-                children: [
-                  _card("تسديد فواتير", Icons.receipt_long),
-                  _card("سوق العقارات", Icons.home_work),
-                ],
-              ),
-            ),
-            SizedBox(height: 100), // مساحة للزر البارز
-          ],
-        ),
-      ),
-
-      // الزر الذهبي البارز
       floatingActionButton: Container(
-        height: 75,
-        width: 75,
+        height: 65, width: 65,
         child: FloatingActionButton(
-          onPressed: () {
-            print("إضافة إعلان جديد");
-          },
+          onPressed: () => setState(() => _currentIndex = 3),
           backgroundColor: Color(0xFFD4AF37),
-          elevation: 15,
-          child: Icon(Icons.add, size: 40, color: Colors.black),
-          shape: CircleBorder(side: BorderSide(color: Colors.black, width: 5)),
+          elevation: 10,
+          child: Icon(Icons.add, size: 35, color: Colors.black),
+          shape: CircleBorder(side: BorderSide(color: Colors.black, width: 3)),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      // الشريط السفلي (Bottom Nav)
       bottomNavigationBar: BottomAppBar(
         color: Color(0xFF1A1A1A),
         shape: CircularNotchedRectangle(),
-        notchMargin: 12.0,
+        notchMargin: 8,
         child: Container(
-          height: 70,
+          height: 65,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _navItem(Icons.grid_view, "سوق"),
-              _navItem(Icons.search, "بحث"),
-              SizedBox(width: 50),
-              _navItem(Icons.account_balance_wallet, "محفظة"),
-              _navItem(Icons.person, "حسابي"),
+              _buildTab(Icons.home, "الرئيسية", 0),
+              _buildTab(Icons.map, "خرائط", 1), // أيقونة الخرائط الجديدة
+              _buildTab(Icons.wallet, "محفظة", 2),
+              SizedBox(width: 40), 
+              _buildTab(Icons.shopping_bag, "طلباتي", 4),
+              _buildTab(Icons.notifications, "تنبيهات", 5),
+              _buildTab(Icons.person, "حسابي", 6),
             ],
           ),
         ),
@@ -187,27 +135,101 @@ class MainDashboard extends StatelessWidget {
     );
   }
 
-  Widget _card(String t, IconData i) => Container(
-    decoration: BoxDecoration(
-      color: Color(0xFF1E1E1E), 
-      borderRadius: BorderRadius.circular(15),
-      border: Border.all(color: Colors.white10),
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center, 
-      children: [
-        Icon(i, color: Color(0xFFD4AF37), size: 30), 
-        SizedBox(height: 10),
-        Text(t, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500))
-      ],
-    ),
-  );
+  Widget _buildTab(IconData icon, String label, int index) {
+    bool active = _currentIndex == index;
+    return Expanded(
+      child: InkWell(
+        onTap: () => setState(() => _currentIndex = index),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: active ? Color(0xFFD4AF37) : Colors.white54, size: 18),
+            Text(label, style: TextStyle(color: active ? Color(0xFFD4AF37) : Colors.white54, fontSize: 8)),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-  Widget _navItem(IconData i, String l) => Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(i, color: Colors.white54, size: 26), 
-      Text(l, style: TextStyle(fontSize: 10, color: Colors.white54))
-    ],
+// --- واجهة الخرائط المبرمجة ---
+class MapsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // محاكي للخريطة (Placeholder) حتى تفعيل Google Maps API
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Color(0xFF121212),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.map_outlined, size: 100, color: Color(0xFFD4AF37).withOpacity(0.3)),
+                SizedBox(height: 15),
+                Text("جاري تحميل خريطة اليمن العقارية...", style: TextStyle(color: Colors.white54)),
+              ],
+            ),
+          ),
+        ),
+        // أزرار تحكم فوق الخريطة
+        Positioned(
+          top: 20,
+          right: 20,
+          child: Column(
+            children: [
+              _mapTool(Icons.my_location),
+              _mapTool(Icons.layers),
+              _mapTool(Icons.zoom_in),
+            ],
+          ),
+        ),
+        // بطاقة عرض العقار عند الضغط على Pin (تجريبية)
+        Positioned(
+          bottom: 100,
+          left: 20,
+          right: 20,
+          child: Container(
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15), border: Border.all(color: Color(0xFFD4AF37))),
+            child: Row(
+              children: [
+                Container(width: 60, height: 60, decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(10)), child: Icon(Icons.home, color: Color(0xFFD4AF37))),
+                SizedBox(width: 15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("عقار مميز في صنعاء - حدة", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("السعر: 45,000,000 ريال", style: TextStyle(color: Colors.green, fontSize: 12)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _mapTool(IconData icon) => Container(
+    margin: EdgeInsets.only(bottom: 10),
+    padding: EdgeInsets.all(8),
+    decoration: BoxDecoration(color: Colors.black.withOpacity(0.7), shape: BoxShape.circle, border: Border.all(color: Color(0xFFD4AF37), width: 0.5)),
+    child: Icon(icon, color: Color(0xFFD4AF37), size: 20),
   );
 }
+
+// بقية الواجهات
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text("الواجهة الرئيسية", style: TextStyle(color: Colors.white)));
+  }
+}
+class WalletScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("المحفظة المالية")); }
+class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("إضافة إعلان جديد")); }
+class OrdersScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("سجل الطلبات")); }
+class NotifyScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("التنبيهات")); }
+class ProfileScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("الملف الشخصي")); }
