@@ -1,36 +1,7 @@
-name: yemen_project
-description: "A new Flutter project for Yemen Market."
-version: 1.0.0+1
-publish_to: 'none'
-
-environment:
-  sdk: '>=3.0.0 <4.0.0'
-
-dependencies:
-  flutter:
-    sdk: flutter
-  cupertino_icons: ^1.0.6
-  supabase_flutter: ^2.5.0
-  provider: ^6.1.1
-  url_launcher: ^6.2.5
-  fl_chart: ^0.66.0
-  image_picker: ^1.0.7
-  geolocator: ^12.0.0
-  google_maps_flutter: ^2.7.0
-  carousel_slider: ^4.2.1
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.0
-  flutter_launcher_icons: ^0.13.1
 
 flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: false
+  android: true
+  ios: true
   image_path: "assets/logo.png"
-
-flutter:
-  uses-material-design: true
-  assets:
-    - assets/
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/logo.png"
