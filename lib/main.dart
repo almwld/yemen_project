@@ -39,25 +39,19 @@ class RootNavigation extends StatefulWidget {
 class _RootNavigationState extends State<RootNavigation> {
   int _currentIndex = 0;
 
-  // تعريف الواجهات السبعة مع تغيير "عقارات" إلى "خرائط"
-  late List<Widget> _screens;
-
   @override
-  void initState() {
-    super.initState();
-    _screens = [
+  Widget build(BuildContext context) {
+    // قائمة الشاشات مع محتوى حقيقي
+    final List<Widget> _screens = [
       HomeScreen(),       // 0 الرئيسية
-      MapsScreen(),       // 1 الخرائط (بدلاً من عقارات)
+      MapsScreen(),       // 1 الخرائط
       WalletScreen(),     // 2 محفظة
       AddPostScreen(),    // 3 إضافة (الزر الذهبي)
       OrdersScreen(),     // 4 طلباتي
       NotifyScreen(),     // 5 تنبيهات
       ProfileScreen(),    // 6 حسابي
     ];
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
@@ -88,7 +82,7 @@ class _RootNavigationState extends State<RootNavigation> {
               child: TextField(
                 textAlign: TextAlign.right,
                 decoration: InputDecoration(
-                  hintText: "بحث في الخرائط والأقسام...",
+                  hintText: "بحث في فلكس يمن...",
                   prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37), size: 20),
                   border: InputBorder.none,
                 ),
@@ -97,9 +91,7 @@ class _RootNavigationState extends State<RootNavigation> {
           ],
         ),
       ),
-      
       body: _screens[_currentIndex],
-
       floatingActionButton: Container(
         height: 65, width: 65,
         child: FloatingActionButton(
@@ -111,7 +103,6 @@ class _RootNavigationState extends State<RootNavigation> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
       bottomNavigationBar: BottomAppBar(
         color: Color(0xFF1A1A1A),
         shape: CircularNotchedRectangle(),
@@ -122,7 +113,7 @@ class _RootNavigationState extends State<RootNavigation> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildTab(Icons.home, "الرئيسية", 0),
-              _buildTab(Icons.map, "خرائط", 1), // أيقونة الخرائط الجديدة
+              _buildTab(Icons.map, "خرائط", 1),
               _buildTab(Icons.wallet, "محفظة", 2),
               SizedBox(width: 40), 
               _buildTab(Icons.shopping_bag, "طلباتي", 4),
@@ -152,84 +143,115 @@ class _RootNavigationState extends State<RootNavigation> {
   }
 }
 
-// --- واجهة الخرائط المبرمجة ---
-class MapsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // محاكي للخريطة (Placeholder) حتى تفعيل Google Maps API
-        Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: Color(0xFF121212),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.map_outlined, size: 100, color: Color(0xFFD4AF37).withOpacity(0.3)),
-                SizedBox(height: 15),
-                Text("جاري تحميل خريطة اليمن العقارية...", style: TextStyle(color: Colors.white54)),
-              ],
-            ),
-          ),
-        ),
-        // أزرار تحكم فوق الخريطة
-        Positioned(
-          top: 20,
-          right: 20,
-          child: Column(
-            children: [
-              _mapTool(Icons.my_location),
-              _mapTool(Icons.layers),
-              _mapTool(Icons.zoom_in),
-            ],
-          ),
-        ),
-        // بطاقة عرض العقار عند الضغط على Pin (تجريبية)
-        Positioned(
-          bottom: 100,
-          left: 20,
-          right: 20,
-          child: Container(
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15), border: Border.all(color: Color(0xFFD4AF37))),
-            child: Row(
-              children: [
-                Container(width: 60, height: 60, decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(10)), child: Icon(Icons.home, color: Color(0xFFD4AF37))),
-                SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("عقار مميز في صنعاء - حدة", style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text("السعر: 45,000,000 ريال", style: TextStyle(color: Colors.green, fontSize: 12)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _mapTool(IconData icon) => Container(
-    margin: EdgeInsets.only(bottom: 10),
-    padding: EdgeInsets.all(8),
-    decoration: BoxDecoration(color: Colors.black.withOpacity(0.7), shape: BoxShape.circle, border: Border.all(color: Color(0xFFD4AF37), width: 0.5)),
-    child: Icon(icon, color: Color(0xFFD4AF37), size: 20),
-  );
-}
-
-// بقية الواجهات
+// --- محتوى شاشة الرئيسية المكتمل ---
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("الواجهة الرئيسية", style: TextStyle(color: Colors.white)));
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CarouselSlider(
+            options: CarouselOptions(height: 180, autoPlay: true, enlargeCenterPage: true),
+            items: [
+              "https://images.unsplash.com/photo-1582408921715-18e7806365c1?w=500",
+              "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500",
+              "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500"
+            ].map((url) => Container(
+              margin: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                image: DecorationImage(image: NetworkImage(url), fit: BoxFit.cover),
+              ),
+            )).toList(),
+          ),
+          _buildTitle("الأقسام الرئيسية"),
+          GridView.count(
+            shrinkWrap: true, physics: NeverScrollableScrollPhysics(),
+            crossAxisCount: 4, padding: EdgeInsets.all(10),
+            children: [
+              _iconBox(Icons.home, "عقارات"),
+              _iconBox(Icons.directions_car, "سيارات"),
+              _iconBox(Icons.phone_android, "جوالات"),
+              _iconBox(Icons.star, "ستارلينك"),
+            ],
+          ),
+          _buildTitle("أحدث العروض العقارية"),
+          ListView.builder(
+            shrinkWrap: true, physics: NeverScrollableScrollPhysics(),
+            itemCount: 3,
+            itemBuilder: (context, i) => Card(
+              margin: EdgeInsets.all(10),
+              color: Color(0xFF1E1E1E),
+              child: ListTile(
+                leading: Icon(Icons.location_on, color: Color(0xFFD4AF37)),
+                title: Text("فيلا للبيع - صنعاء حدة"),
+                subtitle: Text("السعر: 150,000$"),
+                trailing: Icon(Icons.arrow_forward_ios, size: 14),
+              ),
+            ),
+          ),
+          SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitle(String t) => Padding(
+    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+    child: Text(t, style: TextStyle(color: Color(0xFFD4AF37), fontSize: 18, fontWeight: FontWeight.bold)),
+  );
+
+  Widget _iconBox(IconData i, String l) => Column(
+    children: [
+      CircleAvatar(backgroundColor: Color(0xFF1E1E1E), child: Icon(i, color: Color(0xFFD4AF37))),
+      SizedBox(height: 5),
+      Text(l, style: TextStyle(fontSize: 10)),
+    ],
+  );
+}
+
+// --- محتوى شاشة الخرائط ---
+class MapsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.grey[900],
+      child: Stack(
+        children: [
+          Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(Icons.map, size: 80, color: Color(0xFFD4AF37).withOpacity(0.5)),
+            Text("خريطة اليمن التفاعلية", style: TextStyle(color: Colors.white54)),
+          ])),
+          Positioned(top: 20, right: 20, child: FloatingActionButton.small(onPressed: (){}, child: Icon(Icons.my_location))),
+        ],
+      ),
+    );
   }
 }
-class WalletScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("المحفظة المالية")); }
-class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("إضافة إعلان جديد")); }
-class OrdersScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("سجل الطلبات")); }
-class NotifyScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("التنبيهات")); }
-class ProfileScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("الملف الشخصي")); }
+
+// --- محتوى شاشة المحفظة ---
+class WalletScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.all(20), padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(color: Color(0xFFD4AF37), borderRadius: BorderRadius.circular(20)),
+          child: Column(children: [
+            Text("الرصيد المتاح", style: TextStyle(color: Colors.black54)),
+            Text("450,000 RY", style: TextStyle(color: Colors.black, fontSize: 32, fontWeight: FontWeight.bold)),
+          ]),
+        ),
+        ListTile(leading: Icon(Icons.history), title: Text("سجل العمليات"), trailing: Icon(Icons.arrow_forward_ios)),
+      ],
+    );
+  }
+}
+
+// شاشات مفرغة للوظائف الأخرى
+class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("صفحة إضافة إعلان")); }
+class OrdersScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("قائمة طلباتي")); }
+class NotifyScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("التنبيهات والإشعارات")); }
+class ProfileScreen extends StatelessWidget { @override Widget build(BuildContext context) => Center(child: Text("إعدادات الملف الشخصي")); }
