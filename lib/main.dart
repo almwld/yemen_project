@@ -42,7 +42,7 @@ class _RootNavigationState extends State<RootNavigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      appBar: AppBar(
+      appBar: _currentIndex == 0 ? AppBar(
         elevation: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,7 +51,7 @@ class _RootNavigationState extends State<RootNavigation> {
             IconButton(icon: Icon(widget.isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: const Color(0xFFD4AF37)), onPressed: widget.onThemeToggle),
           ],
         ),
-      ),
+      ) : null, // إخفاء الـ AppBar الرئيسي في الصفحات الأخرى لتجنب التكرار
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomAppBar(
         color: widget.isDarkMode ? const Color(0xFF1A1A1A) : Colors.white,
@@ -98,14 +98,14 @@ class _RootNavigationState extends State<RootNavigation> {
 
 class HomeScreen extends StatelessWidget {
   final List<Map<String, dynamic>> categories = [
-    {"title": "العقارات", "icon": Icons.villa, "count": "1.2k"},
-    {"title": "السيارات", "icon": Icons.directions_car, "count": "850"},
-    {"title": "ستارلينك", "icon": Icons.satellite_alt, "count": "120"},
-    {"title": "جوالات", "icon": Icons.phone_android, "count": "2.1k"},
-    {"title": "إلكترونيات", "icon": Icons.laptop, "count": "430"},
-    {"title": "المغتربين", "icon": Icons.flight_takeoff, "count": "55"},
-    {"title": "وظائف", "icon": Icons.work, "count": "310"},
-    {"title": "خدمات", "icon": Icons.handyman, "count": "150"},
+    {"title": "العقارات", "icon": Icons.villa, "color": Colors.blue},
+    {"title": "السيارات", "icon": Icons.directions_car, "color": Colors.red},
+    {"title": "ستارلينك", "icon": Icons.satellite_alt, "color": Colors.orange},
+    {"title": "جوالات", "icon": Icons.phone_android, "color": Colors.green},
+    {"title": "إلكترونيات", "icon": Icons.laptop, "color": Colors.purple},
+    {"title": "المغتربين", "icon": Icons.flight_takeoff, "color": Colors.cyan},
+    {"title": "وظائف", "icon": Icons.work, "color": Colors.brown},
+    {"title": "خدمات", "icon": Icons.handyman, "color": Colors.teal},
   ];
 
   @override
@@ -117,83 +117,95 @@ class HomeScreen extends StatelessWidget {
         children: [
           const Padding(
             padding: EdgeInsets.all(15),
-            child: Text("تصفح الأقسام", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
+            child: Text("الأقسام الرئيسية", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
           ),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, childAspectRatio: 0.8),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, childAspectRatio: 0.85),
             itemCount: categories.length,
             itemBuilder: (context, i) => InkWell(
-              onTap: () => _showAllItems(context, categories[i]['title']),
+              onTap: () {
+                // الانتقال لصفحة القسم المستقلة
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryPage(title: categories[i]['title'])));
+              },
               child: Column(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white10)),
-                    child: Icon(categories[i]['icon'], color: const Color(0xFFD4AF37), size: 30),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E1E1E), 
+                      shape: BoxShape.circle, 
+                      border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.3))
+                    ),
+                    child: Icon(categories[i]['icon'], color: const Color(0xFFD4AF37), size: 28),
                   ),
-                  const SizedBox(height: 5),
-                  Text(categories[i]['title'], style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                  Text(categories[i]['count'], style: const TextStyle(fontSize: 9, color: Colors.grey)),
+                  const SizedBox(height: 8),
+                  Text(categories[i]['title'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                 ],
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(15),
-            child: Text("أحدث الإعلانات", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          ),
-          _buildItemCard("فيلا فاخرة - حدة", "150,000\$", "صنعاء", "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"),
-          _buildItemCard("تويوتا تندرا 2023", "45,000\$", "عدن", "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf"),
         ],
       ),
     );
   }
+}
 
-  void _showAllItems(BuildContext context, String title) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.black,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Text("جميع عروض $title", style: const TextStyle(color: Color(0xFFD4AF37), fontSize: 20, fontWeight: FontWeight.bold)),
-            const Divider(color: Colors.white24),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, i) => _buildItemCard("إعلان $title رقم $i", "السعر: حسب الطلب", "اليمن", null),
+// --- صفحة القسم المستقلة (CategoryPage) ---
+class CategoryPage extends StatelessWidget {
+  final String title;
+  const CategoryPage({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("عروض $title", style: const TextStyle(color: Color(0xFFD4AF37))),
+        backgroundColor: Colors.black,
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFD4AF37)), onPressed: () => Navigator.pop(context)),
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(10),
+        itemCount: 8,
+        itemBuilder: (context, i) => Card(
+          color: const Color(0xFF1A1A1A),
+          margin: const EdgeInsets.only(bottom: 15),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: Column(
+            children: [
+              Container(
+                height: 160,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                  color: Colors.white10,
+                ),
+                child: const Center(child: Icon(Icons.image, size: 50, color: Colors.white12)),
               ),
-            ),
-          ],
+              ListTile(
+                title: Text("$title عرض رقم ${i+1}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: const Text("اليمن - تفاصيل العرض هنا..."),
+                trailing: const Text("السعر\nيتوفر قريباً", textAlign: TextAlign.center, style: TextStyle(color: Color(0xFFD4AF37), fontSize: 10)),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), minimumSize: const Size(double.infinity, 35)),
+                  onPressed: () {}, 
+                  child: const Text("عرض التفاصيل", style: TextStyle(color: Colors.black)),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
   }
-
-  Widget _buildItemCard(String title, String price, String loc, String? img) => Card(
-    margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-    color: const Color(0xFF1A1A1A),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-    child: Column(
-      children: [
-        if(img != null) Container(height: 150, width: double.infinity, decoration: BoxDecoration(borderRadius: const BorderRadius.vertical(top: Radius.circular(15)), image: DecorationImage(image: NetworkImage(img), fit: BoxFit.cover))),
-        ListTile(
-          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text(loc, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-          trailing: Text(price, style: const TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
-        ),
-      ],
-    ),
-  );
 }
 
+// بقية الواجهات المفرغة
 class MapsScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الخرائط")); }
 class WalletScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("المحفظة")); }
 class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("إضافة")); }
