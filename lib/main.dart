@@ -33,9 +33,7 @@ class MainNavigation extends StatefulWidget {
   final int cartCount;
   final VoidCallback onThemeToggle;
   final VoidCallback onAddToCart;
-
   MainNavigation({required this.isDarkMode, required this.cartCount, required this.onThemeToggle, required this.onAddToCart});
-
   @override
   _MainNavigationState createState() => _MainNavigationState();
 }
@@ -45,15 +43,14 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    // قائمة الواجهات المربوطة
     final List<Widget> _pages = [
-      HomeScreen(),             // 0: الرئيسية (عقارات وسيارات)
-      StoreScreen(onAdd: widget.onAddToCart), // 1: المتجر الشامل
-      const Center(child: Text("الخرائط الذكية (قريباً)")), // 2: الخرائط
-      AddPostScreen(),          // 3: إضافة إعلان
-      ChatListScreen(),         // 4: الدردشة والوساطة
-      const Center(child: Text("المحفظة المالية")), // 5: المحفظة
-      ProfilePage(),            // 6: الملف الشخصي والإعدادات
+      HomeScreen(),             
+      StoreScreen(onAdd: widget.onAddToCart), 
+      const Center(child: Text("الخرائط الذكية")), 
+      AddPostScreen(),          
+      ChatListScreen(),         
+      const Center(child: Text("المحفظة المالية")), 
+      ProfilePage(),            
     ];
 
     return Scaffold(
@@ -113,7 +110,6 @@ class _MainNavigationState extends State<MainNavigation> {
   );
 }
 
-// --- 🏠 1. واجهة الرئيسية (العقارات والسيارات) ---
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView(
@@ -121,8 +117,8 @@ class HomeScreen extends StatelessWidget {
     children: [
       const Text("أحدث العقارات", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
       const SizedBox(height: 10),
-      _propertyCard("فيلا في حي حدة", "500,000 $", "صنعاء"),
-      _propertyCard("عمارة استثمارية", "1,200,000 $", "عدن"),
+      _propertyCard("فيلا في حي حدة", "500,000 \$", "صنعاء"), // تم التصحيح هنا
+      _propertyCard("عمارة استثمارية", "1,200,000 \$", "عدن"), // تم التصحيح هنا
     ],
   );
   Widget _propertyCard(String t, String p, String l) => Card(
@@ -135,44 +131,34 @@ class HomeScreen extends StatelessWidget {
   );
 }
 
-// --- 🏪 2. واجهة المتجر الشاملة ---
 class StoreScreen extends StatelessWidget {
   final VoidCallback onAdd;
   StoreScreen({required this.onAdd});
-  final List<Map<String, dynamic>> cats = [
-    {"n": "برايم", "i": Icons.star, "c": Colors.amber},
-    {"n": "سوبر ماركت", "i": Icons.shopping_basket, "c": Colors.green},
-    {"n": "مطاعم", "i": Icons.restaurant, "c": Colors.orange},
-    {"n": "إلكترونيات", "i": Icons.devices, "c": Colors.blue},
-    {"n": "ملبوسات", "i": Icons.checkroom, "c": Colors.purple},
-    {"n": "ألعاب", "i": Icons.videogame_asset, "c": Colors.red},
-  ];
-
   @override
-  Widget build(BuildContext context) => GridView.builder(
-    padding: const EdgeInsets.all(15),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.8, crossAxisSpacing: 10, mainAxisSpacing: 10),
-    itemCount: cats.length,
-    itemBuilder: (context, i) => InkWell(
-      onTap: onAdd,
-      child: Column(children: [
-        CircleAvatar(radius: 25, backgroundColor: cats[i]['c'].withOpacity(0.1), child: Icon(cats[i]['i'], color: cats[i]['c'])),
-        const SizedBox(height: 5), Text(cats[i]['n'], style: const TextStyle(fontSize: 10)),
-      ]),
-    ),
+  Widget build(BuildContext context) => GridView.count(
+    crossAxisCount: 3, padding: const EdgeInsets.all(15), crossAxisSpacing: 10, mainAxisSpacing: 10,
+    children: [
+      _cat(Icons.star, "برايم", Colors.amber),
+      _cat(Icons.shopping_basket, "سوبر ماركت", Colors.green),
+      _cat(Icons.restaurant, "مطاعم", Colors.orange),
+      _cat(Icons.devices, "إلكترونيات", Colors.blue),
+      _cat(Icons.checkroom, "ملبوسات", Colors.purple),
+      _cat(Icons.videogame_asset, "ألعاب", Colors.red),
+    ],
+  );
+  Widget _cat(IconData i, String n, Color c) => InkWell(
+    onTap: onAdd,
+    child: Column(children: [CircleAvatar(backgroundColor: c.withOpacity(0.1), child: Icon(i, color: c)), Text(n, style: const TextStyle(fontSize: 10))]),
   );
 }
 
-// --- ➕ 3. واجهة إضافة إعلان ---
 class AddPostScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.all(20),
     child: Column(children: [
       const Icon(Icons.cloud_upload, size: 80, color: Color(0xFFD4AF37)),
-      const SizedBox(height: 20),
       const TextField(decoration: InputDecoration(hintText: "عنوان الإعلان")),
-      const SizedBox(height: 10),
       const TextField(decoration: InputDecoration(hintText: "السعر")),
       const SizedBox(height: 20),
       ElevatedButton(onPressed: () {}, child: const Text("نشر الآن"))
@@ -180,24 +166,20 @@ class AddPostScreen extends StatelessWidget {
   );
 }
 
-// --- 💬 4. واجهة الدردشة ---
 class ChatListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView(children: const [
-    ListTile(leading: CircleAvatar(child: Icon(Icons.support_agent)), title: Text("الدعم الفني"), subtitle: Text("مرحباً بك في فلكس")),
-    ListTile(leading: CircleAvatar(child: Icon(Icons.person)), title: Text("الوسيط العقاري"), subtitle: Text("هل الفيلا لا تزال متاحة؟")),
+    ListTile(leading: CircleAvatar(child: Icon(Icons.support_agent)), title: Text("الدعم الفني")),
+    ListTile(leading: CircleAvatar(child: Icon(Icons.person)), title: Text("الوسيط العقاري")),
   ]);
 }
 
-// --- 👤 5. واجهة الملف الشخصي ---
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(20), children: [
     const Center(child: CircleAvatar(radius: 40, backgroundColor: Color(0xFFD4AF37), child: Icon(Icons.person, size: 40, color: Colors.black))),
-    const SizedBox(height: 20),
     const ListTile(leading: Icon(Icons.lock, color: Color(0xFFD4AF37)), title: Text("الخصوصية والأمان")),
     const ListTile(leading: Icon(Icons.notifications, color: Color(0xFFD4AF37)), title: Text("الإشعارات")),
     const ListTile(leading: Icon(Icons.info, color: Color(0xFFD4AF37)), title: Text("عن فلكس يمن")),
-    ListTile(leading: const Icon(Icons.logout, color: Colors.red), title: const Text("تسجيل الخروج"), onTap: () {}),
   ]);
 }
