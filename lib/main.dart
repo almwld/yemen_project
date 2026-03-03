@@ -14,7 +14,7 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      theme: ThemeData(brightness: Brightness.light, primaryColor: const Color(0xFFD4AF37), fontFamily: 'Roboto'),
+      theme: ThemeData(brightness: Brightness.light, primaryColor: const Color(0xFFD4AF37)),
       darkTheme: ThemeData(brightness: Brightness.dark, primaryColor: const Color(0xFFD4AF37), scaffoldBackgroundColor: Colors.black),
       home: RootNavigation(
         isDarkMode: isDarkMode,
@@ -33,24 +33,23 @@ class RootNavigation extends StatefulWidget {
 }
 
 class _RootNavigationState extends State<RootNavigation> {
-  int _currentIndex = 0;
+  int _currentIndex = 1; // نبدأ بصفحة المتجر مباشرة للتجربة
   
+  final List<Widget> _screens = [
+    const Center(child: Text("الرئيسية")),
+    StorePage(),
+    const Center(child: Text("الخرائط")),
+    const Center(child: Text("إضافة")),
+    const Center(child: Text("دردشة")),
+    const Center(child: Text("المحفظة")),
+    const Center(child: Text("حسابي")),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          const Center(child: Text("الرئيسية (قريباً)")),
-          const Center(child: Text("المتجر (قريباً)")),
-          const Center(child: Text("الخرائط (قريباً)")),
-          const Center(child: Text("إضافة إعلان (قريباً)")),
-          const Center(child: Text("الدردشة (قريباً)")),
-          const Center(child: Text("المحفظة (قريباً)")),
-          ProfilePage(), // واجهة الملف الشخصي والإعدادات
-        ],
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: BottomAppBar(
         color: widget.isDarkMode ? const Color(0xFF1A1A1A) : Colors.white,
         shape: const CircularNotchedRectangle(),
@@ -87,63 +86,141 @@ class _RootNavigationState extends State<RootNavigation> {
   );
 }
 
-class ProfilePage extends StatelessWidget {
+// --- 🏪 واجهة المتجر الرئيسية (Store Page) ---
+class StorePage extends StatelessWidget {
+  final List<Map<String, dynamic>> categories = [
+    {"name": "فلكس برايم", "icon": Icons.star, "color": Colors.amber},
+    {"name": "العروض", "icon": Icons.local_offer, "color": Colors.redAccent},
+    {"name": "سوبر ماركت", "icon": Icons.shopping_basket, "color": Colors.green},
+    {"name": "مطاعم", "icon": Icons.restaurant, "color": Colors.orange},
+    {"name": "ملبوسات", "icon": Icons.checkroom, "color": Colors.purpleAccent},
+    {"name": "تعهد حفلات", "icon": Icons.celebration, "color": Colors.pink},
+    {"name": "مولات", "icon": Icons.apartment, "color": Colors.blue},
+    {"name": "صحة وصيدلة", "icon": Icons.medication, "color": Colors.cyan},
+    {"name": "عناية شخصية", "icon": Icons.face, "color": Colors.teal},
+    {"name": "أزياء وجمال", "icon": Icons.brush, "color": Colors.deepPurple},
+    {"name": "إلكترونيات", "icon": Icons.devices, "color": Colors.indigo},
+    {"name": "ألعاب فيديو", "icon": Icons.videogame_asset, "color": Colors.blueGrey},
+    {"name": "السيارات", "icon": Icons.directions_car, "color": Colors.brown},
+    {"name": "مستلزمات أطفال", "icon": Icons.child_care, "color": Colors.lightBlue},
+    {"name": "منتجات رياضية", "icon": Icons.fitness_center, "color": Colors.red},
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("الإعدادات والخصوصية"), backgroundColor: Colors.transparent, elevation: 0),
-      body: ListView(
-        padding: const EdgeInsets.all(15),
-        children: [
-          _sectionTitle("الحساب والأمان"),
-          _buildTile(context, Icons.lock_outline, "إعدادات الخصوصية", "من يمكنه رؤية إعلاناتك ورقمك"),
-          _buildTile(context, Icons.security, "الأمان", "تغيير كلمة المرور، التحقق بخطوتين"),
-          const Divider(color: Colors.white10),
-          _sectionTitle("التنبيهات"),
-          _buildTile(context, Icons.notifications_none, "إشعارات التطبيق", "التحكم في أصوات وتنبيهات الرسائل"),
-          const Divider(color: Colors.white10),
-          _sectionTitle("عن فلكس يمن"),
-          _buildTile(context, Icons.info_outline, "عن المنصة", "تعرف على رؤية فلكس يمن للوساطة"),
-          _buildTile(context, Icons.description_outlined, "الشروط والأحكام", "سياسة الاستخدام والقوانين"),
-          const SizedBox(height: 30),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.redAccent),
-            title: const Text("تسجيل الخروج", style: TextStyle(color: Colors.redAccent)),
-            onTap: () => _confirmLogout(context),
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          floating: true,
+          backgroundColor: Colors.black,
+          title: const Text("متجر فلكس الشامل", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
+          actions: [IconButton(icon: const Icon(Icons.search), onPressed: () {})],
+        ),
+        // بنر العروض
+        SliverToBoxAdapter(
+          child: Container(
+            height: 160,
+            margin: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: const LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFB8860B)]),
+            ),
+            child: Stack(
+              children: [
+                Positioned(right: 20, top: 30, child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text("عروض رمضان وصلت!", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
+                    Text("خصومات تصل إلى 50% على الإلكترونيات", style: TextStyle(color: Colors.black87, fontSize: 12)),
+                  ],
+                )),
+                Positioned(left: 10, bottom: 10, child: Icon(Icons.shopping_bag, size: 100, color: Colors.black.withOpacity(0.1))),
+              ],
+            ),
           ),
-        ],
-      ),
+        ),
+        const SliverToBoxAdapter(child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Text("التسوق حسب الفئة", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
+        )),
+        // شبكة التصنيفات
+        SliverPadding(
+          padding: const EdgeInsets.all(15),
+          slivers: [
+            SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, childAspectRatio: 0.9, crossAxisSpacing: 10, mainAxisSpacing: 10,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => _buildCategoryItem(context, categories[index]),
+                childCount: categories.length,
+              ),
+            ),
+          ],
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 100)),
+      ],
     );
   }
 
-  Widget _sectionTitle(String title) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-    child: Text(title, style: const TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 14)),
-  );
-
-  Widget _buildTile(BuildContext context, IconData icon, String title, String sub) => ListTile(
-    leading: Icon(icon, color: Colors.white70),
-    title: Text(title, style: const TextStyle(fontSize: 15)),
-    subtitle: Text(sub, style: const TextStyle(fontSize: 11, color: Colors.grey)),
-    trailing: const Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
-    onTap: () {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("جاري فتح $title...")));
-    },
-  );
-
-  void _confirmLogout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
-        title: const Text("تأكيد", style: TextStyle(color: Color(0xFFD4AF37))),
-        content: const Text("هل تريد فعلاً تسجيل الخروج؟"),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("إلغاء")),
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("خروج", style: TextStyle(color: Colors.red))),
+  Widget _buildCategoryItem(BuildContext context, Map<String, dynamic> cat) {
+    return InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryDetailScreen(title: cat['name']))),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(color: cat['color'].withOpacity(0.1), borderRadius: BorderRadius.circular(15)),
+            child: Icon(cat['icon'], color: cat['color'], size: 30),
+          ),
+          const SizedBox(height: 5),
+          Text(cat['name'], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.center, maxLines: 1),
         ],
       ),
     );
   }
 }
-// Update Version 1.0.1
+
+// --- 🛍️ واجهة تفاصيل القسم (Category Detail Screen) ---
+class CategoryDetailScreen extends StatelessWidget {
+  final String title;
+  CategoryDetailScreen({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(15),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, childAspectRatio: 0.8, crossAxisSpacing: 10, mainAxisSpacing: 10,
+        ),
+        itemCount: 10, // محاكاة 10 منتجات
+        itemBuilder: (context, i) => Card(
+          color: const Color(0xFF1A1A1A),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: Container(
+                decoration: const BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
+                child: const Center(child: Icon(Icons.image, color: Colors.grey)),
+              )),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("$title منتج رقم $i", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 5),
+                    const Text("2,500 RY", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
