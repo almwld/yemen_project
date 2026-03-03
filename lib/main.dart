@@ -43,7 +43,7 @@ class RootNavigation extends StatefulWidget {
 }
 
 class _RootNavigationState extends State<RootNavigation> {
-  int _currentIndex = 1; // المتجر هو الواجهة الافتراضية حالياً
+  int _currentIndex = 1; // المتجر هو الواجهة الافتراضية للتأكد من الإصلاح
   
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class _RootNavigationState extends State<RootNavigation> {
       body: IndexedStack(
         index: _currentIndex,
         children: [
-          const Center(child: Text("الرئيسية (العقارات والسيارات)")),
+          const Center(child: Text("الرئيسية - عقارات وسيارات")),
           StorePage(),
           const Center(child: Text("الخرائط")),
           const Center(child: Text("إضافة إعلان")),
@@ -107,12 +107,9 @@ class StorePage extends StatelessWidget {
     {"name": "تعهد حفلات", "icon": Icons.celebration, "color": Colors.pink},
     {"name": "مولات", "icon": Icons.apartment, "color": Colors.blue},
     {"name": "صحة وصيدلة", "icon": Icons.medication, "color": Colors.cyan},
-    {"name": "عناية شخصية", "icon": Icons.face, "color": Colors.teal},
-    {"name": "أزياء وجمال", "icon": Icons.brush, "color": Colors.deepPurple},
     {"name": "إلكترونيات", "icon": Icons.devices, "color": Colors.indigo},
     {"name": "ألعاب فيديو", "icon": Icons.videogame_asset, "color": Colors.blueGrey},
     {"name": "السيارات", "icon": Icons.directions_car, "color": Colors.brown},
-    {"name": "مستلزمات أطفال", "icon": Icons.child_care, "color": Colors.lightBlue},
     {"name": "منتجات رياضية", "icon": Icons.fitness_center, "color": Colors.red},
   ];
 
@@ -120,50 +117,54 @@ class StorePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
+        const SliverAppBar(
           backgroundColor: Colors.black,
-          title: const Text("متجر فلكس", style: TextStyle(color: Color(0xFFD4AF37))),
+          title: Text("متجر فلكس الشامل", style: TextStyle(color: Color(0xFFD4AF37))),
           pinned: true,
+          floating: true,
         ),
         SliverToBoxAdapter(
           child: Container(
-            height: 150,
+            height: 140,
             margin: const EdgeInsets.all(15),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(15),
               gradient: const LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFB8860B)]),
             ),
-            child: const Center(child: Text("أقوى العروض هنا", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20))),
+            child: const Center(child: Text("عروض السوبر ماركت %50", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))),
           ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.all(15),
-          slivers: [
-            SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, childAspectRatio: 0.85, crossAxisSpacing: 10, mainAxisSpacing: 10,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => _categoryItem(context, categories[index]),
-                childCount: categories.length,
-              ),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3, 
+              childAspectRatio: 0.85, 
+              crossAxisSpacing: 10, 
+              mainAxisSpacing: 10,
             ),
-          ],
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => _categoryItem(categories[index]),
+              childCount: categories.length,
+            ),
+          ),
         ),
+        const SliverToBoxAdapter(child: SizedBox(height: 100)),
       ],
     );
   }
 
-  Widget _categoryItem(BuildContext context, Map<String, dynamic> cat) {
-    return InkWell(
-      onTap: () {},
-      child: Column(
-        children: [
-          CircleAvatar(radius: 25, backgroundColor: cat['color'].withOpacity(0.2), child: Icon(cat['icon'], color: cat['color'])),
-          const SizedBox(height: 5),
-          Text(cat['name'], style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-        ],
-      ),
+  Widget _categoryItem(Map<String, dynamic> cat) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: cat['color'].withOpacity(0.1), shape: BoxShape.circle),
+          child: Icon(cat['icon'], color: cat['color'], size: 28),
+        ),
+        const SizedBox(height: 6),
+        Text(cat['name'], style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+      ],
     );
   }
 }
