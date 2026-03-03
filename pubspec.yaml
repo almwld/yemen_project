@@ -17,11 +17,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  assets:
-    - assets/fonts/
-
-  fonts:
-    - family: Change
-      fonts:
-        - asset: assets/fonts/Change-SemiBold.ttf

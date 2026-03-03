@@ -15,12 +15,10 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
       debugShowCheckedModeBanner: false,
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
-        fontFamily: 'Change',
         brightness: Brightness.light,
         primaryColor: const Color(0xFFD4AF37),
       ),
       darkTheme: ThemeData(
-        fontFamily: 'Change',
         brightness: Brightness.dark,
         primaryColor: const Color(0xFFD4AF37),
         scaffoldBackgroundColor: Colors.black,
