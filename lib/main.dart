@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 void main() => runApp(FlexYemenApp());
 
@@ -37,7 +36,13 @@ class RootNavigation extends StatefulWidget {
 class _RootNavigationState extends State<RootNavigation> {
   int _currentIndex = 0;
   final List<Widget> _screens = [
-    HomeScreen(), MapsScreen(), WalletScreen(), AddPostScreen(), OrdersScreen(), NotifyScreen(), ProfileScreen(),
+    HomeScreen(), 
+    MapsScreen(), 
+    WalletScreen(), 
+    AddPostScreen(), 
+    OrdersScreen(), 
+    NotifyScreen(), 
+    ProfileScreen(),
   ];
 
   @override
@@ -46,21 +51,11 @@ class _RootNavigationState extends State<RootNavigation> {
       extendBody: true,
       appBar: AppBar(
         elevation: 0,
-        toolbarHeight: 120,
-        title: Column(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text("فلكس يمن 🇾🇪", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
-                IconButton(icon: Icon(widget.isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: const Color(0xFFD4AF37)), onPressed: widget.onThemeToggle),
-              ],
-            ),
-            Container(
-              height: 40,
-              decoration: BoxDecoration(color: widget.isDarkMode ? Colors.white10 : Colors.grey[200], borderRadius: BorderRadius.circular(20)),
-              child: const TextField(textAlign: TextAlign.right, decoration: InputDecoration(hintText: "بحث عن عقار أو خدمة...", prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37)), border: InputBorder.none)),
-            ),
+            const Text("فلكس يمن 🇾🇪", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
+            IconButton(icon: Icon(widget.isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: const Color(0xFFD4AF37)), onPressed: widget.onThemeToggle),
           ],
         ),
       ),
@@ -108,71 +103,57 @@ class _RootNavigationState extends State<RootNavigation> {
   }
 }
 
-// --- واجهة الرئيسية الكاملة مع السلايدر والأقسام ---
-class HomeScreen extends StatelessWidget {
+// --- واجهة الخرائط (MapsScreen) ---
+class MapsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          CarouselSlider(
-            options: CarouselOptions(height: 180, autoPlay: true, enlargeCenterPage: true),
-            items: [
-              _sliderCard("عقارات صنعاء", "فلل وقصور للبيع بأسعار منافسة", "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"),
-              _sliderCard("سيارات حديثة", "مزاد فلكس للسيارات الوارد", "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"),
-            ],
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.grey[900],
+          child: const Center(child: Icon(Icons.map, size: 100, color: Colors.white24)),
+        ),
+        Positioned(
+          top: 20, right: 20, left: 20,
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(10), border: Border.all(color: const Color(0xFFD4AF37))),
+            child: const Text("جاري تحديد المواقع القريبة في صنعاء...", textAlign: TextAlign.center, style: TextStyle(color: Color(0xFFD4AF37))),
           ),
-          _sectionTitle("الأقسام الرئيسية"),
-          GridView.count(
-            shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 4, padding: const EdgeInsets.all(10),
-            children: [
-              _categoryIcon(Icons.villa, "عقارات"),
-              _categoryIcon(Icons.directions_car, "سيارات"),
-              _categoryIcon(Icons.satellite_alt, "ستارلينك"),
-              _categoryIcon(Icons.phone_android, "جوالات"),
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+}
+
+// --- واجهة الطلبات والوساطة (OrdersScreen) ---
+class OrdersScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(15),
+      children: [
+        _orderCard("فيلا في حدة", "قيد الوساطة", "150,000\$", Colors.orange),
+        _orderCard("تويوتا هايلوكس 2024", "مكتمل", "32,000\$", Colors.green),
+        _orderCard("اشتراك ستارلينك", "ملغي", "450\$", Colors.red),
+      ],
     );
   }
 
-  Widget _sliderCard(String t, String s, String img) => Container(
-    decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), image: DecorationImage(image: NetworkImage(img), fit: BoxFit.cover, colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken))),
-    child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text(t, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)), Text(s, style: const TextStyle(color: Color(0xFFD4AF37), fontSize: 12))])),
+  Widget _orderCard(String title, String status, String price, Color color) => Card(
+    color: const Color(0xFF1E1E1E),
+    child: ListTile(
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: Text(status, style: TextStyle(color: color)),
+      trailing: Text(price, style: const TextStyle(color: Color(0xFFD4AF37))),
+    ),
   );
-
-  Widget _sectionTitle(String t) => Padding(padding: const EdgeInsets.all(15), child: Align(alignment: Alignment.centerRight, child: Text(t, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37)))));
-
-  Widget _categoryIcon(IconData i, String l) => Column(children: [CircleAvatar(backgroundColor: const Color(0xFF1E1E1E), child: Icon(i, color: const Color(0xFFD4AF37))), const SizedBox(height: 5), Text(l, style: const TextStyle(fontSize: 10))]);
 }
 
-// --- واجهة المحفظة المصححة ---
-class WalletScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFB8860B)]), borderRadius: BorderRadius.circular(20)),
-            child: Column(children: const [
-              Text("الرصيد المتاح", style: TextStyle(color: Colors.black54)),
-              Text("750,000 RY", style: TextStyle(color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold)),
-              Text("≈ \$1,250.00", style: TextStyle(color: Colors.black45)), // تم الهروب بـ \$
-            ]),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class MapsScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("خريطة اليمن")); }
-class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("إضافة إعلان")); }
-class OrdersScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الطلبات")); }
-class NotifyScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الحالة")); }
-class ProfileScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الحساب")); }
+class HomeScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("قائمة الأقسام الرئيسية")); }
+class WalletScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("المحفظة المالية")); }
+class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("إضافة إعلان جديد")); }
+class NotifyScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("التنبيهات")); }
+class ProfileScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الملف الشخصي")); }
