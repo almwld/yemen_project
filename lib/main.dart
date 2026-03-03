@@ -48,11 +48,11 @@ class _RootNavigationState extends State<RootNavigation> {
 
   final List<Widget> _screens = [
     HomeScreen(),
-    const Center(child: Text("خريطة اليمن التفاعلية")),
-    WalletScreen(), // المحفظة المبرمجة
-    const Center(child: Text("إضافة إعلان")),
-    const Center(child: Text("طلباتي")),
-    const Center(child: Text("الحالة والتنبيهات")),
+    const MapsScreen(),
+    WalletScreen(), 
+    const AddPostScreen(),
+    const OrdersScreen(),
+    const NotifyScreen(),
     ProfileScreen(),
   ];
 
@@ -131,7 +131,6 @@ class _RootNavigationState extends State<RootNavigation> {
   }
 }
 
-// --- واجهة المحفظة المالية (WalletScreen) ---
 class WalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -139,7 +138,6 @@ class WalletScreen extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       child: Column(
         children: [
-          // كارت الرصيد
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(25),
@@ -152,12 +150,11 @@ class WalletScreen extends StatelessWidget {
                 Text("إجمالي الرصيد المتاح", style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
                 SizedBox(height: 10),
                 Text("750,000 RY", style: TextStyle(color: Colors.black, fontSize: 32, fontWeight: FontWeight.bold)),
-                Text("≈ $1,250.00", style: TextStyle(color: Colors.black45, fontSize: 16)),
+                Text("≈ \$1,250.00", style: TextStyle(color: Colors.black45, fontSize: 16)), // تم التصحيح بوضع \$
               ],
             ),
           ),
           const SizedBox(height: 20),
-          // أزرار التحكم السريع
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -169,11 +166,8 @@ class WalletScreen extends StatelessWidget {
           ),
           const SizedBox(height: 30),
           const Align(alignment: Alignment.centerRight, child: Text("آخر العمليات", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-          const SizedBox(height: 10),
-          // سجل العمليات
           _transactionItem("شراء إنترنت ستارلينك", "- 45,000 RY", "2026-03-01", Colors.red),
           _transactionItem("إيداع عبر الكريمي", "+ 100,000 RY", "2026-02-28", Colors.green),
-          _transactionItem("عمولة وساطة عقارية", "+ 15,000 RY", "2026-02-25", Colors.green),
         ],
       ),
     );
@@ -199,16 +193,9 @@ class WalletScreen extends StatelessWidget {
   );
 }
 
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("الرئيسية - السلايدر"));
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("الحساب الشخصي"));
-  }
-}
+class HomeScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الرئيسية")); }
+class MapsScreen extends StatelessWidget { const MapsScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("الخرائط")); }
+class AddPostScreen extends StatelessWidget { const AddPostScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("إضافة")); }
+class OrdersScreen extends StatelessWidget { const OrdersScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("الطلبات")); }
+class NotifyScreen extends StatelessWidget { const NotifyScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("الحالة")); }
+class ProfileScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الحساب")); }
