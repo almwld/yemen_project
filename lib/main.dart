@@ -9,15 +9,27 @@ class FlexYemenApp extends StatefulWidget {
 }
 
 class _FlexYemenAppState extends State<FlexYemenApp> {
+  // متغير التحكم في الوضع الليلي والنهاري
   bool isDarkMode = true;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: isDarkMode ? ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
+      // تعريف الثيم الليلي والنهاري
+      theme: ThemeData(
+        brightness: Brightness.light,
         primaryColor: const Color(0xFFD4AF37),
-      ) : ThemeData.light(),
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: const Color(0xFFD4AF37),
+        scaffoldBackgroundColor: Colors.black,
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.black, foregroundColor: Colors.white),
+      ),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: RootNavigation(
         isDarkMode: isDarkMode,
         onThemeToggle: () => setState(() => isDarkMode = !isDarkMode),
@@ -30,56 +42,77 @@ class RootNavigation extends StatefulWidget {
   final bool isDarkMode;
   final VoidCallback onThemeToggle;
   const RootNavigation({super.key, required this.isDarkMode, required this.onThemeToggle});
+
   @override
   _RootNavigationState createState() => _RootNavigationState();
 }
 
 class _RootNavigationState extends State<RootNavigation> {
   int _currentIndex = 0;
-  
+  final TextEditingController _searchController = TextEditingController();
+
+  // مصفوفة الشاشات
   final List<Widget> _screens = [
     HomeScreen(),
-    MapsScreen(),
-    WalletScreen(),
-    AddPostScreen(),
-    OrdersScreen(),
-    NotifyScreen(),
-    ProfileScreen(), // 6 (الحساب الشخصي الجديد)
+    const MapsScreen(),
+    const WalletScreen(),
+    const AddPostScreen(),
+    const OrdersScreen(),
+    const NotifyScreen(),
+    ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = widget.isDarkMode;
+    
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        backgroundColor: Colors.black,
         elevation: 0,
-        toolbarHeight: 120,
+        toolbarHeight: 130,
         title: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("فلكس يمن 🇾🇪", style: TextStyle(color: Color(0xFFD4AF37), fontSize: 22, fontWeight: FontWeight.bold)),
+                Text("فلكس يمن 🇾🇪", 
+                  style: TextStyle(color: const Color(0xFFD4AF37), fontSize: 22, fontWeight: FontWeight.bold)),
                 Row(
                   children: [
-                    IconButton(icon: Icon(widget.isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: const Color(0xFFD4AF37)), onPressed: widget.onThemeToggle),
+                    // برمجة زر الثيم
+                    IconButton(
+                      icon: Icon(isDark ? Icons.wb_sunny : Icons.nightlight_round, color: const Color(0xFFD4AF37)),
+                      onPressed: widget.onThemeToggle,
+                    ),
                     const Icon(Icons.shopping_cart, color: Color(0xFFD4AF37)),
                   ],
                 ),
               ],
             ),
             const SizedBox(height: 10),
+            // برمجة شريط البحث
             Container(
               height: 45,
-              decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(25)),
-              child: const TextField(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E1E1E) : Colors.grey[200],
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.3))
+              ),
+              child: TextField(
+                controller: _searchController,
                 textAlign: TextAlign.right,
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                onSubmitted: (value) {
+                  print("جاري البحث عن: $value");
+                  // هنا سيتم ربط البحث بقاعدة البيانات لاحقاً
+                },
                 decoration: InputDecoration(
-                  hintText: "...بحث في 1000 قسم",
-                  prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37)),
+                  hintText: "ابحث عن عقار، سيارة، أو خدمة...",
+                  hintStyle: TextStyle(color: isDark ? Colors.white54 : Colors.black54, fontSize: 13),
+                  prefixIcon: const Icon(Icons.search, color: Color(0xFFD4AF37)),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 ),
               ),
             ),
@@ -87,8 +120,9 @@ class _RootNavigationState extends State<RootNavigation> {
         ),
       ),
       body: _screens[_currentIndex],
+      // البار السفلي المبرمج (7 أزرار)
       bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF1A1A1A),
+        color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,
         child: Container(
@@ -122,15 +156,15 @@ class _RootNavigationState extends State<RootNavigation> {
       child: InkWell(
         onTap: () => setState(() => _currentIndex = index),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(icon, color: active ? const Color(0xFFD4AF37) : Colors.white54, size: 20),
-          Text(label, style: TextStyle(color: active ? const Color(0xFFD4AF37) : Colors.white54, fontSize: 10)),
+          Icon(icon, color: active ? const Color(0xFFD4AF37) : Colors.grey, size: 20),
+          Text(label, style: TextStyle(color: active ? const Color(0xFFD4AF37) : Colors.grey, fontSize: 10)),
         ]),
       ),
     );
   }
 }
 
-// الواجهة الرئيسية مع السلايدر
+// واجهة الرئيسية مع السلايدر المتوافق مع الثيم
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -152,7 +186,7 @@ class HomeScreen extends StatelessWidget {
           ),
           const Padding(
             padding: EdgeInsets.all(20),
-            child: Text("سوق فلكس يمن الشامل", style: TextStyle(fontSize: 18, color: Color(0xFFD4AF37))),
+            child: Text("أهلاً بك في فلكس يمن 🇾🇪", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -160,90 +194,27 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-// --- واجهة الحساب الشخصي الجديدة (ProfileScreen) ---
+// بقية الواجهات المفرغة للبرمجة اللاحقة
+class MapsScreen extends StatelessWidget { const MapsScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("خريطة اليمن")); }
+class WalletScreen extends StatelessWidget { const WalletScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("المحفظة")); }
+class AddPostScreen extends StatelessWidget { const AddPostScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("إضافة إعلان")); }
+class OrdersScreen extends StatelessWidget { const OrdersScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("الطلبات")); }
+class NotifyScreen extends StatelessWidget { const NotifyScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("التنبيهات")); }
+
+// استعادة واجهة الحساب المبرمجة سابقاً
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // 1. كارت الهوية اليمنية الافتراضي
-          Container(
-            margin: const EdgeInsets.all(20),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [const Color(0xFFD4AF37), Colors.yellow[600]!], begin: Alignment.topLeft, end: Alignment.bottomRight),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [BoxShadow(color: Colors.white10, blurRadius: 10)],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text("جمهورية اليمن", style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold)),
-                    Text("FLEX ID", style: TextStyle(color: Colors.black54, fontSize: 10)),
-                  ],
-                ),
-                Image.asset('assets/logo.png', height: 40, errorBuilder: (c,e,s) => const Icon(Icons.star, color: Colors.black)),
-              ],
-            ),
-          ),
-          
-          // 2. بيانات المستخدم والتحقق
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [
-                  Text("صالح بن علي", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-                  Text("NID: Y-12345", style: TextStyle(fontSize: 12, color: Colors.white60)),
-                ]),
-                Row(children: const [
-                  Icon(Icons.verified, color: Color(0xFFD4AF37), size: 16),
-                  SizedBox(width: 5),
-                  Text("محقق", style: TextStyle(color: Color(0xFFD4AF37), fontSize: 12)),
-                ]),
-              ],
-            ),
-          ),
-          
-          const Divider(height: 30, color: Colors.white12, thickness: 1, indent: 20, endIndent: 20),
-          
-          // 3. قائمة الخيارات
-          _buildOption(Icons.edit, "تعديل البيانات الشخصية"),
-          _buildOption(Icons.lock, "تغيير كلمة المرور"),
-          _buildOption(Icons.verified_user, "بيانات التحقق والوثائق"),
-          _buildOption(Icons.account_balance_wallet, "إدارة المحفظة والوساطة"),
-          _buildOption(Icons.help_outline, "الدعم الفني وخدمة العملاء"),
-          _buildOption(Icons.power_settings_new, "تسجيل الخروج", isRed: true),
-          
-          const SizedBox(height: 100),
-        ],
-      ),
-    );
+    return Center(child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const CircleAvatar(radius: 50, backgroundColor: Color(0xFFD4AF37), child: Icon(Icons.person, size: 50, color: Colors.black)),
+        const SizedBox(height: 20),
+        const Text("صالح بن علي", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+        const Text("حساب محقق ✅", style: TextStyle(color: Color(0xFFD4AF37))),
+        const SizedBox(height: 30),
+        ElevatedButton(onPressed: (){}, style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37)), child: const Text("تعديل الحساب", style: TextStyle(color: Colors.black))),
+      ],
+    ));
   }
-
-  Widget _buildOption(IconData icon, String title, {bool isRed = false}) => Card(
-    color: const Color(0xFF1E1E1E),
-    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-    child: ListTile(
-      leading: Icon(icon, color: isRed ? Colors.red : const Color(0xFFD4AF37)),
-      title: Text(title, style: TextStyle(color: isRed ? Colors.red : Colors.white, fontSize: 14)),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.white60),
-      onTap: () {
-        // تنفيذ الإجراء المطلوب (مثلاً فتح صفحة جديدة)
-      },
-    ),
-  );
 }
-
-// شاشات فرعية
-class MapsScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("خريطة اليمن العقارية")); }
-class WalletScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("المحفظة المالية")); }
-class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("إضافة إعلان جديد")); }
-class OrdersScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("سجل الطلبات والوساطة")); }
-class NotifyScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("التنبيهات وحالة الطلبات")); }
