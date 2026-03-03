@@ -33,7 +33,6 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
   }
 }
 
-// --- المحرك الرئيسي للتنقل ---
 class RootNavigation extends StatefulWidget {
   final bool isDarkMode;
   final VoidCallback onThemeToggle;
@@ -46,11 +45,11 @@ class _RootNavigationState extends State<RootNavigation> {
   int _currentIndex = 0;
   final List<Widget> _screens = [
     HomeScreen(),
-    const MapsPage(),
+    const Center(child: Text("🗺️ الخرائط")),
     const WalletPage(),
-    const AddPostPage(),
-    const ContractsPage(),
-    const ProfilePage(),
+    const Center(child: Text("📸 إضافة إعلان")),
+    const Center(child: Text("📜 العقود")),
+    const Center(child: Text("👤 الملف الشخصي")),
   ];
 
   @override
@@ -108,30 +107,28 @@ class _RootNavigationState extends State<RootNavigation> {
   }
 }
 
-// --- 1. واجهة الرئيسية المتطورة ---
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
-        _searchBar(),
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15)),
+          child: const TextField(textAlign: TextAlign.right, decoration: InputDecoration(hintText: "بحث عن عقارات، سيارات...", border: InputBorder.none, icon: Icon(Icons.search, color: Color(0xFFD4AF37)))),
+        ),
         const SizedBox(height: 25),
         const Text("الأقسام الفاخرة", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
         const SizedBox(height: 15),
         _categories(),
         const SizedBox(height: 25),
-        _propertyCard("فيلا في حي حدة - صنعاء", "150,000 $", "لقطة الأسبوع"),
+        _propertyCard("فيلا في حي حدة - صنعاء", "150,000 \$", "لقطة الأسبوع"),
         _propertyCard("أرض سكنية - دار سلم", "25,000,000 RY", "معمدة"),
       ],
     );
   }
-
-  Widget _searchBar() => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-    decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15)),
-    child: const TextField(textAlign: TextAlign.right, decoration: InputDecoration(hintText: "بحث عن عقارات، سيارات...", border: InputBorder.none, icon: Icon(Icons.search, color: Color(0xFFD4AF37)))),
-  );
 
   Widget _categories() => Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
     _catIcon(Icons.villa, "عقارات"), _catIcon(Icons.directions_car, "سيارات"), _catIcon(Icons.satellite_alt, "ستارلينك"), _catIcon(Icons.work, "وظائف")
@@ -143,13 +140,12 @@ class HomeScreen extends StatelessWidget {
     margin: const EdgeInsets.only(bottom: 15),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
     child: Column(children: [
-      Container(height: 150, decoration: BoxDecoration(color: Colors.white10, borderRadius: const BorderRadius.vertical(top: Radius.circular(15)))),
+      Container(height: 150, decoration: const BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.vertical(top: Radius.circular(15)))),
       ListTile(title: Text(t), subtitle: Text(tag, style: const TextStyle(color: Color(0xFFD4AF37))), trailing: Text(p, style: const TextStyle(fontWeight: FontWeight.bold))),
     ]),
   );
 }
 
-// --- 2. واجهة المحفظة والوساطة ---
 class WalletPage extends StatelessWidget {
   const WalletPage({super.key});
   @override
@@ -165,29 +161,7 @@ class WalletPage extends StatelessWidget {
             Text("850,000 RY", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black)),
           ]),
         ),
-        const SizedBox(height: 20),
-        const ListTile(leading: Icon(Icons.verified, color: Colors.green), title: Text("عملية شراء أرض دار سلم - قيد العربون", textAlign: TextAlign.right)),
       ]),
     );
   }
 }
-
-// --- 3. واجهة العقود والوثائق ---
-class ContractsPage extends StatelessWidget {
-  const ContractsPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(15),
-      children: const [
-        Text("أرشيف العقود الرقمي", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
-        Card(child: ListTile(title: Text("عقد إيجار شقة - حي الأصبحي"), subtitle: Text("موثق بتاريخ 2024/02/10"), leading: Icon(Icons.description, color: Color(0xFFD4AF37)))),
-      ],
-    );
-  }
-}
-
-// --- نماذج مفرغة قابلة للتوسيع لاحقاً ---
-class MapsPage extends StatelessWidget { const MapsPage({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("🗺️ الخرائط المؤمنة: تظهر المواقع بعد دفع العربون")); }
-class AddPostPage extends StatelessWidget { const AddPostPage({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("📸 نظام إضافة الإعلانات مع فحص AI")); }
-class ProfilePage extends StatelessWidget { const ProfilePage({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("👤 حساب المستخدم ولوحة تحكم التاجر")); }
