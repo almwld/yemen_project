@@ -35,23 +35,23 @@ class RootNavigation extends StatefulWidget {
 class _RootNavigationState extends State<RootNavigation> {
   int _currentIndex = 0;
   
-  // الصفحات الجديدة بعد التعديل
-  final List<Widget> _screens = [
-    HomeScreen(),           // 0
-    StorePage(),            // 1 (المتجر الجديد)
-    MapsPage(),             // 2
-    AddPostPage(),          // 3 (إضافة)
-    ChatPage(),             // 4 (الدردشة بدلاً من عقودي)
-    WalletPage(),           // 5
-    ProfilePage(),          // 6
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      appBar: _buildAppBar(context),
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      appBar: _currentIndex == 4 ? null : _buildAppBar(context),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          HomeScreen(),
+          StorePage(),
+          const Center(child: Text("الخرائط")),
+          const Center(child: Text("إضافة إعلان")),
+          ChatListScreen(), // عرض قائمة المحادثات
+          const Center(child: Text("المحفظة")),
+          const Center(child: Text("الملف الشخصي")),
+        ],
+      ),
       bottomNavigationBar: _buildBottomNav(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => setState(() => _currentIndex = 3),
@@ -69,7 +69,6 @@ class _RootNavigationState extends State<RootNavigation> {
     leading: IconButton(icon: const Icon(Icons.settings, color: Color(0xFFD4AF37)), onPressed: () {}),
     actions: [
       IconButton(icon: Icon(widget.isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: const Color(0xFFD4AF37)), onPressed: widget.onThemeToggle),
-      IconButton(icon: const Icon(Icons.shopping_cart, color: Color(0xFFD4AF37)), onPressed: () {}),
     ],
   );
 
@@ -84,7 +83,7 @@ class _RootNavigationState extends State<RootNavigation> {
         children: [
           _navItem(Icons.home, "الرئيسية", 0),
           _navItem(Icons.storefront, "المتجر", 1),
-          const SizedBox(width: 40), // مكان الزر العائم
+          const SizedBox(width: 40),
           _navItem(Icons.chat_bubble_outline, "دردشة", 4),
           _navItem(Icons.person_outline, "حسابي", 6),
         ],
@@ -101,7 +100,102 @@ class _RootNavigationState extends State<RootNavigation> {
   );
 }
 
-// --- 🏪 صفحة المتجر (Store Page) ---
+// --- 💬 قائمة المحادثات ---
+class ChatListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 3,
+      itemBuilder: (context, i) => ListTile(
+        leading: CircleAvatar(backgroundColor: const Color(0xFFD4AF37), child: Text("${i+1}", style: const TextStyle(color: Colors.black))),
+        title: Text("بائع عقارات - صنعاء $i", style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: const Text("هل السعر قابل للتفاوض؟"),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => IndividualChatScreen(name: "صالح العولقي $i"))),
+      ),
+    );
+  }
+}
+
+// --- ✉️ واجهة المحادثة من الداخل ---
+class IndividualChatScreen extends StatelessWidget {
+  final String name;
+  IndividualChatScreen({required this.name});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A1A),
+        title: Row(children: [
+          const CircleAvatar(radius: 15, backgroundColor: Color(0xFFD4AF37), child: Icon(Icons.person, size: 20, color: Colors.black)),
+          const SizedBox(width: 10),
+          Text(name, style: const TextStyle(fontSize: 16)),
+        ]),
+        actions: [IconButton(icon: const Icon(Icons.call, color: Color(0xFFD4AF37)), onPressed: () {})],
+      ),
+      body: Column(
+        children: [
+          Expanded(child: ListView(
+            padding: const EdgeInsets.all(15),
+            children: [
+              _bubble("السلام عليكم، بخصوص عرض الفيلا في حدة", false),
+              _bubble("وعليكم السلام، حياك الله أخي الكريم. نعم لا تزال متاحة", true),
+              _bubble("هل يمكنني معاينة العقار غداً عصراً؟", false),
+              _bubble("بالتأكيد، سأرسل لك الموقع الآن عبر الخريطة", true),
+            ],
+          )),
+          _chatInput(),
+        ],
+      ),
+    );
+  }
+
+  Widget _bubble(String text, bool isMe) => Align(
+    alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+    child: Container(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      decoration: BoxDecoration(
+        color: isMe ? const Color(0xFFD4AF37) : Colors.white12,
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(15),
+          topRight: const Radius.circular(15),
+          bottomLeft: isMe ? const Radius.circular(15) : Radius.zero,
+          bottomRight: isMe ? Radius.zero : const Radius.circular(15),
+        ),
+      ),
+      child: Text(text, style: TextStyle(color: isMe ? Colors.black : Colors.white)),
+    ),
+  );
+
+  Widget _chatInput() => Container(
+    padding: const EdgeInsets.all(10),
+    color: const Color(0xFF1A1A1A),
+    child: Row(
+      children: [
+        IconButton(icon: const Icon(Icons.add_circle_outline, color: Color(0xFFD4AF37)), onPressed: () {}),
+        Expanded(
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: "اكتب رسالتك هنا...",
+              filled: true,
+              fillColor: Colors.black26,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+            ),
+          ),
+        ),
+        const SizedBox(width: 5),
+        CircleAvatar(
+          backgroundColor: const Color(0xFFD4AF37),
+          child: IconButton(icon: const Icon(Icons.send, color: Colors.black, size: 20), onPressed: () {}),
+        ),
+      ],
+    ),
+  );
+}
+
+// --- 🏪 صفحة المتجر ---
 class StorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -113,35 +207,12 @@ class StorePage extends StatelessWidget {
         color: const Color(0xFF1A1A1A),
         child: Column(children: [
           Expanded(child: Container(color: Colors.white10, child: const Icon(Icons.inventory_2, color: Color(0xFFD4AF37), size: 40))),
-          const Padding(padding: EdgeInsets.all(8.0), child: Text("ستارلينك V3 - جديد", style: TextStyle(fontSize: 12))),
-          const Text("550 \$", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
-          ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), minimumSize: const Size(80, 25)), child: const Text("أضف", style: TextStyle(color: Colors.black, fontSize: 10)))
+          Padding(padding: const EdgeInsets.all(8.0), child: Text("منتج متجر فلكس $i", style: const TextStyle(fontSize: 12))),
+          const Text("500 \$", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
         ]),
       ),
     );
   }
 }
 
-// --- 💬 صفحة الدردشة (Chat Page) ---
-class ChatPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 5,
-      itemBuilder: (context, i) => ListTile(
-        leading: const CircleAvatar(backgroundColor: Color(0xFFD4AF37), child: Icon(Icons.person, color: Colors.black)),
-        title: Text("المستخدم رقم $i", style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: const Text("هل العقار لا يزال متاحاً؟", maxLines: 1),
-        trailing: const Text("12:40 PM", style: TextStyle(fontSize: 10, color: Colors.grey)),
-        onTap: () {},
-      ),
-    );
-  }
-}
-
-// الصفحات المتبقية
-class HomeScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الرئيسية (العقارات والسيارات)")); }
-class MapsPage extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الخرائط")); }
-class AddPostPage extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("إضافة إعلان")); }
-class WalletPage extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("المحفظة")); }
-class ProfilePage extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الملف الشخصي")); }
+class HomeScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("قائمة العقارات المميزة")); }
