@@ -15,17 +15,9 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: const Color(0xFFD4AF37),
-        scaffoldBackgroundColor: Colors.white,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: const Color(0xFFD4AF37),
-        scaffoldBackgroundColor: Colors.black,
-      ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      theme: ThemeData(brightness: Brightness.light, primaryColor: const Color(0xFFD4AF37)),
+      darkTheme: ThemeData(brightness: Brightness.dark, primaryColor: const Color(0xFFD4AF37), scaffoldBackgroundColor: Colors.black),
       home: RootNavigation(
         isDarkMode: isDarkMode,
         onThemeToggle: () => setState(() => isDarkMode = !isDarkMode),
@@ -38,22 +30,14 @@ class RootNavigation extends StatefulWidget {
   final bool isDarkMode;
   final VoidCallback onThemeToggle;
   const RootNavigation({super.key, required this.isDarkMode, required this.onThemeToggle});
-
   @override
   _RootNavigationState createState() => _RootNavigationState();
 }
 
 class _RootNavigationState extends State<RootNavigation> {
   int _currentIndex = 0;
-
   final List<Widget> _screens = [
-    HomeScreen(),
-    const MapsScreen(),
-    WalletScreen(), 
-    const AddPostScreen(),
-    const OrdersScreen(),
-    const NotifyScreen(),
-    ProfileScreen(),
+    HomeScreen(), MapsScreen(), WalletScreen(), AddPostScreen(), OrdersScreen(), NotifyScreen(), ProfileScreen(),
   ];
 
   @override
@@ -61,7 +45,6 @@ class _RootNavigationState extends State<RootNavigation> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: 120,
         title: Column(
@@ -70,19 +53,13 @@ class _RootNavigationState extends State<RootNavigation> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text("فلكس يمن 🇾🇪", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
-                IconButton(
-                  icon: Icon(widget.isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: const Color(0xFFD4AF37)),
-                  onPressed: widget.onThemeToggle,
-                ),
+                IconButton(icon: Icon(widget.isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: const Color(0xFFD4AF37)), onPressed: widget.onThemeToggle),
               ],
             ),
             Container(
               height: 40,
               decoration: BoxDecoration(color: widget.isDarkMode ? Colors.white10 : Colors.grey[200], borderRadius: BorderRadius.circular(20)),
-              child: const TextField(
-                textAlign: TextAlign.right,
-                decoration: InputDecoration(hintText: "بحث...", prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37)), border: InputBorder.none),
-              ),
+              child: const TextField(textAlign: TextAlign.right, decoration: InputDecoration(hintText: "بحث عن عقار أو خدمة...", prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37)), border: InputBorder.none)),
             ),
           ],
         ),
@@ -131,71 +108,71 @@ class _RootNavigationState extends State<RootNavigation> {
   }
 }
 
-class WalletScreen extends StatelessWidget {
+// --- واجهة الرئيسية الكاملة مع السلايدر والأقسام ---
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(15),
       child: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(25),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFB8860B)]),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              children: const [
-                Text("إجمالي الرصيد المتاح", style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                Text("750,000 RY", style: TextStyle(color: Colors.black, fontSize: 32, fontWeight: FontWeight.bold)),
-                Text("≈ \$1,250.00", style: TextStyle(color: Colors.black45, fontSize: 16)), // تم التصحيح بوضع \$
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _walletAction(Icons.send, "تحويل"),
-              _walletAction(Icons.account_balance_wallet, "إيداع"),
-              _walletAction(Icons.payments, "سحب"),
-              _walletAction(Icons.history_edu, "كشف"),
+          CarouselSlider(
+            options: CarouselOptions(height: 180, autoPlay: true, enlargeCenterPage: true),
+            items: [
+              _sliderCard("عقارات صنعاء", "فلل وقصور للبيع بأسعار منافسة", "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"),
+              _sliderCard("سيارات حديثة", "مزاد فلكس للسيارات الوارد", "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"),
             ],
           ),
-          const SizedBox(height: 30),
-          const Align(alignment: Alignment.centerRight, child: Text("آخر العمليات", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-          _transactionItem("شراء إنترنت ستارلينك", "- 45,000 RY", "2026-03-01", Colors.red),
-          _transactionItem("إيداع عبر الكريمي", "+ 100,000 RY", "2026-02-28", Colors.green),
+          _sectionTitle("الأقسام الرئيسية"),
+          GridView.count(
+            shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 4, padding: const EdgeInsets.all(10),
+            children: [
+              _categoryIcon(Icons.villa, "عقارات"),
+              _categoryIcon(Icons.directions_car, "سيارات"),
+              _categoryIcon(Icons.satellite_alt, "ستارلينك"),
+              _categoryIcon(Icons.phone_android, "جوالات"),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _walletAction(IconData icon, String label) => Column(
-    children: [
-      CircleAvatar(backgroundColor: const Color(0xFFD4AF37).withOpacity(0.2), child: Icon(icon, color: const Color(0xFFD4AF37))),
-      const SizedBox(height: 5),
-      Text(label, style: const TextStyle(fontSize: 12)),
-    ],
+  Widget _sliderCard(String t, String s, String img) => Container(
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), image: DecorationImage(image: NetworkImage(img), fit: BoxFit.cover, colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken))),
+    child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text(t, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)), Text(s, style: const TextStyle(color: Color(0xFFD4AF37), fontSize: 12))])),
   );
 
-  Widget _transactionItem(String title, String amount, String date, Color color) => Card(
-    margin: const EdgeInsets.only(bottom: 10),
-    color: Colors.white10,
-    child: ListTile(
-      leading: CircleAvatar(backgroundColor: color.withOpacity(0.1), child: Icon(Icons.swap_horiz, color: color)),
-      title: Text(title, style: const TextStyle(fontSize: 14)),
-      subtitle: Text(date, style: const TextStyle(fontSize: 10)),
-      trailing: Text(amount, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
-    ),
-  );
+  Widget _sectionTitle(String t) => Padding(padding: const EdgeInsets.all(15), child: Align(alignment: Alignment.centerRight, child: Text(t, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37)))));
+
+  Widget _categoryIcon(IconData i, String l) => Column(children: [CircleAvatar(backgroundColor: const Color(0xFF1E1E1E), child: Icon(i, color: const Color(0xFFD4AF37))), const SizedBox(height: 5), Text(l, style: const TextStyle(fontSize: 10))]);
 }
 
-class HomeScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الرئيسية")); }
-class MapsScreen extends StatelessWidget { const MapsScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("الخرائط")); }
-class AddPostScreen extends StatelessWidget { const AddPostScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("إضافة")); }
-class OrdersScreen extends StatelessWidget { const OrdersScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("الطلبات")); }
-class NotifyScreen extends StatelessWidget { const NotifyScreen({super.key}); @override Widget build(BuildContext context) => const Center(child: Text("الحالة")); }
+// --- واجهة المحفظة المصححة ---
+class WalletScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFFB8860B)]), borderRadius: BorderRadius.circular(20)),
+            child: Column(children: const [
+              Text("الرصيد المتاح", style: TextStyle(color: Colors.black54)),
+              Text("750,000 RY", style: TextStyle(color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold)),
+              Text("≈ \$1,250.00", style: TextStyle(color: Colors.black45)), // تم الهروب بـ \$
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MapsScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("خريطة اليمن")); }
+class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("إضافة إعلان")); }
+class OrdersScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الطلبات")); }
+class NotifyScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الحالة")); }
 class ProfileScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الحساب")); }
