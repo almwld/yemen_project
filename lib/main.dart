@@ -35,21 +35,11 @@ class RootNavigation extends StatefulWidget {
 class _RootNavigationState extends State<RootNavigation> {
   int _currentIndex = 0;
   
-  final List<Widget> _screens = [
-    const Center(child: Text("الرئيسية")),
-    const StorePage(),
-    const Center(child: Text("الخرائط")),
-    const Center(child: Text("إضافة إعلان")),
-    const ChatListScreen(),
-    const Center(child: Text("المحفظة")),
-    ProfilePage(), // واجهة الملف الشخصي الجديدة
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      appBar: _currentIndex == 6 ? null : AppBar(
+      appBar: _currentIndex == 3 || _currentIndex == 6 ? null : AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: const Text("FLEX YEMEN", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
@@ -57,12 +47,23 @@ class _RootNavigationState extends State<RootNavigation> {
           IconButton(icon: Icon(widget.isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: const Color(0xFFD4AF37)), onPressed: widget.onThemeToggle),
         ],
       ),
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          const Center(child: Text("الرئيسية")),
+          const Center(child: Text("المتجر")),
+          const Center(child: Text("الخرائط")),
+          AddPostScreen(onSuccess: () => setState(() => _currentIndex = 0)), // واجهة النشر
+          const Center(child: Text("دردشة")),
+          const Center(child: Text("المحفظة")),
+          ProfilePage(),
+        ],
+      ),
       bottomNavigationBar: _buildBottomNav(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => setState(() => _currentIndex = 3),
         backgroundColor: const Color(0xFFD4AF37),
-        child: const Icon(Icons.add, color: Colors.black),
+        child: Icon(_currentIndex == 3 ? Icons.check : Icons.add, color: Colors.black),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -96,88 +97,89 @@ class _RootNavigationState extends State<RootNavigation> {
   );
 }
 
-// --- 👤 واجهة الملف الشخصي (Profile Page) ---
-class ProfilePage extends StatelessWidget {
+// --- ➕ واجهة إضافة إعلان جديد (Add Post Screen) ---
+class AddPostScreen extends StatelessWidget {
+  final VoidCallback onSuccess;
+  AddPostScreen({required this.onSuccess});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(backgroundColor: Colors.transparent, title: const Text("نشر إعلان جديد", style: TextStyle(color: Color(0xFFD4AF37)))),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 60),
-            // Header: Profile Picture & Name
-            const CircleAvatar(
-              radius: 50,
-              backgroundColor: Color(0xFFD4AF37),
-              child: Icon(Icons.person, size: 60, color: Colors.black),
+            // Upload Box
+            Container(
+              height: 150,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white10,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: const Color(0xFFD4AF37), style: BorderStyle.solid),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.add_a_photo, color: Color(0xFFD4AF37), size: 40),
+                  SizedBox(height: 10),
+                  Text("إضافة صور الإعلان", style: TextStyle(color: Colors.grey)),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.verified, color: Colors.blue, size: 20),
-                SizedBox(width: 5),
-                Text("المولد الخارق", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-              ],
-            ),
-            const Text("تاجر عقارات موثق - صنعاء", style: TextStyle(color: Colors.grey)),
-            
             const SizedBox(height: 25),
-            
-            // Stats Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildStat("إعلاناتي", "12"),
-                _buildStat("تقييم", "4.9"),
-                _buildStat("متابعين", "1.2k"),
-              ],
-            ),
-            
+            _inputLabel("عنوان الإعلان"),
+            _buildTextField("مثال: فيلا ملكية في حي حدة"),
+            const SizedBox(height: 15),
+            _inputLabel("السعر (بالدولار أو الريال)"),
+            _buildTextField("مثال: 200,000 $", keyboardType: TextInputType.number),
+            const SizedBox(height: 15),
+            _inputLabel("التفاصيل والوصف"),
+            _buildTextField("اكتب مواصفات العقار أو المنتج هنا...", maxLines: 4),
             const SizedBox(height: 30),
-            
-            // Menu Options
-            _buildProfileMenu(Icons.campaign, "إدارة إعلاناتي", "تعديل أو حذف العروض"),
-            _buildProfileMenu(Icons.account_balance_wallet, "المحفظة الرقمية", "الرصيد: 850,000 RY"),
-            _buildProfileMenu(Icons.verified_user, "توثيق الحساب (KYC)", "ارفع هويتك لزيادة الثقة"),
-            _buildProfileMenu(Icons.favorite, "المفضلة", "العقارات التي نالت إعجابك"),
-            _buildProfileMenu(Icons.settings, "إعدادات التطبيق", "اللغة، التنبيهات، الخصوصية"),
-            _buildProfileMenu(Icons.help_outline, "مركز المساعدة", "تواصل مع إدارة فلكس يمن"),
-            
-            const SizedBox(height: 20),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.redAccent),
-              title: const Text("تسجيل الخروج", style: TextStyle(color: Colors.redAccent)),
-              onTap: () {},
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFD4AF37),
+                minimumSize: const Size(double.infinity, 55),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              ),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("تم نشر إعلانك بنجاح!")));
+                onSuccess();
+              },
+              child: const Text("نشر الإعلان الآن", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
             ),
-            const SizedBox(height: 100), // مساحة للشريط السفلي
+            const SizedBox(height: 100),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStat(String label, String value) => Column(
-    children: [
-      Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
-      Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-    ],
+  Widget _inputLabel(String label) => Padding(
+    padding: const EdgeInsets.only(bottom: 8.0),
+    child: Text(label, style: const TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
   );
 
-  Widget _buildProfileMenu(IconData icon, String title, String subtitle) => ListTile(
-    leading: Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(color: const Color(0xFFD4AF37).withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-      child: Icon(icon, color: const Color(0xFFD4AF37)),
+  Widget _buildTextField(String hint, {int maxLines = 1, TextInputType keyboardType = TextInputType.text}) => TextField(
+    maxLines: maxLines,
+    keyboardType: keyboardType,
+    textAlign: TextAlign.right,
+    decoration: InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
+      filled: true,
+      fillColor: const Color(0xFF1A1A1A),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
     ),
-    title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-    subtitle: Text(subtitle, style: const TextStyle(color: Colors.grey, fontSize: 11)),
-    trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-    onTap: () {},
   );
 }
 
-// الصفحات الفرعية المتبقية
-class StorePage extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("المتجر")); }
-class ChatListScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("قائمة الدردشة")); }
+// واجهة الملف الشخصي (بسيطة للعرض)
+class ProfilePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => const Center(child: Text("واجهة الملف الشخصي"));
+}
