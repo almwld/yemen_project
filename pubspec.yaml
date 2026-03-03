@@ -1,7 +1,24 @@
+name: yemen_project
+description: Flex Yemen Multi-Service Platform
+version: 1.0.0+1
+publish_to: 'none'
 
-flutter_launcher_icons:
-  android: true
-  ios: true
-  image_path: "assets/logo.png"
-  adaptive_icon_background: "#000000"
-  adaptive_icon_foreground: "assets/logo.png"
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  carousel_slider: ^4.2.1
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo.png
+    - assets/
