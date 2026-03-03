@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(FlexYemenApp());
-}
+void main() => runApp(FlexYemenApp());
 
 class FlexYemenApp extends StatefulWidget {
   @override
@@ -20,7 +18,7 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(brightness: Brightness.light, primaryColor: const Color(0xFFD4AF37)),
       darkTheme: ThemeData(brightness: Brightness.dark, primaryColor: const Color(0xFFD4AF37), scaffoldBackgroundColor: Colors.black),
-      home: RootNavigation(
+      home: MainNavigation(
         isDarkMode: isDarkMode,
         cartCount: cartCount,
         onThemeToggle: () => setState(() => isDarkMode = !isDarkMode),
@@ -30,47 +28,50 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
   }
 }
 
-class RootNavigation extends StatefulWidget {
+class MainNavigation extends StatefulWidget {
   final bool isDarkMode;
   final int cartCount;
   final VoidCallback onThemeToggle;
   final VoidCallback onAddToCart;
-  const RootNavigation({super.key, required this.isDarkMode, required this.cartCount, required this.onThemeToggle, required this.onAddToCart});
+
+  MainNavigation({required this.isDarkMode, required this.cartCount, required this.onThemeToggle, required this.onAddToCart});
+
   @override
-  _RootNavigationState createState() => _RootNavigationState();
+  _MainNavigationState createState() => _MainNavigationState();
 }
 
-class _RootNavigationState extends State<RootNavigation> {
-  int _currentIndex = 1; // يفتح على المتجر مباشرة للتأكد
+class _MainNavigationState extends State<MainNavigation> {
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    // قائمة الواجهات المربوطة
+    final List<Widget> _pages = [
+      HomeScreen(),             // 0: الرئيسية (عقارات وسيارات)
+      StoreScreen(onAdd: widget.onAddToCart), // 1: المتجر الشامل
+      const Center(child: Text("الخرائط الذكية (قريباً)")), // 2: الخرائط
+      AddPostScreen(),          // 3: إضافة إعلان
+      ChatListScreen(),         // 4: الدردشة والوساطة
+      const Center(child: Text("المحفظة المالية")), // 5: المحفظة
+      ProfilePage(),            // 6: الملف الشخصي والإعدادات
+    ];
+
     return Scaffold(
-      extendBody: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent, elevation: 0,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
         title: const Text("FLEX YEMEN", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
         actions: [
           _buildCartBadge(),
           IconButton(icon: Icon(widget.isDarkMode ? Icons.wb_sunny : Icons.nightlight_round, color: const Color(0xFFD4AF37)), onPressed: widget.onThemeToggle),
         ],
       ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          const Center(child: Text("الرئيسية (العقارات)")),
-          StorePage(onAdd: widget.onAddToCart),
-          const Center(child: Text("الخرائط")),
-          const Center(child: Text("إضافة إعلان")),
-          const Center(child: Text("دردشة")),
-          const Center(child: Text("المحفظة")),
-          ProfilePage(), // صفحة الخصوصية والإعدادات
-        ],
-      ),
-      bottomNavigationBar: _bottomNav(),
+      body: _pages[_currentIndex],
+      bottomNavigationBar: _buildBottomNav(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => setState(() => _currentIndex = 3),
-        backgroundColor: const Color(0xFFD4AF37), child: const Icon(Icons.add, color: Colors.black),
+        backgroundColor: const Color(0xFFD4AF37),
+        child: const Icon(Icons.add, color: Colors.black, size: 30),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -84,16 +85,23 @@ class _RootNavigationState extends State<RootNavigation> {
     ],
   );
 
-  Widget _bottomNav() => BottomAppBar(
+  Widget _buildBottomNav() => BottomAppBar(
     color: widget.isDarkMode ? const Color(0xFF1A1A1A) : Colors.white,
     shape: const CircularNotchedRectangle(),
-    child: SizedBox(height: 60, child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-      _navItem(Icons.home, "الرئيسية", 0),
-      _navItem(Icons.storefront, "المتجر", 1),
-      const SizedBox(width: 40),
-      _navItem(Icons.chat_bubble_outline, "دردشة", 4),
-      _navItem(Icons.person_outline, "حسابي", 6),
-    ])),
+    notchMargin: 8,
+    child: SizedBox(
+      height: 60,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _navItem(Icons.home, "الرئيسية", 0),
+          _navItem(Icons.storefront, "المتجر", 1),
+          const SizedBox(width: 40),
+          _navItem(Icons.chat_bubble_outline, "دردشة", 4),
+          _navItem(Icons.person_outline, "حسابي", 6),
+        ],
+      ),
+    ),
   );
 
   Widget _navItem(IconData icon, String label, int index) => InkWell(
@@ -105,65 +113,91 @@ class _RootNavigationState extends State<RootNavigation> {
   );
 }
 
-// --- 🏪 صفحة المتجر الشاملة ---
-class StorePage extends StatelessWidget {
-  final VoidCallback onAdd;
-  StorePage({required this.onAdd});
-
-  final List<Map<String, dynamic>> categories = [
-    {"name": "فلكس برايم", "icon": Icons.star, "color": Colors.amber},
-    {"name": "سوبر ماركت", "icon": Icons.shopping_basket, "color": Colors.green},
-    {"name": "مطاعم", "icon": Icons.restaurant, "color": Colors.orange},
-    {"name": "إلكترونيات", "icon": Icons.devices, "color": Colors.indigo},
-    {"name": "ملبوسات", "icon": Icons.checkroom, "color": Colors.purple},
-    {"name": "ألعاب فيديو", "icon": Icons.videogame_asset, "color": Colors.blueGrey},
-    {"name": "السيارات", "icon": Icons.directions_car, "color": Colors.brown},
-    {"name": "صحة وجمال", "icon": Icons.face, "color": Colors.pink},
-  ];
-
+// --- 🏠 1. واجهة الرئيسية (العقارات والسيارات) ---
+class HomeScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Container(height: 120, margin: const EdgeInsets.all(15), decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), gradient: const LinearGradient(colors: [Color(0xFFD4AF37), Colors.orange])), child: const Center(child: Text("عروض الصيف بدأت!", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))),
-        GridView.builder(
-          shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), padding: const EdgeInsets.all(15),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.8, crossAxisSpacing: 10, mainAxisSpacing: 10),
-          itemCount: categories.length,
-          itemBuilder: (context, i) => InkWell(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryView(title: categories[i]['name'], onAdd: onAdd))),
-            child: Column(children: [
-              CircleAvatar(radius: 28, backgroundColor: categories[i]['color'].withOpacity(0.1), child: Icon(categories[i]['icon'], color: categories[i]['color'])),
-              const SizedBox(height: 5), Text(categories[i]['name'], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-            ]),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class CategoryView extends StatelessWidget {
-  final String title;
-  final VoidCallback onAdd;
-  CategoryView({required this.title, required this.onAdd});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(title)),
-    body: GridView.builder(padding: const EdgeInsets.all(15), gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.7, crossAxisSpacing: 10, mainAxisSpacing: 10), itemCount: 4, itemBuilder: (context, i) => Card(color: const Color(0xFF1A1A1A), child: Column(children: [const Expanded(child: Icon(Icons.inventory, size: 40)), Text("منتج $i"), Text("2000 RY", style: TextStyle(color: Color(0xFFD4AF37))), ElevatedButton(onPressed: onAdd, child: const Text("إضافة"))]))),
+  Widget build(BuildContext context) => ListView(
+    padding: const EdgeInsets.all(15),
+    children: [
+      const Text("أحدث العقارات", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
+      const SizedBox(height: 10),
+      _propertyCard("فيلا في حي حدة", "500,000 $", "صنعاء"),
+      _propertyCard("عمارة استثمارية", "1,200,000 $", "عدن"),
+    ],
+  );
+  Widget _propertyCard(String t, String p, String l) => Card(
+    margin: const EdgeInsets.only(bottom: 15),
+    color: const Color(0xFF1A1A1A),
+    child: ListTile(
+      leading: const Icon(Icons.home_work, color: Color(0xFFD4AF37), size: 40),
+      title: Text(t), subtitle: Text(l), trailing: Text(p, style: const TextStyle(color: Colors.greenAccent)),
+    ),
   );
 }
 
-// --- 👤 صفحة الملف الشخصي والإعدادات ---
+// --- 🏪 2. واجهة المتجر الشاملة ---
+class StoreScreen extends StatelessWidget {
+  final VoidCallback onAdd;
+  StoreScreen({required this.onAdd});
+  final List<Map<String, dynamic>> cats = [
+    {"n": "برايم", "i": Icons.star, "c": Colors.amber},
+    {"n": "سوبر ماركت", "i": Icons.shopping_basket, "c": Colors.green},
+    {"n": "مطاعم", "i": Icons.restaurant, "c": Colors.orange},
+    {"n": "إلكترونيات", "i": Icons.devices, "c": Colors.blue},
+    {"n": "ملبوسات", "i": Icons.checkroom, "c": Colors.purple},
+    {"n": "ألعاب", "i": Icons.videogame_asset, "c": Colors.red},
+  ];
+
+  @override
+  Widget build(BuildContext context) => GridView.builder(
+    padding: const EdgeInsets.all(15),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.8, crossAxisSpacing: 10, mainAxisSpacing: 10),
+    itemCount: cats.length,
+    itemBuilder: (context, i) => InkWell(
+      onTap: onAdd,
+      child: Column(children: [
+        CircleAvatar(radius: 25, backgroundColor: cats[i]['c'].withOpacity(0.1), child: Icon(cats[i]['i'], color: cats[i]['c'])),
+        const SizedBox(height: 5), Text(cats[i]['n'], style: const TextStyle(fontSize: 10)),
+      ]),
+    ),
+  );
+}
+
+// --- ➕ 3. واجهة إضافة إعلان ---
+class AddPostScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(20),
+    child: Column(children: [
+      const Icon(Icons.cloud_upload, size: 80, color: Color(0xFFD4AF37)),
+      const SizedBox(height: 20),
+      const TextField(decoration: InputDecoration(hintText: "عنوان الإعلان")),
+      const SizedBox(height: 10),
+      const TextField(decoration: InputDecoration(hintText: "السعر")),
+      const SizedBox(height: 20),
+      ElevatedButton(onPressed: () {}, child: const Text("نشر الآن"))
+    ]),
+  );
+}
+
+// --- 💬 4. واجهة الدردشة ---
+class ChatListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => ListView(children: const [
+    ListTile(leading: CircleAvatar(child: Icon(Icons.support_agent)), title: Text("الدعم الفني"), subtitle: Text("مرحباً بك في فلكس")),
+    ListTile(leading: CircleAvatar(child: Icon(Icons.person)), title: Text("الوسيط العقاري"), subtitle: Text("هل الفيلا لا تزال متاحة؟")),
+  ]);
+}
+
+// --- 👤 5. واجهة الملف الشخصي ---
 class ProfilePage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(15), children: [
-    const CircleAvatar(radius: 40, backgroundColor: Color(0xFFD4AF37), child: Icon(Icons.person, size: 40, color: Colors.black)),
+  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(20), children: [
+    const Center(child: CircleAvatar(radius: 40, backgroundColor: Color(0xFFD4AF37), child: Icon(Icons.person, size: 40, color: Colors.black))),
     const SizedBox(height: 20),
-    _tile(Icons.lock, "الخصوصية", "إدارة بياناتك"),
-    _tile(Icons.notifications, "الإشعارات", "تنبيهات العروض"),
-    _tile(Icons.info, "عن المنصة", "إصدار 1.0.2"),
+    const ListTile(leading: Icon(Icons.lock, color: Color(0xFFD4AF37)), title: Text("الخصوصية والأمان")),
+    const ListTile(leading: Icon(Icons.notifications, color: Color(0xFFD4AF37)), title: Text("الإشعارات")),
+    const ListTile(leading: Icon(Icons.info, color: Color(0xFFD4AF37)), title: Text("عن فلكس يمن")),
     ListTile(leading: const Icon(Icons.logout, color: Colors.red), title: const Text("تسجيل الخروج"), onTap: () {}),
   ]);
-  Widget _tile(IconData i, String t, String s) => ListTile(leading: Icon(i, color: const Color(0xFFD4AF37)), title: Text(t), subtitle: Text(s, style: const TextStyle(fontSize: 10)));
 }
